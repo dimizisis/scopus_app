@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
+        MainWindow.setObjectName("MenuWindow")
         MainWindow.resize(750, 271)
         MainWindow.setStyleSheet("background-color: rgb(190, 190, 190);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -157,4 +157,3 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionExit.setShortcut(_translate("MainWindow", "Ctrl+X"))
-
