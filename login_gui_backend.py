@@ -21,14 +21,14 @@ import menu_gui_backend
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(851, 292)
-        MainWindow.setMinimumSize(QtCore.QSize(851, 292))
-        MainWindow.setMaximumSize(QtCore.QSize(851, 292))
-        MainWindow.setStyleSheet("background-color: rgb(190, 190, 190);")
-        MainWindow.setDocumentMode(False)
-        MainWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.MainWindow = MainWindow
+        self.MainWindow.setObjectName("MainWindow")
+        self.MainWindow.resize(851, 292)
+        self.MainWindow.setMinimumSize(QtCore.QSize(851, 292))
+        self.MainWindow.setMaximumSize(QtCore.QSize(851, 292))
+        self.MainWindow.setStyleSheet("background-color: rgb(190, 190, 190);")
+        self.MainWindow.setDocumentMode(False)
+        self.MainWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
@@ -92,16 +92,16 @@ class Ui_MainWindow(object):
         self.scopus_image_label.setStyleSheet("image: url(:/scopus_logo/1280px-Scopus_logo.svg.png);")
         self.scopus_image_label.setText("")
         self.scopus_image_label.setObjectName("scopus_image_label")
-        MainWindow.setCentralWidget(self.centralwidget)
+        self.MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        self.MainWindow.setStatusBar(self.statusbar)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 851, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
-        MainWindow.setMenuBar(self.menubar)
+        self.MainWindow.setMenuBar(self.menubar)
         self.actionExit = QtWidgets.QAction(MainWindow)
         self.actionExit.setObjectName("actionExit")
         self.actionExit.triggered.connect(MainWindow.close)
@@ -160,7 +160,7 @@ class Ui_MainWindow(object):
         '''
         self.menu_ui = menu_gui_backend.Ui_MainWindow()
         self.menu_ui.setupUi(self.MainWindow)
-        MainWindow.show()
+        self.MainWindow.show()
 
 class LoginPage():
 
@@ -181,6 +181,9 @@ class LoginPage():
         
         user_element = self.browser.find_element_by_id(self.username_box_id)   # Find the textboxes we'll send the credentials
         pass_element = self.browser.find_element_by_id(self.password_box_id)
+
+        user_element.clear()
+        pass_element.clear()
 
         user_element.send_keys(username)    # send credentials to textboxes 
         pass_element.send_keys(password) 
