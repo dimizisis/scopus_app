@@ -17,7 +17,7 @@ from threading import Thread
 from time import sleep
 import global_vars
 import img_source
-import menu
+import menu_gui_backend
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -87,16 +87,11 @@ class Ui_MainWindow(object):
         self.login_failed_label.setWordWrap(False)
         self.login_failed_label.setObjectName("login_failed_label")
         self.verticalLayout.addWidget(self.login_failed_label)
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(600, 90, 47, 13))
-        self.label.setText("")
-        self.label.setIndent(0)
-        self.label.setObjectName("label")
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(20, 10, 401, 241))
-        self.label_2.setStyleSheet("image: url(:/scopus_logo/1280px-Scopus_logo.svg.png);")
-        self.label_2.setText("")
-        self.label_2.setObjectName("label_2")
+        self.scopus_image_label = QtWidgets.QLabel(self.centralwidget)
+        self.scopus_image_label.setGeometry(QtCore.QRect(20, 10, 401, 241))
+        self.scopus_image_label.setStyleSheet("image: url(:/scopus_logo/1280px-Scopus_logo.svg.png);")
+        self.scopus_image_label.setText("")
+        self.scopus_image_label.setObjectName("scopus_image_label")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -107,9 +102,10 @@ class Ui_MainWindow(object):
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
         MainWindow.setMenuBar(self.menubar)
-        self.actionQuit = QtWidgets.QAction(MainWindow)
-        self.actionQuit.setObjectName("actionQuit")
-        self.menuFile.addAction(self.actionQuit)
+        self.actionExit = QtWidgets.QAction(MainWindow)
+        self.actionExit.setObjectName("actionExit")
+        self.actionExit.triggered.connect(MainWindow.close)
+        self.menuFile.addAction(self.actionExit)
         self.menubar.addAction(self.menuFile.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -121,6 +117,13 @@ class Ui_MainWindow(object):
         self.login_btn.setShortcut('Return')
         self.login_failed_label.setVisible(False)
 
+        ########################## To be removed *used for test* ##########################
+
+        self.email_txt.setText('@uom.edu.gr')
+        self.pass_txt.setText('')
+
+        ###################################################################################
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Login"))
@@ -130,9 +133,8 @@ class Ui_MainWindow(object):
         self.login_btn.setText(_translate("MainWindow", "Login"))
         self.login_failed_label.setText(_translate("MainWindow", "Login Failed, please try again."))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
-        self.actionQuit.setText(_translate("MainWindow", "Quit"))
-        self.actionQuit.setStatusTip(_translate("MainWindow", "Click to exit the app"))
-        self.actionQuit.setShortcut(_translate("MainWindow", "Ctrl+Q"))
+        self.actionExit.setText(_translate("MainWindow", "Exit"))
+        self.actionExit.setShortcut(_translate("MainWindow", "Ctrl+X"))
 
     def login_btn_function(self):
 
@@ -152,14 +154,13 @@ class Ui_MainWindow(object):
     def open_menu_window(self):
 
         '''
-        When the login successes, this function will be triggered (slot)
+        When login successful, this function will be triggered (slot)
         to show the menu window (and "close" the login window)
 
         '''
-        menuWindow = QtWidgets.QMainWindow()
-        menu_ui = menu.Ui_MainWindow()
-        menu_ui.setupUi(MainWindow)
-        menuWindow.show()
+        self.menu_ui = menu_gui_backend.Ui_MainWindow()
+        self.menu_ui.setupUi(self.MainWindow)
+        MainWindow.show()
 
 class LoginPage():
 
@@ -177,10 +178,6 @@ class LoginPage():
         logs in Scopus system
 
         '''
-
-        url = 'https://www.scopus.com/customer/authenticate/loginfull.uri'
-
-        self.browser.get(url)
         
         user_element = self.browser.find_element_by_id(self.username_box_id)   # Find the textboxes we'll send the credentials
         pass_element = self.browser.find_element_by_id(self.password_box_id)
@@ -223,6 +220,7 @@ class LoginThread(QtCore.QThread):
             self.fail_signal.emit(not success)
         else:
             self.open_menu_signal.emit()    # emit signal (to open the menu window)
+
 if __name__ == '__main__':
 
     import sys
