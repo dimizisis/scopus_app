@@ -17,8 +17,9 @@ from global_vars import browser, login_url, search_url
 from queue import deque
 from threading import Thread
 import login_gui_backend
+import results_gui_backend
 
-MAX_DELAY_TIME = 6
+MAX_DELAY_TIME = 10
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -208,7 +209,7 @@ class Ui_MainWindow(object):
 
         dialog = QtWidgets.QDialog()
         dialog.dialog_ui = Ui_ScanDialog()
-        dialog.dialog_ui.setupUi(dialog, self.generate_query())
+        dialog.dialog_ui.setupUi(dialog, self.MainWindow, self.generate_query())
         dialog.exec_()
 
     def open_directory_dialog(self):
@@ -280,7 +281,8 @@ class Ui_MainWindow(object):
         self.MainWindow.show()
   
 class Ui_ScanDialog(object):
-    def setupUi(self, ScanDialog, query):
+    def setupUi(self, ScanDialog, MainWindow, query):
+        self.MainWindow = MainWindow
         self.ScanDialog = ScanDialog
         self.ScanDialog.setObjectName("ScanDialog")
         self.ScanDialog.resize(440, 108)
@@ -331,8 +333,38 @@ class Ui_ScanDialog(object):
         self.analysis_thread = AnalysisThread(parent=None)
         self.analysis_thread.total_docs_update.connect(self.set_progress_bar_max_value)
         self.analysis_thread.update_progress_bar.connect(self.update_progress_bar_value)
-        # self.analysis_thread.finished.connect()
+        self.analysis_thread.thread_finished.connect(self.open_question_box)
         self.analysis_thread.start()
+
+    def open_question_box(self, results):
+
+        '''
+        This function opens a question box
+        in order to ask the user whether
+        he wants to open the results window or not
+        Triggered when analysis operation is finished
+
+        '''
+
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(QtWidgets.QMessageBox.Question)
+        msg.setText('Analysis finished! Show results?')
+        msg.setStandardButtons(QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No)
+        msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
+        msg.setWindowTitle("Success")
+        reply = msg.exec_()
+
+        if reply == QtWidgets.QMessageBox.Yes:
+            
+            self.ScanDialog.close()
+            self.MainWindow.close()
+            self.ResultsWindow = QtWidgets.QMainWindow()
+            self.results_ui = results_gui_backend.Ui_ResultsWindow()
+            self.results_ui.setupUi(self.ResultsWindow, results)
+            self.ResultsWindow.show()
+
+        elif reply == QtWidgets.QMessageBox.No:
+            self.ScanDialog.close()
 
     def cancel_analysis(self):
 
@@ -723,6 +755,8 @@ class AnalysisThread(QtCore.QThread):
 
     total_docs_update = QtCore.pyqtSignal(int)
     update_progress_bar = QtCore.pyqtSignal(int)
+
+    thread_finished = QtCore.pyqtSignal(list)
     
     def __init__(self, parent=None):
         super(AnalysisThread, self).__init__(parent)
@@ -730,7 +764,9 @@ class AnalysisThread(QtCore.QThread):
     # run method gets called when we start the thread
     def run(self):
         doc_page = DocumentPage(self, self.total_docs_update, self.update_progress_bar)
-        doc_page.analyze_documents()
+        results = doc_page.analyze_documents()
+
+        self.thread_finished.emit(results)
 
     def stop(self):
         self.terminate()
