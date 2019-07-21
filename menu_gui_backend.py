@@ -188,11 +188,28 @@ class Ui_MainWindow(object):
         which shows the progress of the expected search (progress bar & percentage of completion)
 
         '''
+
+        if self.export_checkbox.isChecked():
+            if not self.export_path_textedit.toPlainText():
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Critical)
+                msg.setText("Please select a valid export path.")
+                msg.setWindowTitle("Error")
+                msg.exec_()
+                return
+
+            if not self.export_filename_textedit.toPlainText():
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Critical)
+                msg.setText('Please enter a valid output filename.')
+                msg.setWindowTitle("Error")
+                msg.exec_()
+                return
+
         dialog = QtWidgets.QDialog()
         dialog.dialog_ui = Ui_ScanDialog()
         dialog.dialog_ui.setupUi(dialog, self.generate_query())
         dialog.exec_()
-        dialog.show()
 
     def open_directory_dialog(self):
 
@@ -249,6 +266,14 @@ class Ui_MainWindow(object):
         return query
 
     def logout(self):
+
+        '''
+        This function brings user to login window
+        in order to login again with the same or
+        different scopus account
+        Triggered on Logout click (menu bar) or on CTRL+L pressed
+
+        '''
         browser.get(login_url)
         self.login_ui = login_gui_backend.Ui_MainWindow()
         self.login_ui.setupUi(self.MainWindow)
@@ -256,13 +281,16 @@ class Ui_MainWindow(object):
   
 class Ui_ScanDialog(object):
     def setupUi(self, ScanDialog, query):
-        ScanDialog.setObjectName("ScanDialog")
-        ScanDialog.resize(440, 108)
+        self.ScanDialog = ScanDialog
+        self.ScanDialog.setObjectName("ScanDialog")
+        self.ScanDialog.resize(440, 108)
+        self.ScanDialog.setStyleSheet("background-color: rgb(190, 190, 190);")
         self.buttonBox = QtWidgets.QDialogButtonBox(ScanDialog)
         self.buttonBox.setGeometry(QtCore.QRect(10, 70, 421, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setEnabled(False)
         self.progressBar = QtWidgets.QProgressBar(ScanDialog)
         self.progressBar.setGeometry(QtCore.QRect(10, 20, 421, 23))
         self.progressBar.setProperty("value", 0)
@@ -271,7 +299,7 @@ class Ui_ScanDialog(object):
 
         self.retranslateUi(ScanDialog)
         self.buttonBox.accepted.connect(ScanDialog.accept)
-        self.buttonBox.rejected.connect(ScanDialog.reject)
+        self.buttonBox.rejected.connect(self.cancel_analysis)
         QtCore.QMetaObject.connectSlotsByName(ScanDialog)
 
         self.query = query
@@ -306,6 +334,26 @@ class Ui_ScanDialog(object):
         # self.analysis_thread.finished.connect()
         self.analysis_thread.start()
 
+    def cancel_analysis(self):
+
+        '''
+        This function closes scan dialog
+        and ends search and analysis operation
+        Triggered on cancel click
+
+        '''
+        self.ScanDialog.close()
+        
+        try:
+            self.search_thread.stop()
+        except:
+            print('No search thread found')
+
+        try:
+            self.analysis_thread.stop()  
+        except:
+            print('No analysis thread found')
+        
     def update_progress_bar_value(self, value):
 
         '''
@@ -341,6 +389,7 @@ class SearchPage():
         in Scopus
 
         '''
+
         advanced_ref = WebDriverWait(browser, MAX_DELAY_TIME).until(    # when page is loaded, click Advanced Search
             EC.presence_of_element_located((By.LINK_TEXT, self.advanced_ref_link_text)))
         advanced_ref.click()
@@ -364,14 +413,18 @@ class SearchThread(QtCore.QThread):
     def __init__(self, parent=None, query=''):
         super(SearchThread, self).__init__(parent)
         self.query = query
+
     # run method gets called when we start the thread
     def run(self):
         search_page = SearchPage()
         search_page.search(self.query)
 
+    def stop(self):
+        self.terminate()
+
 class DocumentPage():
 
-    def __init__(self, total_docs_signal, update_progress_bar_signal):
+    def __init__(self, thread, total_docs_signal, update_progress_bar_signal):
         self.percentile_categories_class_name = 'treeLineContainer'
         self.percentiles_xpath = '//*[contains(@class, "pull-left paddingLeftQuarter")]'
         self.metric_values_xpath = "//*[contains(@class, 'value fontMedLarge lineHeight2 blockDisplay')]"
@@ -385,6 +438,8 @@ class DocumentPage():
 
         self.total_docs_update = total_docs_signal
         self.update_progress_bar = update_progress_bar_signal
+
+        self.analysis_thread = thread
 
     def analyze_documents(self):
 
@@ -671,10 +726,14 @@ class AnalysisThread(QtCore.QThread):
     
     def __init__(self, parent=None):
         super(AnalysisThread, self).__init__(parent)
+
     # run method gets called when we start the thread
     def run(self):
-        doc_page = DocumentPage(self.total_docs_update, self.update_progress_bar)
+        doc_page = DocumentPage(self, self.total_docs_update, self.update_progress_bar)
         doc_page.analyze_documents()
+
+    def stop(self):
+        self.terminate()
 
 # if __name__ == '__main__':
 

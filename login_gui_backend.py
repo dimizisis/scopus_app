@@ -215,6 +215,7 @@ class LoginThread(QtCore.QThread):
         super(LoginThread, self).__init__(parent)
         self.email = email
         self.passsword = password
+        
     # run method gets called when we start the thread
     def run(self):
         login_page = LoginPage()
