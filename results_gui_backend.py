@@ -7,19 +7,22 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import menu_gui_backend
 
 class Ui_ResultsWindow(object):
     def setupUi(self, ResultsWindow, results):
         self.ResultsWindow = ResultsWindow
         self.results = results
-        ResultsWindow.setObjectName("ResultsWindow")
-        ResultsWindow.resize(833, 342)
-        ResultsWindow.setStyleSheet("background-color: rgb(190, 190, 190);")
+        self.ResultsWindow.setObjectName("ResultsWindow")
+        self.ResultsWindow.resize(833, 342)
+        self.ResultsWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 black, stop:1 grey);")
         self.centralwidget = QtWidgets.QWidget(ResultsWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.back_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.back_btn.setStyleSheet("background-color: rgb(170, 170, 170);")
         self.back_btn.setGeometry(QtCore.QRect(10, 270, 101, 31))
         self.back_btn.setObjectName("back_btn")
+        self.back_btn.clicked.connect(self.go_to_menu)
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
         self.tableWidget.setGeometry(QtCore.QRect(10, 10, 811, 241))
         self.tableWidget.setStyleSheet("background-color: rgb(255, 255, 255);")
@@ -27,18 +30,19 @@ class Ui_ResultsWindow(object):
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
         self.statistics_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.statistics_btn.setStyleSheet("background-color: rgb(170, 170, 170);")
         self.statistics_btn.setGeometry(QtCore.QRect(720, 270, 101, 31))
         self.statistics_btn.setObjectName("statistics_btn")
-        ResultsWindow.setCentralWidget(self.centralwidget)
+        self.ResultsWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(ResultsWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 833, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
-        ResultsWindow.setMenuBar(self.menubar)
+        self.ResultsWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(ResultsWindow)
         self.statusbar.setObjectName("statusbar")
-        ResultsWindow.setStatusBar(self.statusbar)
+        self.ResultsWindow.setStatusBar(self.statusbar)
         self.actionBack = QtWidgets.QAction(ResultsWindow)
         self.actionBack.setObjectName("actionBack")
         self.actionExit = QtWidgets.QAction(ResultsWindow)
@@ -66,7 +70,7 @@ class Ui_ResultsWindow(object):
                         item = str(item)
                     self.tableWidget.setItem(row, column, QtWidgets.QTableWidgetItem(item))
                 except:
-                    print('not successful completely')
+                    print('Ok')
                 
     def retranslateUi(self, ResultsWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -80,3 +84,15 @@ class Ui_ResultsWindow(object):
         self.actionExit.setText(_translate("ResultsWindow", "Exit"))
         self.actionExit.setToolTip(_translate("ResultsWindow", "Exit application"))
         self.actionExit.setShortcut(_translate("ResultsWindow", "Ctrl+X"))
+
+    def go_to_menu(self):
+
+        '''
+        When back button is clicked,
+        the function will be executed
+        in order to bring user back to
+        main menu
+        '''
+        self.menu_ui = menu_gui_backend.Ui_MainWindow()
+        self.menu_ui.setupUi(self.ResultsWindow)
+        self.ResultsWindow.show()

@@ -19,8 +19,6 @@ from threading import Thread
 import login_gui_backend
 import results_gui_backend
 
-MAX_DELAY_TIME = 10
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
