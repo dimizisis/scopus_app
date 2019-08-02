@@ -60,10 +60,13 @@ class Ui_ResultsWindow(object):
 
         for row in range(row_count):  # add items from array to QTableWidget
             for column in range(column_count):
-                item = (list(self.results[row].values())[column])
-                if not isinstance(item, str):
-                    item = str(item)
-                self.tableWidget.setItem(row, column, QtWidgets.QTableWidgetItem(item))
+                try:
+                    item = (list(self.results[row].values())[column])
+                    if not isinstance(item, str):
+                        item = str(item)
+                    self.tableWidget.setItem(row, column, QtWidgets.QTableWidgetItem(item))
+                except:
+                    print('not successful completely')
                 
     def retranslateUi(self, ResultsWindow):
         _translate = QtCore.QCoreApplication.translate

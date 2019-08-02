@@ -26,7 +26,7 @@ class Ui_MainWindow(object):
         self.MainWindow.resize(851, 292)
         self.MainWindow.setMinimumSize(QtCore.QSize(851, 292))
         self.MainWindow.setMaximumSize(QtCore.QSize(851, 292))
-        self.MainWindow.setStyleSheet("background-color: rgb(190, 190, 190);")
+        self.MainWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 black, stop:1 grey);")
         self.MainWindow.setDocumentMode(False)
         self.MainWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -34,6 +34,7 @@ class Ui_MainWindow(object):
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox.setGeometry(QtCore.QRect(440, 0, 401, 251))
         self.groupBox.setObjectName("groupBox")
+        self.groupBox.setStyleSheet("background-color: rgba(0,0,0,0%)")
         self.layoutWidget = QtWidgets.QWidget(self.groupBox)
         self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 371, 221))
         self.layoutWidget.setObjectName("layoutWidget")
@@ -73,6 +74,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addItem(spacerItem3)
         self.login_btn = QtWidgets.QPushButton(self.layoutWidget)
         self.login_btn.setObjectName("login_btn")
+        self.login_btn.setStyleSheet("background-color: rgb(170, 170, 170);")
         self.verticalLayout_2.addWidget(self.login_btn)
         self.verticalLayout.addLayout(self.verticalLayout_2)
         spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -89,7 +91,8 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.login_failed_label)
         self.scopus_image_label = QtWidgets.QLabel(self.centralwidget)
         self.scopus_image_label.setGeometry(QtCore.QRect(20, 10, 401, 241))
-        self.scopus_image_label.setStyleSheet("image: url(:/scopus_logo/1280px-Scopus_logo.svg.png);")
+        self.scopus_image_label.setStyleSheet("image: url(:/scopus_logo/1280px-Scopus_logo.svg.png);\n"
+"background-color: rgba(0,0,0,0%)")
         self.scopus_image_label.setText("")
         self.scopus_image_label.setObjectName("scopus_image_label")
         self.MainWindow.setCentralWidget(self.centralwidget)
@@ -119,8 +122,8 @@ class Ui_MainWindow(object):
 
         ########################## To be removed *used for test* ##########################
 
-        self.email_txt.setText('@uom.edu.gr')
-        self.pass_txt.setText('')
+        self.email_txt.setText('dai17053@uom.edu.gr')
+        self.pass_txt.setText('Uom53')
 
         ###################################################################################
 
@@ -192,7 +195,7 @@ class LoginPage():
 
         try:
             # if document search text appears, login successful
-            document_search_txt = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.XPATH, self.document_header_xpath)))
+            document_search_txt = WebDriverWait(self.browser, global_vars.DELAY_TIME).until(EC.presence_of_element_located((By.XPATH, self.document_header_xpath)))
             print('Login ok')
             return True
         except:

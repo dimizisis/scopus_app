@@ -13,7 +13,7 @@ from selenium.common import exceptions
 import re
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from global_vars import browser, login_url, search_url
+from global_vars import browser, login_url, search_url, DELAY_TIME
 from queue import deque
 from threading import Thread
 import login_gui_backend
@@ -28,7 +28,7 @@ class Ui_MainWindow(object):
         self.MainWindow.resize(750, 273)
         self.MainWindow.setMinimumSize(QtCore.QSize(750, 273))
         self.MainWindow.setMaximumSize(QtCore.QSize(750, 273))
-        self.MainWindow.setStyleSheet("background-color: rgb(190, 190, 190);")
+        self.MainWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 black, stop:1 grey);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
@@ -286,8 +286,9 @@ class Ui_ScanDialog(object):
         self.ScanDialog = ScanDialog
         self.ScanDialog.setObjectName("ScanDialog")
         self.ScanDialog.resize(440, 108)
-        self.ScanDialog.setStyleSheet("background-color: rgb(190, 190, 190);")
+        self.ScanDialog.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 black, stop:1 grey);")
         self.buttonBox = QtWidgets.QDialogButtonBox(ScanDialog)
+        self.buttonBox.setStyleSheet("background: rgb(170, 170, 170);")
         self.buttonBox.setGeometry(QtCore.QRect(10, 70, 421, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
@@ -422,11 +423,11 @@ class SearchPage():
 
         '''
 
-        advanced_ref = WebDriverWait(browser, MAX_DELAY_TIME).until(    # when page is loaded, click Advanced Search
+        advanced_ref = WebDriverWait(browser, DELAY_TIME).until(    # when page is loaded, click Advanced Search
             EC.presence_of_element_located((By.LINK_TEXT, self.advanced_ref_link_text)))
         advanced_ref.click()
 
-        search_field = WebDriverWait(browser, MAX_DELAY_TIME).until(    # when page is loaded, click query text box & send our query
+        search_field = WebDriverWait(browser, DELAY_TIME).until(    # when page is loaded, click query text box & send our query
             EC.presence_of_element_located((By.ID, self.search_field_id)))
         search_field.clear()
         search_field.send_keys(query)
@@ -500,18 +501,18 @@ class DocumentPage():
                 year = year_rows.popleft()
 
                 if source_name['clickable']:
-                    source = WebDriverWait(browser, MAX_DELAY_TIME).until(    
+                    source = WebDriverWait(browser, DELAY_TIME).until(    
                         EC.presence_of_element_located((By.LINK_TEXT, source_name['name'])))   # go in document's page
                     source.click()
 
                     try:
-                        categories = WebDriverWait(browser, MAX_DELAY_TIME).until(    
+                        categories = WebDriverWait(browser, DELAY_TIME).until(    
                             EC.presence_of_all_elements_located((By.CLASS_NAME, self.percentile_categories_class_name)))    # find categories names
 
                         categories = self.convert_to_txt(categories) # convert categories from web element to string
 
                         try:
-                            percentiles = WebDriverWait(browser, MAX_DELAY_TIME).until(    
+                            percentiles = WebDriverWait(browser, DELAY_TIME).until(    
                                 EC.presence_of_all_elements_located((By.XPATH, self.percentiles_xpath))) # find percentiles
 
                             percentiles = self.percentiles_to_num(self.convert_to_txt(percentiles))   # convert percentiles to number (int)
@@ -523,7 +524,7 @@ class DocumentPage():
 
                         try:
 
-                            metric_values = WebDriverWait(browser, MAX_DELAY_TIME).until(    
+                            metric_values = WebDriverWait(browser, DELAY_TIME).until(    
                                 EC.presence_of_all_elements_located((By.XPATH, self.metric_values_xpath))) # find metrics (num)
 
                             metric_values = self.convert_to_txt(metric_values)
@@ -635,7 +636,8 @@ class DocumentPage():
         Takes a list of numbers (percentiles) 
         and returns their average
         '''
-        return float(sum(percentiles) / len(percentiles)) 
+        average = float(sum(percentiles) / len(percentiles))
+        return round(average, 2)
 
     def change_page(self, curr_page):
         '''
@@ -645,7 +647,7 @@ class DocumentPage():
         Returns the new curr_page
         '''
         try:
-            paging_ul = WebDriverWait(browser, MAX_DELAY_TIME).until(    # when page is loaded, click query text box & send our query
+            paging_ul = WebDriverWait(browser, DELAY_TIME).until(    # when page is loaded, click query text box & send our query
                 EC.presence_of_element_located((By.CLASS_NAME, self.paging_ul_class_name)))
             pages = paging_ul.find_elements_by_tag_name('li')
 
@@ -662,7 +664,7 @@ class DocumentPage():
         '''
         Returns total number of pages
         '''
-        paging_ul = WebDriverWait(browser, MAX_DELAY_TIME).until(    # when page is loaded, click query text box & send our query
+        paging_ul = WebDriverWait(browser, DELAY_TIME).until(    # when page is loaded, click query text box & send our query
                 EC.presence_of_element_located((By.CLASS_NAME, self.paging_ul_class_name)))
         return len(paging_ul.find_elements_by_tag_name("li"))
 
@@ -700,7 +702,7 @@ class DocumentPage():
 
         i=1
         while i<=no_of_rows:
-            td = WebDriverWait(browser, MAX_DELAY_TIME).until(    
+            td = WebDriverWait(browser, DELAY_TIME).until(    
                 EC.presence_of_element_located((By.XPATH, '//*[@id="resultDataRow'+str(i-1)+'"]/td[4]'))) 
             try:
                 row = td.find_element(By.CLASS_NAME, self.doc_source_class_name)
@@ -717,7 +719,7 @@ class DocumentPage():
         Fetches all documents (names)
         and returns a string queue (with all the names)
         '''
-        results = WebDriverWait(browser, MAX_DELAY_TIME).until(    
+        results = WebDriverWait(browser, DELAY_TIME).until(    
             EC.presence_of_element_located((By.ID, self.search_results_table_id))) # srchResultsList is the data table, from which we will get the documents' names
         rows = results.find_elements(By.CLASS_NAME, self.doc_title_class_name) # get all of the rows in the table
         rows = self.convert_to_txt(rows) # convert web elements to string
@@ -728,7 +730,7 @@ class DocumentPage():
         Fetches all authors (names)
         and returns a string queue (with all the names)
         '''
-        results = WebDriverWait(browser, MAX_DELAY_TIME).until(    
+        results = WebDriverWait(browser, DELAY_TIME).until(    
             EC.presence_of_element_located((By.ID, self.search_results_table_id))) # srchResultsList is the data table, from which we will get the documents' names
         rows = results.find_elements(By.CLASS_NAME, self.authors_list_class_name) # get all of the rows in the table
         rows = self.convert_to_txt(rows) # convert web elements to string
@@ -739,7 +741,7 @@ class DocumentPage():
         Fetches all years
         and returns a string queue (with all the years)
         '''
-        results = WebDriverWait(browser, MAX_DELAY_TIME).until(    
+        results = WebDriverWait(browser, DELAY_TIME).until(    
             EC.presence_of_element_located((By.ID, self.search_results_table_id))) # srchResultsList is the data table, from which we will get the documents' names
         rows = results.find_elements(By.CLASS_NAME, self.pub_year_class_name) # get all of the rows in the table
         rows = self.convert_to_txt(rows) # convert web elements to string
