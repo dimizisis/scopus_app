@@ -169,9 +169,9 @@ class LoginPage():
 
     def __init__(self):
         self.browser = global_vars.browser
-        self.username_box_id = 'username'
-        self.password_box_id = 'password-input-password'
-        self.login_btn_xpath = '//*[@title="Login"]'
+        self.username_box_id = 'paywall_username'
+        self.password_box_id = 'paywall_password'
+        self.login_btn_id = 'paywall_login_submit_button_element'
         self.document_header_xpath = '//h1[@class="documentHeader"]'
 
     def login(self, username, password):
@@ -190,7 +190,7 @@ class LoginPage():
 
         user_element.send_keys(username)    # send credentials to textboxes 
         pass_element.send_keys(password) 
-        login_btn = self.browser.find_element_by_xpath(self.login_btn_xpath)    # find & click login button
+        login_btn = self.browser.find_element_by_id(self.login_btn_id)    # find & click login button
         login_btn.click()
 
         try:

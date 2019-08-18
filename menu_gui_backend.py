@@ -522,10 +522,36 @@ class DocumentPage():
 
                         try:
 
-                            metric_values = WebDriverWait(browser, DELAY_TIME).until(    
-                                EC.presence_of_all_elements_located((By.XPATH, self.metric_values_xpath))) # find metrics (num)
+                            # metric_values = WebDriverWait(browser, DELAY_TIME).until(    
+                            #     EC.presence_of_all_elements_located((By.XPATH, self.metric_values_xpath))) # find metrics (num)
 
-                            metric_values = self.convert_to_txt(metric_values)
+                            # metric_values = self.convert_to_txt(metric_values)
+
+                            try:
+                                citescore_element = WebDriverWait(browser, DELAY_TIME).until(    
+                                    EC.presence_of_element_located((By.XPATH, '//*[@id="rpCard"]/h2/span')))
+
+                                citescore = citescore_element.text
+                            except:
+                                citescore = 0
+
+                            try:
+                                sjr_element = WebDriverWait(browser, DELAY_TIME).until(    
+                                    EC.presence_of_element_located((By.XPATH, '//*[@id="sjrCard"]/h2/span')))
+                                
+                                sjr = sjr_element.text
+                            except:
+                                sjr = 0
+
+                            try:
+                                snip_element = WebDriverWait(browser, DELAY_TIME).until(    
+                                    EC.presence_of_element_located((By.XPATH, '//*[@id="snipCard"]/h2/span')))
+
+                                snip = snip_element.text
+                            except:
+                                snip = 0
+
+                            metric_values = [citescore, sjr, snip]
                         
                         except:
                             print('no metric values found')

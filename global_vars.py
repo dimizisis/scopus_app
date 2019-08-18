@@ -3,7 +3,7 @@ import threading
 
 DELAY_TIME = 10
 
-login_url = 'https://www.scopus.com/customer/authenticate/loginfull.uri'
+login_url = 'https://www.scopus.com/customer/authenticate.uri'
 
 search_url = 'https://www.scopus.com/search/form.uri?display=advanced'
 
