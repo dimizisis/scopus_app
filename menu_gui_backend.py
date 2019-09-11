@@ -18,6 +18,29 @@ from queue import deque
 from threading import Thread
 import login_gui_backend
 import results_gui_backend
+import magic
+
+class TestListView(QtWidgets.QListWidget):
+    def __init__(self, parent=None):
+        super(TestListView, self).__init__(parent)
+        self.setAcceptDrops(True)
+        self.setIconSize(QtCore.QSize(72, 72))
+
+    def dragMoveEvent(self, event):
+        pass
+
+    def dragEnterEvent(self, e):
+        if e.mimeData().hasUrls():
+            e.accept()
+        else:
+            e.ignore() 
+
+    def dropEvent(self, e):
+        for url in e.mimeData().urls():
+            if magic.from_file(url.toLocalFile()) == 'ASCII text':
+                self.addItem(url.toLocalFile())
+            else:
+                print(magic.from_file(url.toLocalFile()))
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -127,6 +150,12 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.new_search_tab, "")
         self.import_tab = QtWidgets.QWidget()
         self.import_tab.setObjectName("import_tab")
+        self.listWidget = TestListView(self.import_tab)
+        self.listWidget.setGeometry(QtCore.QRect(0, 0, 731, 201))
+        self.listWidget.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.listWidget.setDragEnabled(True)
+        self.listWidget.setDragDropMode(QtWidgets.QAbstractItemView.DragDrop)
+        self.listWidget.setObjectName("listWidget")
         self.tabWidget.addTab(self.import_tab, "")
         self.MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -797,13 +826,13 @@ class AnalysisThread(QtCore.QThread):
     def stop(self):
         self.terminate()
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 
-#     import sys
+    import sys
 
-#     app = QtWidgets.QApplication(sys.argv)
-#     MainWindow = QtWidgets.QMainWindow()
-#     ui = Ui_MainWindow()
-#     ui.setupUi(MainWindow)
-#     MainWindow.show()
-#     sys.exit(app.exec_())
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
