@@ -26,7 +26,7 @@
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(170, 170, 170);</string>
+    <string notr="true">background: rgb(170, 170, 170);</string>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
