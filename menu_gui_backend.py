@@ -30,12 +30,20 @@ class TestListView(QtWidgets.QListWidget):
         pass
 
     def dragEnterEvent(self, e):
+        '''
+        If it is a file, we accept it
+        '''
         if e.mimeData().hasUrls():
             e.accept()
         else:
             e.ignore() 
 
     def dropEvent(self, e):
+        '''
+        When a file is dropped, we check if it is ASCII text (CSV)
+        and if it is, it appears on the list
+        Else, it is not accepted
+        '''
         for url in e.mimeData().urls():
             if magic.from_file(url.toLocalFile()) == 'ASCII text':
                 self.addItem(url.toLocalFile())
@@ -46,20 +54,21 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
         self.MainWindow.setObjectName("MainWindow")
-        self.MainWindow.resize(750, 273)
-        self.MainWindow.setMinimumSize(QtCore.QSize(750, 273))
-        self.MainWindow.setMaximumSize(QtCore.QSize(750, 273))
+        MainWindow.resize(750, 391)
+        self.MainWindow.setMinimumSize(QtCore.QSize(750, 391))
+        self.MainWindow.setMaximumSize(QtCore.QSize(750, 391))
         self.MainWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 black, stop:1 grey);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 731, 221))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 731, 331))
+        self.tabWidget.setStyleSheet("background-color: rgb(211, 211, 211);")
         self.tabWidget.setObjectName("tabWidget")
         self.new_search_tab = QtWidgets.QWidget()
         self.new_search_tab.setStyleSheet("background-color: rgb(211, 211, 211);")
         self.new_search_tab.setObjectName("new_search_tab")
         self.search_settings_grpbox = QtWidgets.QGroupBox(self.new_search_tab)
-        self.search_settings_grpbox.setGeometry(QtCore.QRect(10, 10, 341, 121))
+        self.search_settings_grpbox.setGeometry(QtCore.QRect(10, 10, 341, 221))
         self.search_settings_grpbox.setObjectName("search_settings_grpbox")
         self.layoutWidget = QtWidgets.QWidget(self.search_settings_grpbox)
         self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 311, 75))
@@ -97,11 +106,12 @@ class Ui_MainWindow(object):
         self.src_type_combobox.addItem("Conference Proceedings")
         self.horizontalLayout_2.addWidget(self.src_type_combobox)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.groupBox = QtWidgets.QGroupBox(self.new_search_tab)
-        self.groupBox.setGeometry(QtCore.QRect(370, 10, 351, 121))
-        self.groupBox.setObjectName("groupBox")
-        self.layoutWidget1 = QtWidgets.QWidget(self.groupBox)
-        self.layoutWidget1.setGeometry(QtCore.QRect(10, 30, 321, 71))
+        self.export_settings_grpbox = QtWidgets.QGroupBox(self.new_search_tab)
+        self.export_settings_grpbox.setGeometry(QtCore.QRect(370, 10, 351, 221))
+        self.export_settings_grpbox.setStyleSheet("")
+        self.export_settings_grpbox.setObjectName("groupBox")
+        self.layoutWidget1 = QtWidgets.QWidget(self.export_settings_grpbox)
+        self.layoutWidget1.setGeometry(QtCore.QRect(10, 30, 311, 75))
         self.layoutWidget1.setObjectName("layoutWidget1")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.layoutWidget1)
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -143,19 +153,38 @@ class Ui_MainWindow(object):
         self.export_filename_textedit.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.horizontalLayout_3.addWidget(self.export_filename_textedit)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
-        self.proceed_btn = QtWidgets.QCommandLinkButton(self.new_search_tab)
-        self.proceed_btn.clicked.connect(self.proceed_btn_function)
-        self.proceed_btn.setGeometry(QtCore.QRect(620, 150, 101, 41))
-        self.proceed_btn.setObjectName("proceed_btn")
+        self.proceed_btn_search = QtWidgets.QCommandLinkButton(self.new_search_tab)
+        self.proceed_btn_search.clicked.connect(self.proceed_btn_search_function)
+        self.proceed_btn_search.setGeometry(QtCore.QRect(620, 260, 101, 41))
+        self.proceed_btn_search.setObjectName("proceed_btn_search")
         self.tabWidget.addTab(self.new_search_tab, "")
         self.import_tab = QtWidgets.QWidget()
         self.import_tab.setObjectName("import_tab")
         self.listWidget = TestListView(self.import_tab)
-        self.listWidget.setGeometry(QtCore.QRect(0, 0, 731, 201))
-        self.listWidget.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.listWidget.setGeometry(QtCore.QRect(0, 40, 731, 201))
+        self.listWidget.setStyleSheet("background-color: rgb(211, 211, 211);")
         self.listWidget.setDragEnabled(True)
         self.listWidget.setDragDropMode(QtWidgets.QAbstractItemView.DragDrop)
         self.listWidget.setObjectName("listWidget")
+        self.add_btn = QtWidgets.QPushButton(self.import_tab)
+        self.add_btn.setGeometry(QtCore.QRect(650, 10, 31, 23))
+        self.add_btn.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.add_btn.setText("")
+        add_icon = QtGui.QIcon()
+        add_icon.addPixmap(QtGui.QPixmap("plus-solid.svg"))
+        self.add_btn.setIcon(add_icon)
+        self.add_btn.setObjectName("add_btn")
+        self.remove_btn = QtWidgets.QPushButton(self.import_tab)
+        self.remove_btn.setGeometry(QtCore.QRect(690, 10, 31, 23))
+        self.remove_btn.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.remove_btn.setText("")
+        remove_icon = QtGui.QIcon()
+        remove_icon.addPixmap(QtGui.QPixmap("minus-solid.svg"))
+        self.remove_btn.setIcon(remove_icon)
+        self.remove_btn.setObjectName("remove_btn")
+        self.proceed_btn_stats = QtWidgets.QCommandLinkButton(self.import_tab)
+        self.proceed_btn_stats.setGeometry(QtCore.QRect(620, 260, 101, 41))
+        self.proceed_btn_stats.setObjectName("proceed_btn_stats")
         self.tabWidget.addTab(self.import_tab, "")
         self.MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -193,23 +222,21 @@ class Ui_MainWindow(object):
         self.src_type_combobox.setItemText(1, _translate("MainWindow", "Conference Proceedings"))
         self.src_type_combobox.setItemText(2, _translate("MainWindow", "Book Series"))
         self.src_type_combobox.setItemText(3, _translate("MainWindow", "Books"))
-        self.groupBox.setTitle(_translate("MainWindow", "Export Settings"))
+        self.export_settings_grpbox.setTitle(_translate("MainWindow", "Export Settings"))
         self.export_checkbox.setText(_translate("MainWindow", "Export results to CSV"))
         self.select_path_label.setText(_translate("MainWindow", "Select Export Path:"))
         self.export_path_textedit.setPlaceholderText(_translate("MainWindow", "Export Path..."))
         self.path_select_toolbtn.setText(_translate("MainWindow", "..."))
         self.export_filename_label.setText(_translate("MainWindow", "Select CSV Filename:"))
-        self.proceed_btn.setText(_translate("MainWindow", "Proceed"))
+        self.proceed_btn_search.setText(_translate("MainWindow", "Proceed"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.new_search_tab), _translate("MainWindow", "New Search"))
+        self.proceed_btn_stats.setText(_translate("MainWindow", "Proceed"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.import_tab), _translate("MainWindow", "Import CSVs"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
-        self.actionLogout.setText(_translate("MainWindow", "Logout"))
-        self.actionLogout.setShortcut(_translate("MainWindow", "Ctrl+L"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionExit.setShortcut(_translate("MainWindow", "Ctrl+X"))
-        self.proceed_btn.setShortcut(_translate("MainWindow", "Return"))
 
-    def proceed_btn_function(self):
+    def proceed_btn_search_function(self):
 
         '''
         When user hits proceed button, a scan dialog appears,
@@ -826,13 +853,13 @@ class AnalysisThread(QtCore.QThread):
     def stop(self):
         self.terminate()
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    import sys
+#     import sys
 
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+#     app = QtWidgets.QApplication(sys.argv)
+#     MainWindow = QtWidgets.QMainWindow()
+#     ui = Ui_MainWindow()
+#     ui.setupUi(MainWindow)
+#     MainWindow.show()
+#     sys.exit(app.exec_())
