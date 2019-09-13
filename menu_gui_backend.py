@@ -20,9 +20,9 @@ import login_gui_backend
 import results_gui_backend
 import magic
 
-class TestListView(QtWidgets.QListWidget):
+class ListView(QtWidgets.QListWidget):
     def __init__(self, parent=None):
-        super(TestListView, self).__init__(parent)
+        super(ListView, self).__init__(parent)
         self.setAcceptDrops(True)
         self.setIconSize(QtCore.QSize(72, 72))
 
@@ -57,7 +57,7 @@ class Ui_MainWindow(object):
         MainWindow.resize(750, 391)
         self.MainWindow.setMinimumSize(QtCore.QSize(750, 391))
         self.MainWindow.setMaximumSize(QtCore.QSize(750, 391))
-        self.MainWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 black, stop:1 grey);")
+        self.MainWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
@@ -140,6 +140,7 @@ class Ui_MainWindow(object):
         self.path_select_toolbtn = QtWidgets.QToolButton(self.layoutWidget1)
         self.path_select_toolbtn.setObjectName("path_select_toolbtn")
         self.path_select_toolbtn.clicked.connect(self.open_directory_dialog)
+        self.path_select_toolbtn.setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);\nborder-width: 5px;\nborder-radius: 10px;")
         self.horizontalLayout_7.addWidget(self.path_select_toolbtn)
         self.verticalLayout_2.addLayout(self.horizontalLayout_7)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
@@ -157,34 +158,37 @@ class Ui_MainWindow(object):
         self.proceed_btn_search.clicked.connect(self.proceed_btn_search_function)
         self.proceed_btn_search.setGeometry(QtCore.QRect(620, 260, 101, 41))
         self.proceed_btn_search.setObjectName("proceed_btn_search")
+        self.proceed_btn_search.setStyleSheet("")
         self.tabWidget.addTab(self.new_search_tab, "")
         self.import_tab = QtWidgets.QWidget()
         self.import_tab.setObjectName("import_tab")
-        self.listWidget = TestListView(self.import_tab)
+        self.listWidget = ListView(self.import_tab)
         self.listWidget.setGeometry(QtCore.QRect(0, 40, 731, 201))
-        self.listWidget.setStyleSheet("background-color: rgb(211, 211, 211);")
+        self.listWidget.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.listWidget.setDragEnabled(True)
         self.listWidget.setDragDropMode(QtWidgets.QAbstractItemView.DragDrop)
         self.listWidget.setObjectName("listWidget")
         self.add_btn = QtWidgets.QPushButton(self.import_tab)
         self.add_btn.setGeometry(QtCore.QRect(650, 10, 31, 23))
-        self.add_btn.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.add_btn.setText("")
-        add_icon = QtGui.QIcon()
-        add_icon.addPixmap(QtGui.QPixmap("plus-solid.svg"))
-        self.add_btn.setIcon(add_icon)
+        self.add_btn.setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);\nborder-width: 5px;\nborder-radius: 10px;\ncolor: green;")
         self.add_btn.setObjectName("add_btn")
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(14)
+        font.setBold(True)
+        font.setWeight(75)
+        self.add_btn.setFont(font)
+        self.add_btn.clicked.connect(self.open_file_dialog)
         self.remove_btn = QtWidgets.QPushButton(self.import_tab)
         self.remove_btn.setGeometry(QtCore.QRect(690, 10, 31, 23))
-        self.remove_btn.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.remove_btn.setText("")
-        remove_icon = QtGui.QIcon()
-        remove_icon.addPixmap(QtGui.QPixmap("minus-solid.svg"))
-        self.remove_btn.setIcon(remove_icon)
+        self.remove_btn.setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);\nborder-width: 5px;\nborder-radius: 10px;\ncolor: red;")
         self.remove_btn.setObjectName("remove_btn")
+        self.remove_btn.setFont(font)
+        self.remove_btn.setEnabled(False)
         self.proceed_btn_stats = QtWidgets.QCommandLinkButton(self.import_tab)
         self.proceed_btn_stats.setGeometry(QtCore.QRect(620, 260, 101, 41))
         self.proceed_btn_stats.setObjectName("proceed_btn_stats")
+        self.proceed_btn_stats.setStyleSheet("")
         self.tabWidget.addTab(self.import_tab, "")
         self.MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -235,6 +239,10 @@ class Ui_MainWindow(object):
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionExit.setShortcut(_translate("MainWindow", "Ctrl+X"))
+        self.remove_btn.setToolTip(_translate("MainWindow", "Remove CSV from list"))
+        self.remove_btn.setText(_translate("MainWindow", "-"))
+        self.add_btn.setToolTip(_translate("MainWindow", "Add CSV"))
+        self.add_btn.setText(_translate("MainWindow", "+"))
 
     def proceed_btn_search_function(self):
 
@@ -276,6 +284,19 @@ class Ui_MainWindow(object):
         '''
         dir_ = QFileDialog.getExistingDirectory(self.MainWindow, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
         self.export_path_textedit.setText(dir_)
+
+    def open_file_dialog(self):
+        '''
+        When user hits the add button,
+        a dialog appears, in order the user to choose csv file
+        When ok is clicked, file's path is added to list widget
+
+        '''
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        filenames = QFileDialog.getOpenFileNames(None,"Open", "","Text Files (*.csv)", options=options)
+        for filename in filenames[0]:
+            self.listWidget.addItem(filename)
 
     def export_csv_checkbox_function(self):
 
@@ -340,9 +361,9 @@ class Ui_ScanDialog(object):
         self.ScanDialog = ScanDialog
         self.ScanDialog.setObjectName("ScanDialog")
         self.ScanDialog.resize(440, 108)
-        self.ScanDialog.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 black, stop:1 grey);")
+        self.ScanDialog.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);")
         self.buttonBox = QtWidgets.QDialogButtonBox(ScanDialog)
-        self.buttonBox.setStyleSheet("background: rgb(170, 170, 170);")
+        self.buttonBox.setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);\nborder-width: 5px;\nborder-radius: 10px;\ncolor: red;")
         self.buttonBox.setGeometry(QtCore.QRect(10, 70, 421, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
@@ -853,13 +874,13 @@ class AnalysisThread(QtCore.QThread):
     def stop(self):
         self.terminate()
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 
-#     import sys
+    import sys
 
-#     app = QtWidgets.QApplication(sys.argv)
-#     MainWindow = QtWidgets.QMainWindow()
-#     ui = Ui_MainWindow()
-#     ui.setupUi(MainWindow)
-#     MainWindow.show()
-#     sys.exit(app.exec_())
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())

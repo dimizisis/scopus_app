@@ -18,7 +18,7 @@ from time import sleep
 import global_vars
 import img_source
 import menu_gui_backend
-
+from waiting_dialog import WaitingDialog
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
@@ -26,7 +26,7 @@ class Ui_MainWindow(object):
         self.MainWindow.resize(851, 292)
         self.MainWindow.setMinimumSize(QtCore.QSize(851, 292))
         self.MainWindow.setMaximumSize(QtCore.QSize(851, 292))
-        self.MainWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 black, stop:1 grey);")
+        self.MainWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);")
         self.MainWindow.setDocumentMode(False)
         self.MainWindow.setTabShape(QtWidgets.QTabWidget.Rounded)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -74,7 +74,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addItem(spacerItem3)
         self.login_btn = QtWidgets.QPushButton(self.layoutWidget)
         self.login_btn.setObjectName("login_btn")
-        self.login_btn.setStyleSheet("background-color: rgb(170, 170, 170);")
+        self.login_btn.setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);\nborder-style: solid;\nborder-width: 5px;\nborder-radius: 10px;")
         self.verticalLayout_2.addWidget(self.login_btn)
         self.verticalLayout.addLayout(self.verticalLayout_2)
         spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -119,13 +119,6 @@ class Ui_MainWindow(object):
         self.login_btn.clicked.connect(self.login_btn_function)
         self.login_btn.setShortcut('Return')
         self.login_failed_label.setVisible(False)
-
-        ########################## To be removed *used for test* ##########################
-
-        self.email_txt.setText('dai17053@uom.edu.gr')
-        self.pass_txt.setText('Uom53')
-
-        ###################################################################################
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate

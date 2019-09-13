@@ -1,5 +1,8 @@
 from selenium import webdriver
 import threading
+from waiting_dialog import WaitingDialog
+from PyQt5 import QtWidgets
+import sys
 
 DELAY_TIME = 10
 
@@ -11,6 +14,29 @@ options = webdriver.ChromeOptions()
 
 # options.add_argument('headless') ## to be enabled later
 
-browser = webdriver.Chrome(chrome_options=options, executable_path='C:/Users/nikzi/Desktop/Thesis/chromedriver.exe')
+# app = QtWidgets.QApplication(sys.argv)
+
+# dialog = WaitingDialog()
+
+browser = webdriver.Chrome(chrome_options=options, executable_path='')
 
 browser.get(login_url)
+
+try:
+    error = browser.find_element_by_id('errorPages')
+
+    while error is not None:
+
+        browser.close()
+
+        browser = webdriver.Chrome(chrome_options=options, executable_path='')
+
+        browser.get(login_url)
+
+        error = browser.find_element_by_id('errorPages')
+
+    # dialog.close()
+
+except:
+    pass
+    # dialog.close()
