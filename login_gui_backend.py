@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'C:\Users\nikzi\Desktop\login_form.ui'
-#
-# Created by: PyQt5 UI code generator 5.11.3
-#
-# WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -15,10 +7,19 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import exceptions
 from threading import Thread
 from time import sleep
-import global_vars
+from main import DELAY_TIME
 import img_source
 import menu_gui_backend
-from waiting_dialog import WaitingDialog
+
+browser = None
+
+def update_browser(updated_browser):
+    '''
+    Updates the browser with its latest form
+    '''
+    global browser
+    browser = updated_browser
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
@@ -140,6 +141,7 @@ class Ui_MainWindow(object):
 
         '''
         self.login_failed_label.setVisible(False)
+        print(browser)
         self.thread = LoginThread(parent=None, email=self.email_txt.text(), password=self.pass_txt.text())
         self.thread.fail_signal.connect(self.login_failed_label.setVisible) # if login failed, show "login failed" to user
         self.thread.fail_signal.connect(self.login_btn.setEnabled)  # if login failed, re-enable the login button in order the user tries again
@@ -161,7 +163,7 @@ class Ui_MainWindow(object):
 class LoginPage():
 
     def __init__(self):
-        self.browser = global_vars.browser
+        self.browser = browser
         self.username_box_id = 'paywall_username'
         self.password_box_id = 'paywall_password'
         self.login_btn_id = 'paywall_login_submit_button_element'
@@ -175,8 +177,8 @@ class LoginPage():
 
         '''
         
-        user_element = self.browser.find_element_by_id(self.username_box_id)   # Find the textboxes we'll send the credentials
-        pass_element = self.browser.find_element_by_id(self.password_box_id)
+        user_element = WebDriverWait(self.browser, DELAY_TIME).until(EC.presence_of_element_located((By.ID, self.username_box_id)))   # Find the textboxes we'll send the credentials
+        pass_element = WebDriverWait(self.browser, DELAY_TIME).until(EC.presence_of_element_located((By.ID, self.password_box_id)))
 
         user_element.clear()
         pass_element.clear()
@@ -188,7 +190,7 @@ class LoginPage():
 
         try:
             # if document search text appears, login successful
-            document_search_txt = WebDriverWait(self.browser, global_vars.DELAY_TIME).until(EC.presence_of_element_located((By.XPATH, self.document_header_xpath)))
+            WebDriverWait(self.browser, DELAY_TIME).until(EC.presence_of_element_located((By.XPATH, self.document_header_xpath)))
             print('Login ok')
             return True
         except:
@@ -221,13 +223,15 @@ class LoginThread(QtCore.QThread):
         else:
             self.open_menu_signal.emit()    # emit signal (to open the menu window)
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    import sys
+#     import sys
 
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+#     app = QtWidgets.QApplication(sys.argv)
+#     splash = QtWidgets.QSplashScreen(QPixmap(), QtCore.Qt.WindowStaysOnTopHint)
+#     show_splashscreen(splash)
+#     MainWindow = QtWidgets.QMainWindow()
+#     ui = Ui_MainWindow()
+#     ui.setupUi(MainWindow)
+#     MainWindow.show()
+#     sys.exit(app.exec_())
