@@ -7,7 +7,6 @@ import re
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from queue import deque
-from threading import Thread
 import main
 import login_gui_backend
 import results_gui_backend

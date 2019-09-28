@@ -5,9 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import exceptions
-from threading import Thread
 from time import sleep
-from main import DELAY_TIME
+from main import DELAY_TIME, LOGIN_DELAY_TIME
 import img_source
 import menu_gui_backend
 
@@ -167,6 +166,9 @@ class LoginPage():
         self.username_box_id = 'paywall_username'
         self.password_box_id = 'paywall_password'
         self.login_btn_id = 'paywall_login_submit_button_element'
+        self.alternative_username_box_id = 'username'
+        self.alternative_password_box_id = 'password-input-password'
+        self.alternative_login_btn_xpath = '//*[@title="Login"]'
         self.document_header_xpath = '//h1[@class="documentHeader"]'
 
     def login(self, username, password):
@@ -177,20 +179,25 @@ class LoginPage():
 
         '''
         
-        user_element = WebDriverWait(self.browser, DELAY_TIME).until(EC.presence_of_element_located((By.ID, self.username_box_id)))   # Find the textboxes we'll send the credentials
-        pass_element = WebDriverWait(self.browser, DELAY_TIME).until(EC.presence_of_element_located((By.ID, self.password_box_id)))
+        try:
+            user_element = self.browser.find_element_by_id(self.username_box_id) # Find the textboxes we'll send the credentials
+            pass_element = self.browser.find_element_by_id(self.password_box_id)
+            login_btn = self.browser.find_element_by_id(self.login_btn_id)    # find & click login button
+        except:
+            user_element = self.browser.find_element_by_id(self.alternative_username_box_id) # Find the textboxes we'll send the credentials
+            pass_element = self.browser.find_element_by_id(self.alternative_password_box_id)
+            login_btn = self.browser.find_element_by_xpath(self.alternative_login_btn_xpath)    # find & click login button
 
         user_element.clear()
         pass_element.clear()
 
         user_element.send_keys(username)    # send credentials to textboxes 
         pass_element.send_keys(password) 
-        login_btn = self.browser.find_element_by_id(self.login_btn_id)    # find & click login button
         login_btn.click()
 
         try:
             # if document search text appears, login successful
-            WebDriverWait(self.browser, DELAY_TIME).until(EC.presence_of_element_located((By.XPATH, self.document_header_xpath)))
+            WebDriverWait(self.browser, LOGIN_DELAY_TIME).until(EC.presence_of_element_located((By.XPATH, self.document_header_xpath)))
             print('Login ok')
             return True
         except:

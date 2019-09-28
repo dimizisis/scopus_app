@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import menu_gui_backend
+import pandas as pd
 
 class Ui_ResultsWindow(object):
     def setupUi(self, ResultsWindow, results):

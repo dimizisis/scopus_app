@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-import threading
 from PyQt5 import QtWidgets, QtCore
 from pyqtspinner.spinner import WaitingSpinner
 from PyQt5.QtGui import QPixmap
@@ -12,9 +11,13 @@ import menu_gui_backend
 
 DELAY_TIME = 30
 
+LOGIN_DELAY_TIME = 10
+
 login_url = 'https://www.scopus.com/customer/authenticate.uri'
 
 search_url = 'https://www.scopus.com/search/form.uri?display=advanced'
+
+driver_path = 'chromedriver.exe'
 
 browser = None
 
@@ -34,11 +37,11 @@ class BrowserThread(QtCore.QThread):
     def run(self):
         
         options = Options()
-        options.headless = True   # to be enabled
+        # options.headless = True   # to be enabled
 
         global browser
 
-        browser = webdriver.Chrome(options=options, executable_path='C:/Users/nikzi/Desktop/Thesis/chromedriver.exe')
+        browser = webdriver.Chrome(options=options, executable_path=driver_path)
 
         user_agent = str(browser.execute_script("return navigator.userAgent;")).replace('Headless','')  # remove headless from user-agent (if headless is detected by site, our requests will be denied)
 
@@ -46,7 +49,11 @@ class BrowserThread(QtCore.QThread):
 
         options.add_argument('user-agent={0}'.format(user_agent))   # update the user agent
 
-        browser = webdriver.Chrome(options=options, executable_path='C:/Users/nikzi/Desktop/Thesis/chromedriver.exe')    # open browser with new user agent
+        # proxy = "51.79.38.73:9999"
+
+        # options.add_argument('--proxy-server={}'.format(proxy))
+
+        browser = webdriver.Chrome(options=options, executable_path=driver_path)    # open browser with new user agent
 
         browser.get(login_url)
 
@@ -58,7 +65,7 @@ class BrowserThread(QtCore.QThread):
 
                 browser.close()
 
-                browser = webdriver.Chrome(options=options, executable_path='C:/Users/nikzi/Desktop/Thesis/chromedriver.exe')
+                browser = webdriver.Chrome(options=options, executable_path=driver_path)
 
                 browser.get(login_url)
 
