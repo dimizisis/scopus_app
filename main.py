@@ -9,15 +9,15 @@ import sys
 import login_gui_backend
 import menu_gui_backend
 
-DELAY_TIME = 30
+DELAY_TIME = 60
 
-LOGIN_DELAY_TIME = 10
+LOGIN_DELAY_TIME = 60
 
 login_url = 'https://www.scopus.com/customer/authenticate.uri'
 
 search_url = 'https://www.scopus.com/search/form.uri?display=advanced'
 
-driver_path = 'chromedriver.exe'
+driver_path = 'C:/Users/Dimitris/Desktop/Thesis/chromedriver.exe'
 
 browser = None
 

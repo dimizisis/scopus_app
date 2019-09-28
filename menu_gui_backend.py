@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QFileDialog
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import exceptions
 import re
+import csv
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from queue import deque
@@ -215,6 +216,8 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionExit)
         self.menubar.addAction(self.menuFile.menuAction())
 
+        self.export_path = None
+
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -273,10 +276,11 @@ class Ui_MainWindow(object):
                 msg.setWindowTitle("Error")
                 msg.exec_()
                 return
+            self.export_path = self.export_path_textedit.toPlainText() + self.export_filename_textedit.toPlainText()
 
         dialog = QtWidgets.QDialog()
         dialog.dialog_ui = Ui_ScanDialog()
-        dialog.dialog_ui.setupUi(dialog, self.MainWindow, self.generate_query())
+        dialog.dialog_ui.setupUi(dialog, self.MainWindow, self.generate_query(), self.export_checkbox, self.export_path)
         dialog.exec_()
 
     def open_directory_dialog(self):
@@ -361,7 +365,7 @@ class Ui_MainWindow(object):
         self.MainWindow.show()
   
 class Ui_ScanDialog(object):
-    def setupUi(self, ScanDialog, MainWindow, query):
+    def setupUi(self, ScanDialog, MainWindow, query, csv_export, csv_path):
         self.MainWindow = MainWindow
         self.ScanDialog = ScanDialog
         self.ScanDialog.setObjectName("ScanDialog")
@@ -369,6 +373,8 @@ class Ui_ScanDialog(object):
         self.ScanDialog.setMaximumSize(QtCore.QSize(440, 108))
         self.ScanDialog.setMinimumSize(QtCore.QSize(440, 108))
         self.ScanDialog.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);")
+        self.csv_export = csv_export
+        self.csv_path = csv_path
         self.buttonBox = QtWidgets.QDialogButtonBox(ScanDialog)
         self.buttonBox.setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);\nborder-style: solid;\nborder-width: 5px;\nborder-radius: 10px;")
         self.buttonBox.setGeometry(QtCore.QRect(10, 70, 421, 32))
@@ -416,8 +422,22 @@ class Ui_ScanDialog(object):
         self.analysis_thread = AnalysisThread(parent=None)
         self.analysis_thread.total_docs_update.connect(self.set_progress_bar_max_value)
         self.analysis_thread.update_progress_bar.connect(self.update_progress_bar_value)
+        if self.csv_export:
+            self.analysis_thread.thread_finished.connect(self.write_to_csv)
         self.analysis_thread.thread_finished.connect(self.open_question_box)
         self.analysis_thread.start()
+
+    def write_to_csv(self, results):
+        '''
+        Takes a list of dictionaries (sources)
+        and writes all the info to csv file
+        '''
+        keys = results[0].keys()
+        with open('results2019.csv', 'w', encoding='utf-8') as output_file:
+            dict_writer = csv.DictWriter(output_file, keys)
+            dict_writer.writeheader()
+            dict_writer.writerows(results)
+            print('written to csv')
 
     def open_question_box(self, results):
 
@@ -566,6 +586,7 @@ class DocumentPage():
         '''
         final_lst = []
         curr_page = 1   # begin with page 1
+        
         no_of_pages = self.get_number_of_pages() # get total number of pages
         document_rows = self.get_document_rows() # get all document names
         author_rows = self.get_author_rows() # get all author names
@@ -585,7 +606,7 @@ class DocumentPage():
                 if source_name['clickable']:
                     source = WebDriverWait(browser, main.DELAY_TIME).until(    
                         EC.presence_of_element_located((By.LINK_TEXT, source_name['name'])))   # go in document's page
-                    source.click()
+                    browser.execute_script("arguments[0].click();", source) # javascript click
 
                     try:
                         categories = WebDriverWait(browser, main.DELAY_TIME).until(    
