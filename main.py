@@ -1,10 +1,12 @@
 from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.chrome.options import Options
 from PyQt5 import QtWidgets, QtCore
 from pyqtspinner.spinner import WaitingSpinner
 from PyQt5.QtGui import QPixmap
 import login_gui_backend
 import sys
+import zipfile
 
 import login_gui_backend
 import menu_gui_backend
@@ -13,11 +15,11 @@ DELAY_TIME = 60
 
 LOGIN_DELAY_TIME = 60
 
-login_url = 'https://www.scopus.com/customer/authenticate.uri'
+login_url = 'https://www.scopus.com/customer/authenticate/loginfull.uri'
 
 search_url = 'https://www.scopus.com/search/form.uri?display=advanced'
 
-driver_path = 'C:/Users/Dimitris/Desktop/Thesis/chromedriver.exe'
+driver_path = ''
 
 browser = None
 
@@ -34,10 +36,76 @@ class BrowserThread(QtCore.QThread):
         super().__init__(parent=parent)
         self.splash = splash
 
+    def create_plugin(self):
+        manifest_json = """
+{
+    "version": "1.0.0",
+    "manifest_version": 2,
+    "name": "Chrome Proxy",
+    "permissions": [
+        "proxy",
+        "tabs",
+        "unlimitedStorage",
+        "storage",
+        "<all_urls>",
+        "webRequest",
+        "webRequestBlocking"
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "minimum_chrome_version":"22.0.0"
+}
+"""
+
+        background_js = """
+        var config = {
+                mode: "fixed_servers",
+                rules: {
+                singleProxy: {
+                    scheme: "http",
+                    host: "xxx.xxx.xxx.xxx",
+                    port: parseInt(xxxx)
+                },
+                bypassList: ["foobar.com"]
+                }
+            };
+
+        chrome.proxy.settings.set({value: config, scope: "regular"}, function() {});
+
+        function callbackFn(details) {
+            return {
+                authCredentials: {
+                    username: "xxxx",
+                    password: "xxxx"
+                }
+            };
+        }
+
+        chrome.webRequest.onAuthRequired.addListener(
+                    callbackFn,
+                    {urls: ["<all_urls>"]},
+                    ['blocking']
+        );
+        """
+
+
+        pluginfile = 'proxy_auth_plugin.zip'
+
+        with zipfile.ZipFile(pluginfile, 'w') as zp:
+            zp.writestr("manifest.json", manifest_json)
+            zp.writestr("background.js", background_js)
+
+        return pluginfile
+
     def run(self):
+
+        pluginfile = self.create_plugin()   # for proxy server
         
         options = Options()
         # options.headless = True   # to be enabled
+
+        options.add_extension(pluginfile)
 
         global browser
 
@@ -48,10 +116,6 @@ class BrowserThread(QtCore.QThread):
         browser.close() # close browser with old user-agent
 
         options.add_argument('user-agent={0}'.format(user_agent))   # update the user agent
-
-        # proxy = "51.79.38.73:9999"
-
-        # options.add_argument('--proxy-server={}'.format(proxy))
 
         browser = webdriver.Chrome(options=options, executable_path=driver_path)    # open browser with new user agent
 

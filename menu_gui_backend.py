@@ -1,6 +1,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtGui import QKeySequence
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import exceptions
 import re
@@ -190,7 +191,7 @@ class Ui_MainWindow(object):
         self.remove_btn.setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);\nborder-width: 5px;\nborder-radius: 10px;\ncolor: red;")
         self.remove_btn.setObjectName("remove_btn")
         self.remove_btn.setFont(font)
-        self.remove_btn.setEnabled(False)
+        self.remove_btn.clicked.connect(self.remove_selected_items)
         self.proceed_btn_stats = QtWidgets.QCommandLinkButton(self.import_tab)
         self.proceed_btn_stats.setGeometry(QtCore.QRect(620, 260, 101, 41))
         self.proceed_btn_stats.setObjectName("proceed_btn_stats")
@@ -207,6 +208,8 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         self.MainWindow.setStatusBar(self.statusbar)
         self.actionExit = QtWidgets.QAction(MainWindow)
+        self.actionChangeTab = QtWidgets.QShortcut(QKeySequence("Ctrl+Tab"), MainWindow)
+        self.actionChangeTab.activated.connect(self.change_tab)
         self.actionLogout = QtWidgets.QAction(MainWindow)
         self.actionLogout.triggered.connect(self.logout)
         self.actionExit.setObjectName("actionExit")
@@ -245,12 +248,22 @@ class Ui_MainWindow(object):
         self.proceed_btn_stats.setText(_translate("MainWindow", "Proceed"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.import_tab), _translate("MainWindow", "Import CSVs"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
+        self.actionLogout.setText(_translate("MainWindow", "Logout"))
+        self.actionLogout.setShortcut(_translate("MainWindow", "Ctrl+L"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionExit.setShortcut(_translate("MainWindow", "Ctrl+X"))
         self.remove_btn.setToolTip(_translate("MainWindow", "Remove CSV from list"))
         self.remove_btn.setText(_translate("MainWindow", "-"))
         self.add_btn.setToolTip(_translate("MainWindow", "Add CSV"))
         self.add_btn.setText(_translate("MainWindow", "+"))
+        
+    def change_tab(self):
+        '''
+        Changes current tab
+        Triggered when CTRL+Tab is pressed
+        '''
+        desired_index = abs(self.tabWidget.currentIndex() - 1)
+        self.tabWidget.setCurrentIndex(desired_index)
 
     def proceed_btn_search_function(self):
 
@@ -306,6 +319,16 @@ class Ui_MainWindow(object):
         filenames = QFileDialog.getOpenFileNames(None,"Open", "","Text Files (*.csv)", options=options)
         for filename in filenames[0]:
             self.listWidget.addItem(filename)
+
+    def remove_selected_items(self):
+        '''
+        Removes selected items from list
+        Triggered when the minus (-) button is clicked
+        '''
+        list_items = self.listWidget.selectedItems()
+        if not list_items: return        
+        for item in list_items:
+            self.listWidget.takeItem(self.listWidget.row(item))
 
     def export_csv_checkbox_function(self):
 
