@@ -2,6 +2,8 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
+from matplotlib.ticker import FuncFormatter
+import numpy as np
 
 PATH = 'C:/Users/Dimitris/Desktop/' # Set your path to the folder containing the .csv files
 
@@ -34,7 +36,7 @@ def create_num_of_documents_by_year_plot(df):
 
     plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))   # only integers in year axis
 
-    plot = plt.plot(years, num_of_docs_by_year, )    # create the plot
+    plot = plt.plot(years, num_of_docs_by_year)    # create the plot
 
     plt.show()  # Generate the plot
 
@@ -42,7 +44,7 @@ def create_num_of_documents_by_year_plot(df):
 
 def create_num_of_documents_by_year_plot_top_ten(df):
     '''
-    Creates a plot which shows the process
+    Creates a plot which shows the evolution
     of the number of documents, whose average percentile is over 90, over the years
     '''
 
@@ -62,3 +64,71 @@ def create_num_of_documents_by_year_plot_top_ten(df):
     plt.show()  # Generate the plot
 
     return plot
+
+def create_citescore_mean_by_year_plot(df):
+    '''
+    Creates a plot which shows the evolution
+    of citescore mean over the years (CSVs)
+    '''
+
+    citescores = df.groupby('Year')['CiteScore'].mean()
+
+    years = df['Year'].unique()
+
+    plt.xlabel('Year')
+    plt.ylabel('CiteScore (Mean)')
+
+    plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))   # only integers in year axis
+
+    plot = plt.plot(years, citescores)    # create the plot
+
+    plt.show()  # Generate the plot
+
+    return plot
+
+def create_avg_percentile_by_year_plot(df):
+    '''
+    Creates a plot which shows the evolution
+    of average percentile mean over the years (CSVs)
+    '''
+
+    citescores = df.groupby('Year')['Average Percentile'].mean()    # find mean by year
+
+    years = df['Year'].unique()
+
+    plt.xlabel('Year')
+    plt.ylabel('Average Percentile (Mean)')
+
+    plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))   # only integers in year axis
+
+    plot = plt.plot(years, citescores)    # create the plot
+
+    plt.show()  # Generate the plot
+
+    return plot
+
+def create_citescore_max_by_year_barplot(df):
+    '''
+    Creates a plot which shows the evolution
+    of maximum CiteScore over the years (CSVs)
+    '''
+
+    years = df['Year'].unique()
+    citescore_max = df.groupby('Year')['CiteScore'].max()
+
+    plt.xlabel('Year')
+    plt.ylabel('Maximum CiteScore')
+
+    plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))   # only integers in year axis
+
+    plot = plt.bar(years, citescore_max)   # create the barplot
+
+    plt.show()
+
+    return plot
+
+create_citescore_max_by_year_barplot(df)
+# create_num_of_documents_by_year_plot(df)
+# create_num_of_documents_by_year_plot_top_ten(df)
+# create_citescore_mean_by_year_plot(df)
+# create_avg_percentile_by_year_plot(df)
