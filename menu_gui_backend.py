@@ -1,5 +1,6 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QKeySequence
 from selenium.webdriver.support import expected_conditions as EC
@@ -13,6 +14,7 @@ import main
 import login_gui_backend
 import results_gui_backend
 import magic
+import os
 
 browser = None
 
@@ -219,6 +221,9 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionExit)
         self.menubar.addAction(self.menuFile.menuAction())
 
+        scriptDir = os.path.dirname(os.path.realpath(__file__))
+        self.MainWindow.setWindowIcon(QIcon(scriptDir + os.path.sep + 'favicon.ico')) 
+
         self.export_path = None
 
         self.retranslateUi(MainWindow)
@@ -289,11 +294,14 @@ class Ui_MainWindow(object):
                 msg.setWindowTitle("Error")
                 msg.exec_()
                 return
-            self.export_path = self.export_path_textedit.toPlainText() + self.export_filename_textedit.toPlainText()
+            if '.csv' not in self.export_filename_textedit.toPlainText():
+                self.export_path = self.export_path_textedit.toPlainText() + '/' + self.export_filename_textedit.toPlainText() + '.csv'
+            else:
+                self.export_path = self.export_path_textedit.toPlainText() + '/' + self.export_filename_textedit.toPlainText()
 
         dialog = QtWidgets.QDialog()
         dialog.dialog_ui = Ui_ScanDialog()
-        dialog.dialog_ui.setupUi(dialog, self.MainWindow, self.generate_query(), self.export_checkbox, self.export_path)
+        dialog.dialog_ui.setupUi(dialog, self.MainWindow, self.generate_query(), self.export_checkbox.isChecked(), self.export_path)
         dialog.exec_()
 
     def open_directory_dialog(self):
@@ -382,7 +390,10 @@ class Ui_MainWindow(object):
         Triggered on Logout click (menu bar) or on CTRL+L pressed
 
         '''
-        browser.get(main.login_url)
+
+        browser.get('https://id.elsevier.com/ext/ae-logout?platSite=SC%2Fscopus&return_to=https%3A%2F%2Fwww.scopus.com%2Flogout.uri')
+
+        # browser.get(main.login_url)
         self.login_ui = login_gui_backend.Ui_MainWindow()
         self.login_ui.setupUi(self.MainWindow)
         self.MainWindow.show()
@@ -411,6 +422,9 @@ class Ui_ScanDialog(object):
         self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
         self.progressBar.setObjectName("progressBar")
 
+        scriptDir = os.path.dirname(os.path.realpath(__file__))
+        self.ScanDialog.setWindowIcon(QIcon(scriptDir + os.path.sep + 'favicon.ico')) 
+
         self.retranslateUi(ScanDialog)
         self.buttonBox.accepted.connect(ScanDialog.accept)
         self.buttonBox.rejected.connect(self.cancel_analysis)
@@ -430,6 +444,11 @@ class Ui_ScanDialog(object):
         if browser.current_url != main.search_url:
             browser.get(main.search_url)
 
+        try:
+            WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.ID, '_pendo-close-guide_'))).click()
+        except:
+            pass
+        
         self.search_thread = SearchThread(parent=None, query=self.query)
         self.search_thread.finished.connect(self.start_doc_analysis)
         self.search_thread.start()
@@ -456,7 +475,10 @@ class Ui_ScanDialog(object):
         and writes all the info to csv file
         '''
         keys = results[0].keys()
-        with open('results2019.csv', 'w', encoding='utf-8') as output_file:
+
+        print(self.csv_path)
+            
+        with open(self.csv_path, 'w', encoding='utf-8') as output_file:
             dict_writer = csv.DictWriter(output_file, keys)
             dict_writer.writeheader()
             dict_writer.writerows(results)
@@ -818,7 +840,7 @@ class DocumentPage():
         '''
         paging_ul = WebDriverWait(browser, main.DELAY_TIME).until(    # when page is loaded, click query text box & send our query
                 EC.presence_of_element_located((By.CLASS_NAME, self.paging_ul_class_name)))
-        return len(paging_ul.find_elements_by_tag_name("li"))
+        return int(paging_ul.find_element_by_id("endPage").get_attribute("value"))
 
     def get_number_of_rows(self):
         '''

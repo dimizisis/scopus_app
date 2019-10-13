@@ -7,8 +7,10 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QIcon
 import menu_gui_backend
 import pandas as pd
+import os
 
 class Ui_ResultsWindow(object):
     def setupUi(self, ResultsWindow, results):
@@ -16,6 +18,7 @@ class Ui_ResultsWindow(object):
         self.results = results
         self.ResultsWindow.setObjectName("ResultsWindow")
         self.ResultsWindow.resize(833, 342)
+        self.ResultsWindow.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)
         self.ResultsWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);")
         self.centralwidget = QtWidgets.QWidget(ResultsWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -51,6 +54,9 @@ class Ui_ResultsWindow(object):
         self.menuFile.addAction(self.actionBack)
         self.menuFile.addAction(self.actionExit)
         self.menubar.addAction(self.menuFile.menuAction())
+
+        scriptDir = os.path.dirname(os.path.realpath(__file__))
+        self.ResultsWindow.setWindowIcon(QIcon(scriptDir + os.path.sep + 'favicon.ico')) 
 
         self.retranslateUi(self.ResultsWindow)
         QtCore.QMetaObject.connectSlotsByName(self.ResultsWindow)

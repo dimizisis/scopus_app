@@ -1,14 +1,16 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QIcon
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import exceptions
 from time import sleep
-from main import DELAY_TIME, LOGIN_DELAY_TIME
+from main import DELAY_TIME, LOGIN_DELAY_TIME, login_url
 import img_source
 import menu_gui_backend
+import os
 
 browser = None
 
@@ -111,6 +113,9 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionExit)
         self.menubar.addAction(self.menuFile.menuAction())
 
+        scriptDir = os.path.dirname(os.path.realpath(__file__))
+        self.MainWindow.setWindowIcon(QIcon(scriptDir + os.path.sep + 'favicon.ico')) 
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -170,8 +175,9 @@ class LoginPage():
 
         self.bdd_email_box_id = 'bdd-email'
         self.bdd_pass_box_id = 'bdd-password'
-        self.bdd_submit_mail_id = 'bdd-els-searchBtn'
         self.bdd_login_btn_id = 'bdd-elsPrimaryBtn'
+        self.sign_in_link_id = 'signin_link_move'
+        self.close_window_id = '_pendo-close-guide_'
 
     def login(self, username, password):
 
@@ -180,22 +186,33 @@ class LoginPage():
         logs in Scopus system
 
         '''
+
+        try:
+            # pop up window that appears in some occasions
+            close_window_btn = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.close_window_id)))
+            close_window_btn.click()
+        except:
+            print('No window showed.')
         
         try:
-            user_element = self.browser.find_element_by_id(self.username_box_id) # Find the textboxes we'll send the credentials
-            pass_element = self.browser.find_element_by_id(self.password_box_id)
-            login_btn = self.browser.find_element_by_xpath(self.login_btn_xpath)    # find & click login button
-        except:
-            error = self.browser.find_element_by_id('errorDiv')
-            print('Login failed')
-            return False
-
-        user_element.clear()
-        pass_element.clear()
-
-        user_element.send_keys(username)    # send credentials to textboxes 
-        pass_element.send_keys(password)
-        login_btn.click()
+            sign_in = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.sign_in_link_id)))
+            sign_in.click()
+            user_element = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_email_box_id))) # Find the textboxes we'll send the credentials
+            user_element.clear()
+            user_element.send_keys(username)    # send credentials to textboxes 
+            continue_btn = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_login_btn_id)))
+            continue_btn.click()
+            pass_element = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_pass_box_id)))
+            pass_element.clear()
+            pass_element.send_keys(password)    # send credentials to textboxes 
+            login_btn = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_login_btn_id))) # find & click login button
+            login_btn.click()
+        except: # if we logged in before (in the same session), it asks only for password
+            pass_element = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_pass_box_id)))
+            pass_element.clear()
+            pass_element.send_keys(password)    # send credentials to textboxes 
+            login_btn = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_login_btn_id))) # find & click login button
+            login_btn.click()
 
         try:
             # if document search text appears, login successful 
@@ -203,35 +220,12 @@ class LoginPage():
             print('Login ok')
             return True
         except:
+            error = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, 'passworderror')))
+            print('Login failed')
+            self.browser.get(login_url)
+            return False
             
-            try:
-                error = self.browser.find_element_by_id('errorDiv')
-                print('Login failed')
-                return False
-            except:
-                try:
-                    check_access_element = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.XPATH, "//span[.='Check Scopus access']")))
-                    check_access_element.click()
-                    user_element = self.browser.find_element_by_id(self.bdd_email_box_id)
-                    submit_btn = self.browser.find_element_by_id(self.bdd_submit_mail_id)
-                    user_element.clear()
-                    user_element.send_keys(username)
-                    submit_btn.click()
-
-                    pass_element = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_pass_box_id)))
-
-                    pass_element.clear()
-                    pass_element.send_keys(password)
-
-                    login_btn = self.browser.find_element_by_id(self.bdd_login_btn_id)
-
-                    login_btn.click()
-                    print('Login ok')
-                    return True
-                except:
-                    return False
-                    print('Login failed')
-
+    
 class LoginThread(QtCore.QThread):
 
     '''

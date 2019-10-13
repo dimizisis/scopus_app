@@ -15,7 +15,7 @@ DELAY_TIME = 60
 
 LOGIN_DELAY_TIME = 60
 
-login_url = 'https://www.scopus.com/customer/authenticate/loginfull.uri'
+login_url = 'https://www.scopus.com/'
 
 search_url = 'https://www.scopus.com/search/form.uri?display=advanced'
 
@@ -64,8 +64,8 @@ class BrowserThread(QtCore.QThread):
                 rules: {
                 singleProxy: {
                     scheme: "http",
-                    host: "xxx.xxx.xxx.xxx",
-                    port: parseInt(xxxx)
+                    host: "195.251.214.183",
+                    port: parseInt(3128)
                 },
                 bypassList: ["foobar.com"]
                 }
@@ -76,8 +76,8 @@ class BrowserThread(QtCore.QThread):
         function callbackFn(details) {
             return {
                 authCredentials: {
-                    username: "xxxx",
-                    password: "xxxx"
+                    username: "dai17053",
+                    password: "paokfc4."
                 }
             };
         }
@@ -105,7 +105,7 @@ class BrowserThread(QtCore.QThread):
         options = Options()
         # options.headless = True   # to be enabled
 
-        options.add_extension(pluginfile)
+        # options.add_extension(pluginfile)
 
         global browser
 
