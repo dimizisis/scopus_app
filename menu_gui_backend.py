@@ -225,6 +225,9 @@ class Ui_MainWindow(object):
         self.MainWindow.setWindowIcon(QIcon(scriptDir + os.path.sep + 'favicon.ico')) 
 
         self.export_path = None
+        
+        self.sign_in_link_id = 'signin_link_move'
+        self.sign_in_with_different_id = 'bdd-elsSecondaryBtn'
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
@@ -392,6 +395,12 @@ class Ui_MainWindow(object):
         '''
 
         browser.get('https://id.elsevier.com/ext/ae-logout?platSite=SC%2Fscopus&return_to=https%3A%2F%2Fwww.scopus.com%2Flogout.uri')
+
+        sign_in = WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.ID, self.sign_in_link_id)))
+        sign_in.click()
+
+        sign_in_with_different = WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.ID, self.sign_in_with_different_id)))
+        sign_in_with_different.click()
 
         # browser.get(main.login_url)
         self.login_ui = login_gui_backend.Ui_MainWindow()

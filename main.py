@@ -7,6 +7,7 @@ from PyQt5.QtGui import QPixmap
 import login_gui_backend
 import sys
 import zipfile
+import os
 
 import login_gui_backend
 import menu_gui_backend
@@ -19,7 +20,7 @@ login_url = 'https://www.scopus.com/'
 
 search_url = 'https://www.scopus.com/search/form.uri?display=advanced'
 
-driver_path = ''
+driver_path = os.path.dirname(os.path.realpath(__file__)) + '\chromedriver.exe'
 
 browser = None
 

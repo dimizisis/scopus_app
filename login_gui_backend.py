@@ -125,6 +125,9 @@ class Ui_MainWindow(object):
         self.login_btn.setShortcut('Return')
         self.login_failed_label.setVisible(False)
 
+        self.email_txt.setText('dai17053@uom.edu.gr')
+        self.pass_txt.setText('Uom53')
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Login"))
@@ -197,6 +200,10 @@ class LoginPage():
         try:
             sign_in = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.sign_in_link_id)))
             sign_in.click()
+        except:
+            print('Logged out before')
+        
+        try:
             user_element = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_email_box_id))) # Find the textboxes we'll send the credentials
             user_element.clear()
             user_element.send_keys(username)    # send credentials to textboxes 
