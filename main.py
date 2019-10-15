@@ -3,7 +3,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.chrome.options import Options
 from PyQt5 import QtWidgets, QtCore
 from pyqtspinner.spinner import WaitingSpinner
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 import login_gui_backend
 import sys
 import zipfile
@@ -11,6 +11,10 @@ import os
 
 import login_gui_backend
 import menu_gui_backend
+
+import ctypes
+myappid = 'uom.scopus.scopusanalyzer.1' # arbitrary string
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 DELAY_TIME = 60
 
@@ -106,7 +110,7 @@ class BrowserThread(QtCore.QThread):
         options = Options()
         # options.headless = True   # to be enabled
 
-        # options.add_extension(pluginfile)
+        options.add_extension(pluginfile)
 
         global browser
 
@@ -149,6 +153,8 @@ def show_splashscreen(splash):
     Shows splash screen when the program starts
     Splash screen is closed when login form is loaded (in browser)
     '''
+    scriptDir = os.path.dirname(os.path.realpath(__file__))
+    splash.setWindowIcon(QIcon(scriptDir + os.path.sep + 'favicon.ico')) 
     splash.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.WindowStaysOnTopHint)
     splash.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);")
     title = "Processing..."
