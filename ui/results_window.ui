@@ -27,10 +27,48 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);
-border-style: solid;
-border-width: 5px;
-border-radius: 10px;</string>
+     <string notr="true">QPushButton
+{
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));
+  border: 1px solid rgb(20,20,20);
+  color: rgb(230,230,230);
+  padding: 4px 8px;
+}
+
+QPushButton:hover
+{
+  background-color: rgb(70,110,130);
+}
+
+QPushButton:pressed
+{
+  border-color: rgb(90,200,255);
+  padding: 1px -1px -1px 1px;
+}
+
+/**** QPushButton (checkable) ****/
+QPushButton:checked
+{
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));
+  color: rgb(20,20,20);
+}
+
+QPushButton:checked:hover
+{
+  background-color: rgb(70,110,130);
+}
+
+/**** QPushButton (disabled) ****/
+QPushButton:disabled
+{
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));
+  border-color: rgb(60,60,60);
+  color: rgb(40,40,40);
+}
+R</string>
     </property>
     <property name="text">
      <string>Back</string>
@@ -46,7 +84,60 @@ border-radius: 10px;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(255, 255, 255);</string>
+     <string notr="true">/**** QTableView (enabled) ****/
+QTableView
+{
+  alternate-background-color: rgb(110,110,110);
+  background-color: rgb(100,100,100);
+  border: 1px solid rgb(20,20,20);
+  color: rgb(220,220,220);
+  selection-background-color: rgb(70,110,130);
+  selection-color: white;
+}
+
+QTableView QLineEdit
+{
+  padding: -1 0 0 0;
+}
+
+QTableView::item:hover,
+QTableView::item:selected:hover
+{
+  background-color: rgb(70,110,130);
+  color: white;
+}
+
+QTableView::item:selected
+{
+  background-color: rgb(90,200,255);
+  color: rgb(20,20,20);
+}
+
+QTableView QTableCornerButton::section
+{
+  background-color: rgb(60,60,60);
+  border: 1px inset rgb(60,60,60);
+}
+
+/**** QTableView (disabled) ****/
+QTableView:disabled
+{
+  alternate-background-color: rgb(130,130,130);
+  background-color: rgb(120,120,120);
+  border-color: rgb(60,60,60);
+  color: rgb(40,40,40);
+}
+
+QTableView::item:selected:disabled
+{
+  background-color: transparent;
+}
+
+QTableView QTableCornerButton::section:disabled
+{
+  background-color: rgb(80,80,80);
+  border: 1px inset rgb(80,80,80);
+}</string>
     </property>
    </widget>
    <widget class="QPushButton" name="statistics_btn">
@@ -59,10 +150,48 @@ border-radius: 10px;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);
-border-style: solid;
-border-width: 5px;
-border-radius: 10px;</string>
+     <string notr="true">QPushButton
+{
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));
+  border: 1px solid rgb(20,20,20);
+  color: rgb(230,230,230);
+  padding: 4px 8px;
+}
+
+QPushButton:hover
+{
+  background-color: rgb(70,110,130);
+}
+
+QPushButton:pressed
+{
+  border-color: rgb(90,200,255);
+  padding: 1px -1px -1px 1px;
+}
+
+/**** QPushButton (checkable) ****/
+QPushButton:checked
+{
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));
+  color: rgb(20,20,20);
+}
+
+QPushButton:checked:hover
+{
+  background-color: rgb(70,110,130);
+}
+
+/**** QPushButton (disabled) ****/
+QPushButton:disabled
+{
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));
+  border-color: rgb(60,60,60);
+  color: rgb(40,40,40);
+}
+R</string>
     </property>
     <property name="text">
      <string>Show Stats</string>

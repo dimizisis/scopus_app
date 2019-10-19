@@ -14,7 +14,7 @@
    <string>Scanning...</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 black, stop:1 grey);</string>
+   <string notr="true">background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -43,6 +43,32 @@
      <width>421</width>
      <height>23</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">/**** QProgressBar (enabled) ****/
+QProgressBar
+{
+  background-color: rgb(40,40,40);
+  background-color: rgb(20,60,80);
+  border: 1px solid rgb(20,20,20);
+  color: rgb(220,220,220);
+  text-align: center;
+}
+
+QProgressBar::chunk
+{
+  background-color: rgb(70,110,130);
+  margin: 1px;
+  width: 4px;
+}
+
+/**** QProgressBar (disabled) ****/
+QProgressBar:disabled
+{
+  background-color: rgb(120,120,120);
+  border: 1px solid rgb(60,60,60);
+  color: rgb(40,40,40);
+}</string>
    </property>
    <property name="value">
     <number>0</number>

@@ -156,10 +156,48 @@
         <item>
          <widget class="QPushButton" name="login_btn">
           <property name="styleSheet">
-           <string notr="true">background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);
-border-style: solid;
-border-width: 5px;
-border-radius: 10px;</string>
+           <string notr="true">QPushButton
+{
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));
+  border: 1px solid rgb(20,20,20);
+  color: rgb(230,230,230);
+  padding: 4px 8px;
+}
+
+QPushButton:hover
+{
+  background-color: rgb(70,110,130);
+}
+
+QPushButton:pressed
+{
+  border-color: rgb(90,200,255);
+  padding: 1px -1px -1px 1px;
+}
+
+/**** QPushButton (checkable) ****/
+QPushButton:checked
+{
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));
+  color: rgb(20,20,20);
+}
+
+QPushButton:checked:hover
+{
+  background-color: rgb(70,110,130);
+}
+
+/**** QPushButton (disabled) ****/
+QPushButton:disabled
+{
+  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));
+  border-color: rgb(60,60,60);
+  color: rgb(40,40,40);
+}
+R</string>
           </property>
           <property name="text">
            <string>Login</string>
@@ -261,8 +299,8 @@ background-color: rgba(0,0,0,0%)</string>
   </action>
  </widget>
  <resources>
-  <include location="test.qrc"/>
-  <include location="test.qrc"/>
+  <include location="image.qrc"/>
+  <include location="image.qrc"/>
  </resources>
  <connections/>
 </ui>
