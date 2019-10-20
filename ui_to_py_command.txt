@@ -1,1 +1,0 @@
-pyuic5 C:\Users\nikzi\Desktop\login_form.ui -o C:\Users\nikzi\Desktop\login_form.py

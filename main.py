@@ -4,13 +4,11 @@ from selenium.webdriver.chrome.options import Options
 from PyQt5 import QtWidgets, QtCore
 from pyqtspinner.spinner import WaitingSpinner
 from PyQt5.QtGui import QPixmap, QIcon
-import login_gui_backend
+import login
 import sys
 import zipfile
 import os
-
-import login_gui_backend
-import menu_gui_backend
+import menu
 
 import ctypes
 myappid = 'uom.scopus.scopusanalyzer.1' # arbitrary string
@@ -181,8 +179,8 @@ def update_browser(updated_browser):
     global browser
     browser = updated_browser
 
-    login_gui_backend.update_browser(browser)   # one call for login form
-    menu_gui_backend.update_browser(browser)    # the other call for menu
+    login.update_browser(browser)   # one call for login form
+    menu.update_browser(browser)    # the other call for menu
 
 def show_login_screen():
     '''
@@ -200,6 +198,6 @@ if __name__ == '__main__':
     browser_thread.finished.connect(show_login_screen)
     browser_thread.start()
     MainWindow = QtWidgets.QMainWindow()
-    ui = login_gui_backend.Ui_MainWindow()
+    ui = login.Ui_MainWindow()
     ui.setupUi(MainWindow)
     sys.exit(app.exec_())

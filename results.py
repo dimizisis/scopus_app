@@ -8,7 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon
-import menu_gui_backend
+import menu
 import pandas as pd
 import os
 
@@ -23,18 +23,150 @@ class Ui_ResultsWindow(object):
         self.centralwidget = QtWidgets.QWidget(ResultsWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.back_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.back_btn.setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);\nborder-style: solid;\nborder-width: 5px;\nborder-radius: 10px;")
+        self.back_btn.setStyleSheet("QPushButton\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));\n"
+"  border: 1px solid rgb(20,20,20);\n"
+"  color: rgb(230,230,230);\n"
+"  padding: 4px 8px;\n"
+"}\n"
+"\n"
+"QPushButton:hover\n"
+"{\n"
+"  background-color: rgb(70,110,130);\n"
+"}\n"
+"\n"
+"QPushButton:pressed\n"
+"{\n"
+"  border-color: rgb(90,200,255);\n"
+"  padding: 1px -1px -1px 1px;\n"
+"}\n"
+"\n"
+"/**** QPushButton (checkable) ****/\n"
+"QPushButton:checked\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));\n"
+"  color: rgb(20,20,20);\n"
+"}\n"
+"\n"
+"QPushButton:checked:hover\n"
+"{\n"
+"  background-color: rgb(70,110,130);\n"
+"}\n"
+"\n"
+"/**** QPushButton (disabled) ****/\n"
+"QPushButton:disabled\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));\n"
+"  border-color: rgb(60,60,60);\n"
+"  color: rgb(40,40,40);\n"
+"}")
         self.back_btn.setGeometry(QtCore.QRect(10, 270, 101, 31))
         self.back_btn.setObjectName("back_btn")
         self.back_btn.clicked.connect(self.go_to_menu)
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
         self.tableWidget.setGeometry(QtCore.QRect(10, 10, 811, 241))
-        self.tableWidget.setStyleSheet("background-color: rgb(255, 255, 255);")
+        self.tableWidget.setStyleSheet("QTableView\n"
+"{\n"
+"  alternate-background-color: rgb(110,110,110);\n"
+"  background-color: rgb(100,100,100);\n"
+"  border: 1px solid rgb(20,20,20);\n"
+"  color: rgb(220,220,220);\n"
+"  selection-background-color: rgb(70,110,130);\n"
+"  selection-color: white;\n"
+"}\n"
+"\n"
+"QTableView QLineEdit\n"
+"{\n"
+"  padding: -1 0 0 0;\n"
+"}\n"
+"\n"
+"QTableView::item:hover,\n"
+"QTableView::item:selected:hover\n"
+"{\n"
+"  background-color: rgb(70,110,130);\n"
+"  color: white;\n"
+"}\n"
+"\n"
+"QTableView::item:selected\n"
+"{\n"
+"  background-color: rgb(90,200,255);\n"
+"  color: rgb(20,20,20);\n"
+"}\n"
+"\n"
+"QTableView QTableCornerButton::section\n"
+"{\n"
+"  background-color: rgb(60,60,60);\n"
+"  border: 1px inset rgb(60,60,60);\n"
+"}\n"
+"\n"
+"/**** QTableView (disabled) ****/\n"
+"QTableView:disabled\n"
+"{\n"
+"  alternate-background-color: rgb(130,130,130);\n"
+"  background-color: rgb(120,120,120);\n"
+"  border-color: rgb(60,60,60);\n"
+"  color: rgb(40,40,40);\n"
+"}\n"
+"\n"
+"QTableView::item:selected:disabled\n"
+"{\n"
+"  background-color: transparent;\n"
+"}\n"
+"\n"
+"QTableView QTableCornerButton::section:disabled\n"
+"{\n"
+"  background-color: rgb(80,80,80);\n"
+"  border: 1px inset rgb(80,80,80);\n"
+"}")
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
         self.statistics_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.statistics_btn.setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);\nborder-style: solid;\nborder-width: 5px;\nborder-radius: 10px;")
+        self.statistics_btn.setStyleSheet("QPushButton\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));\n"
+"  border: 1px solid rgb(20,20,20);\n"
+"  color: rgb(230,230,230);\n"
+"  padding: 4px 8px;\n"
+"}\n"
+"\n"
+"QPushButton:hover\n"
+"{\n"
+"  background-color: rgb(70,110,130);\n"
+"}\n"
+"\n"
+"QPushButton:pressed\n"
+"{\n"
+"  border-color: rgb(90,200,255);\n"
+"  padding: 1px -1px -1px 1px;\n"
+"}\n"
+"\n"
+"/**** QPushButton (checkable) ****/\n"
+"QPushButton:checked\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));\n"
+"  color: rgb(20,20,20);\n"
+"}\n"
+"\n"
+"QPushButton:checked:hover\n"
+"{\n"
+"  background-color: rgb(70,110,130);\n"
+"}\n"
+"\n"
+"/**** QPushButton (disabled) ****/\n"
+"QPushButton:disabled\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));\n"
+"  border-color: rgb(60,60,60);\n"
+"  color: rgb(40,40,40);\n"
+"}")
         self.statistics_btn.setGeometry(QtCore.QRect(720, 270, 101, 31))
         self.statistics_btn.setObjectName("statistics_btn")
         self.ResultsWindow.setCentralWidget(self.centralwidget)
@@ -100,6 +232,6 @@ class Ui_ResultsWindow(object):
         in order to bring user back to
         main menu
         '''
-        self.menu_ui = menu_gui_backend.Ui_MainWindow()
+        self.menu_ui = menu.Ui_MainWindow()
         self.menu_ui.setupUi(self.ResultsWindow)
         self.ResultsWindow.show()
