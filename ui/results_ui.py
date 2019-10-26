@@ -188,7 +188,7 @@ class Ui_ResultsWindow(object):
         self.menubar.addAction(self.menuFile.menuAction())
 
         scriptDir = os.path.dirname(os.path.realpath(__file__))
-        self.ResultsWindow.setWindowIcon(QIcon(scriptDir + os.path.sep + 'favicon.ico')) 
+        self.ResultsWindow.setWindowIcon(QIcon(scriptDir + os.path.sep + 'images\\favicon.ico')) 
 
         self.retranslateUi(self.ResultsWindow)
         QtCore.QMetaObject.connectSlotsByName(self.ResultsWindow)
