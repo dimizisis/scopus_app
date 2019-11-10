@@ -56,7 +56,7 @@ class LoginPage():
             user_element.send_keys(username)    # send credentials to textboxes 
             continue_btn = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_login_btn_id)))
             continue_btn.click()
-            pass_element = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_pass_box_id)))
+            pass_element = WebDriverWait(self.browser, 5).until(EC.visibility_of_element_located((By.ID, self.bdd_pass_box_id)))
             pass_element.clear()
             pass_element.send_keys(password)    # send credentials to textboxes 
             login_btn = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_login_btn_id))) # find & click login button
@@ -65,9 +65,8 @@ class LoginPage():
             pass_element = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_pass_box_id)))
             pass_element.clear()
             pass_element.send_keys(password)    # send credentials to textboxes 
-            login_btn = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, self.bdd_login_btn_id))) # find & click login button
+            login_btn = WebDriverWait(self.browser, 5).until(EC.visibility_of_element_located((By.ID, self.bdd_login_btn_id))) # find & click login button
             login_btn.click()
-
         try:
             # if document search text appears, login successful 
             WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.XPATH, self.document_header_xpath)))
@@ -76,5 +75,5 @@ class LoginPage():
         except:
             error = WebDriverWait(self.browser, 5).until(EC.presence_of_element_located((By.ID, 'passworderror')))
             print('Login failed')
-            self.browser.get(login_url)
+            self.browser.get(init.login_url)
             return False

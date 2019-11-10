@@ -10,8 +10,8 @@ from time import sleep
 from init import DELAY_TIME, LOGIN_DELAY_TIME, login_url
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '\\images')
-import img_source as img_source
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '\\style\\images')
+import scopus_logo_rsrc
 import ui.menu_ui as menu_ui
 import os
 from pyqtspinner.spinner import WaitingSpinner
@@ -32,29 +32,7 @@ class Ui_MainWindow(object):
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBox.setGeometry(QtCore.QRect(440, 0, 401, 251))
         self.groupBox.setObjectName("login_groupBox")
-        self.groupBox.setStyleSheet("QGroupBox\n"
-"{\n"
-"  background-color: transparent;\n"
-"  background-clip: margin;\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  border-radius: 4px;\n"
-"  margin-top: 10px;\n"
-"  padding-top: 4px;\n"
-"}\n"
-"\n"
-"QGroupBox::title\n"
-"{\n"
-"  padding: 2px 8px;\n"
-"  subcontrol-origin: margin;\n"
-"  subcontrol-position: top center;\n"
-"}\n"
-"\n"
-"QGroupBox::indicator\n"
-"{\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  width: 14px;\n"
-"  height: 14px;\n"
-"}")
+        self.groupBox.setStyleSheet("background-color: transparent;")
         self.layoutWidget = QtWidgets.QWidget(self.groupBox)
         self.layoutWidget.setGeometry(QtCore.QRect(20, 20, 371, 221))
         self.layoutWidget.setObjectName("layoutWidget")
@@ -73,7 +51,6 @@ class Ui_MainWindow(object):
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.horizontalLayout.addItem(spacerItem)
         self.email_txt = QtWidgets.QLineEdit(self.layoutWidget)
-        self.email_txt.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.email_txt.setObjectName("email_txt")
         self.horizontalLayout.addWidget(self.email_txt)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
@@ -88,7 +65,6 @@ class Ui_MainWindow(object):
         spacerItem2 = QtWidgets.QSpacerItem(2, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.horizontalLayout_2.addItem(spacerItem2)
         self.pass_txt = QtWidgets.QLineEdit(self.layoutWidget)
-        self.pass_txt.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.pass_txt.setEchoMode(QtWidgets.QLineEdit.Password)
         self.pass_txt.setObjectName("pass_txt")
         self.horizontalLayout_2.addWidget(self.pass_txt)
@@ -97,47 +73,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addItem(spacerItem3)
         self.login_btn = QtWidgets.QPushButton(self.layoutWidget)
         self.login_btn.setObjectName("login_btn")
-        self.login_btn.setStyleSheet("QPushButton\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  color: rgb(230,230,230);\n"
-"  padding: 4px 8px;\n"
-"}\n"
-"\n"
-"QPushButton:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"QPushButton:pressed\n"
-"{\n"
-"  border-color: rgb(90,200,255);\n"
-"  padding: 1px -1px -1px 1px;\n"
-"}\n"
-"\n"
-"/**** QPushButton (checkable) ****/\n"
-"QPushButton:checked\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));\n"
-"  color: rgb(20,20,20);\n"
-"}\n"
-"\n"
-"QPushButton:checked:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"/**** QPushButton (disabled) ****/\n"
-"QPushButton:disabled\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));\n"
-"  border-color: rgb(60,60,60);\n"
-"  color: rgb(40,40,40);\n"
-"}")
         self.verticalLayout_2.addWidget(self.login_btn)
         self.verticalLayout.addLayout(self.verticalLayout_2)
         spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -145,7 +80,6 @@ class Ui_MainWindow(object):
         self.login_failed_label = QtWidgets.QLabel(self.layoutWidget)
         self.login_failed_label.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.login_failed_label.setAutoFillBackground(False)
-        self.login_failed_label.setStyleSheet("color: rgb(255, 0, 0);")
         self.login_failed_label.setTextFormat(QtCore.Qt.RichText)
         self.login_failed_label.setScaledContents(False)
         self.login_failed_label.setAlignment(QtCore.Qt.AlignCenter)
@@ -187,9 +121,6 @@ class Ui_MainWindow(object):
         self.login_btn.clicked.connect(self.login_btn_function)
         self.login_btn.setShortcut('Return')
         self.login_failed_label.setVisible(False)
-
-        self.email_txt.setText('dai17053@uom.edu.gr')
-        self.pass_txt.setText('Uom53')
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate

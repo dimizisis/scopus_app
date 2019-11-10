@@ -30,17 +30,21 @@ def logout():
     Triggered on Logout click (menu bar) or on CTRL+L pressed
 
     '''
+    try:
+        sign_in_link_id = 'signin_link_move'
+        sign_in_with_different_id = 'bdd-elsSecondaryBtn'
 
-    sign_in_link_id = 'signin_link_move'
-    sign_in_with_different_id = 'bdd-elsSecondaryBtn'
+        browser.get('https://id.elsevier.com/ext/ae-logout?platSite=SC%2Fscopus&return_to=https%3A%2F%2Fwww.scopus.com%2Flogout.uri')
 
-    browser.get('https://id.elsevier.com/ext/ae-logout?platSite=SC%2Fscopus&return_to=https%3A%2F%2Fwww.scopus.com%2Flogout.uri')
+        sign_in = WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.ID, sign_in_link_id)))
+        sign_in.click()
 
-    sign_in = WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.ID, sign_in_link_id)))
-    sign_in.click()
+        sign_in_with_different = WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.ID, sign_in_with_different_id)))
+        sign_in_with_different.click()
 
-    sign_in_with_different = WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.ID, sign_in_with_different_id)))
-    sign_in_with_different.click()
+        return True
+    except:
+        return False
 
 def browse_to_search_page():
 

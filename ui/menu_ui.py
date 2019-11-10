@@ -10,6 +10,7 @@ import main
 import ui.login_ui as login_ui
 import menu
 import ui.results_ui as results_ui
+from pyqtspinner.spinner import WaitingSpinner
 import magic
 import os
 
@@ -54,183 +55,20 @@ class Ui_MainWindow(object):
         MainWindow.resize(750, 391)
         self.MainWindow.setMinimumSize(QtCore.QSize(750, 391))
         self.MainWindow.setMaximumSize(QtCore.QSize(750, 391))
-        self.MainWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);")
+        # self.MainWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+        self.spinner = WaitingSpinner(self.MainWindow)
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setGeometry(QtCore.QRect(10, 10, 731, 331))
-        self.tabWidget.setStyleSheet("QTabWidget\n"
-"{\n"
-"  background-color: rgb(211, 211, 211);\n"
-"}\n"
-"\n"
-"QTabWidget::pane\n"
-"{\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"}\n"
-"\n"
-"/**** QTabWidget (disabled) ****/\n"
-"QTabWidget::pane:disabled\n"
-"{\n"
-"  border-color: rgb(60,60,60);\n"
-"}\n"
-"\n"
-"/*********************************************************************************************************/\n"
-"\n"
-"/**** QTabBar (enabled) ****/\n"
-"QTabBar\n"
-"{\n"
-"  background-color: transparent;\n"
-"}\n"
-"\n"
-"QTabBar::tab\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(120,120,120), stop: 1 rgb(80,80,80));\n"
-"  border: 1px solid rgb(60,60,60);\n"
-"  border-bottom: 0;\n"
-"  border-top-right-radius: 12px;\n"
-"  color: rgb(220,220,220);\n"
-"  margin-right: 2px;\n"
-"  padding: 6px;\n"
-"}\n"
-"\n"
-"QTabBar::tab:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"QTabBar::tab:selected\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(211, 211, 211), stop: 1  rgb(255, 255, 255));\n"
-"  border-color: rgb(20,20,20);\n"
-"  color: rgb(20,20,20);\n"
-"}\n"
-"\n"
-"QTabBar::tab:selected:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"  color: rgb(220,220,220);\n"
-"}\n"
-"\n"
-"QTabBar::tab:!selected\n"
-"{\n"
-"  margin-top: 4px;\n"
-"}\n"
-"\n"
-"QTabBar::tear\n"
-"{\n"
-"  background-color: transparent;\n"
-"}\n"
-"\n"
-"QTabBar QToolButton\n"
-"{\n"
-"  background-color: rgb(80,80,80);\n"
-"  border: 1px solid transparent;\n"
-"  padding: 0px;\n"
-"}\n"
-"\n"
-"QTabBar QToolButton:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"QTabBar QToolButton:pressed\n"
-"{\n"
-"  border-color: transparent;\n"
-"}\n"
-"\n"
-"\n"
-"/**** QTabBar (disabled) ****/\n"
-"QTabBar:disabled\n"
-"{\n"
-"  background-color: transparent;\n"
-"}\n"
-"\n"
-"QTabBar::tab:disabled\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));\n"
-"  color: rgb(40,40,40);\n"
-"}\n"
-"\n"
-"QTabBar::tab:selected:disabled\n"
-"{\n"
-"  border-color: rgb(60,60,60);\n"
-"}\n"
-"\n"
-"QTabBar QToolButton:disabled\n"
-"{\n"
-"  background-color: rgb(80,80,80);\n"
-"  border-color: transparent;\n"
-"}")
+        self.tabWidget.setStyleSheet("background-color: transparent;")
         self.tabWidget.setObjectName("tabWidget")
         self.new_search_tab = QtWidgets.QWidget()
-        self.new_search_tab.setStyleSheet("background-color: rgb(211, 211, 211);")
         self.new_search_tab.setObjectName("new_search_tab")
         self.search_settings_grpbox = QtWidgets.QGroupBox(self.new_search_tab)
         self.search_settings_grpbox.setGeometry(QtCore.QRect(10, 10, 341, 221))
         self.search_settings_grpbox.setObjectName("search_settings_grpbox")
-        self.search_settings_grpbox.setStyleSheet("QGroupBox\n"
-"{\n"
-"  background-color: transparent;\n"
-"  background-clip: margin;\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  border-radius: 4px;\n"
-"  margin-top: 10px;\n"
-"  padding-top: 4px;\n"
-"}\n"
-"\n"
-"QGroupBox::title\n"
-"{\n"
-"  padding: 2px 8px;\n"
-"  subcontrol-origin: margin;\n"
-"  subcontrol-position: top center;\n"
-"}\n"
-"\n"
-"QGroupBox::indicator\n"
-"{\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  width: 14px;\n"
-"  height: 14px;\n"
-"}\n"
-"\n"
-"QGroupBox::indicator:unchecked\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(120,120,120), stop: 1 rgb(80,80,80));\n"
-"}\n"
-"\n"
-"QGroupBox::indicator:checked\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(80,80,80), stop: 1 rgb(120,120,120));\n"
-"  image: url(images/checkbox_checked.png);\n"
-"}\n"
-"\n"
-"QGroupBox::indicator:unchecked:hover,\n"
-"QGroupBox::indicator:checked:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"QGroupBox::indicator:unchecked:pressed,\n"
-"QGroupBox::indicator:checked:pressed\n"
-"{\n"
-"  border: 1px solid rgb(90,200,255);\n"
-"}\n"
-"\n"
-"/**** QGroupBox (disabled) ****/\n"
-"QGroupBox:disabled\n"
-"{\n"
-"  border-color: rgb(60,60,60);\n"
-"}\n"
-"\n"
-"QGroupBox::indicator:disabled\n"
-"{\n"
-"  border-color: rgb(60,60,60);\n"
-"}")
+        self.search_settings_grpbox.setStyleSheet("background-color: transparent;")
         self.layoutWidget = QtWidgets.QWidget(self.search_settings_grpbox)
         self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 311, 75))
         self.layoutWidget.setObjectName("layoutWidget")
@@ -269,66 +107,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.export_settings_grpbox = QtWidgets.QGroupBox(self.new_search_tab)
         self.export_settings_grpbox.setGeometry(QtCore.QRect(370, 10, 351, 221))
-        self.export_settings_grpbox.setStyleSheet("QGroupBox\n"
-"{\n"
-"  background-color: transparent;\n"
-"  background-clip: margin;\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  border-radius: 4px;\n"
-"  margin-top: 10px;\n"
-"  padding-top: 4px;\n"
-"}\n"
-"\n"
-"QGroupBox::title\n"
-"{\n"
-"  padding: 2px 8px;\n"
-"  subcontrol-origin: margin;\n"
-"  subcontrol-position: top center;\n"
-"}\n"
-"\n"
-"QGroupBox::indicator\n"
-"{\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  width: 14px;\n"
-"  height: 14px;\n"
-"}\n"
-"\n"
-"QGroupBox::indicator:unchecked\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(120,120,120), stop: 1 rgb(80,80,80));\n"
-"}\n"
-"\n"
-"QGroupBox::indicator:checked\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(80,80,80), stop: 1 rgb(120,120,120));\n"
-"  image: url(images/checkbox_checked.png);\n"
-"}\n"
-"\n"
-"QGroupBox::indicator:unchecked:hover,\n"
-"QGroupBox::indicator:checked:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"QGroupBox::indicator:unchecked:pressed,\n"
-"QGroupBox::indicator:checked:pressed\n"
-"{\n"
-"  border: 1px solid rgb(90,200,255);\n"
-"}\n"
-"\n"
-"/**** QGroupBox (disabled) ****/\n"
-"QGroupBox:disabled\n"
-"{\n"
-"  border-color: rgb(60,60,60);\n"
-"}\n"
-"\n"
-"QGroupBox::indicator:disabled\n"
-"{\n"
-"  border-color: rgb(60,60,60);\n"
-"}\n"
-"")
+        self.export_settings_grpbox.setStyleSheet("background-color: transparent;")
         self.export_settings_grpbox.setObjectName("groupBox")
         self.layoutWidget1 = QtWidgets.QWidget(self.export_settings_grpbox)
         self.layoutWidget1.setGeometry(QtCore.QRect(10, 30, 311, 75))
@@ -361,43 +140,6 @@ class Ui_MainWindow(object):
         self.path_select_toolbtn.setObjectName("path_select_toolbtn")
 
         self.path_select_toolbtn.clicked.connect(self.open_directory_dialog)
-        self.path_select_toolbtn.setStyleSheet("QToolButton\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  color: rgb(220,220,220);\n"
-"  padding: 4px 8px;\n"
-"}\n"
-"\n"
-"QToolButton:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"QToolButton:pressed\n"
-"{\n"
-"  border-color: rgb(90,200,255);\n"
-"  padding: 1px -1px -1px 1px;\n"
-"}\n"
-"\n"
-"/**** QToolButton (checkable) ****/\n"
-"QToolButton:checked\n"
-"{\n"
-"  border-color: transparent;\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));\n"
-"  color: rgb(20,20,20);\n"
-"}\n"
-"\n"
-"/**** QToolButton (disabled) ****/\n"
-"QToolButton:disabled\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));\n"
-"  border-color: rgb(60,60,60);\n"
-"  color: rgb(40,40,40);\n"
-"}")
         self.horizontalLayout_7.addWidget(self.path_select_toolbtn)
         self.verticalLayout_2.addLayout(self.horizontalLayout_7)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
@@ -408,100 +150,17 @@ class Ui_MainWindow(object):
         self.export_filename_textedit = QtWidgets.QTextEdit(self.layoutWidget1)
         self.export_filename_textedit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.export_filename_textedit.setObjectName("export_filename_textedit")
-        self.export_filename_textedit.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.horizontalLayout_3.addWidget(self.export_filename_textedit)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
         self.proceed_btn_search = QtWidgets.QCommandLinkButton(self.new_search_tab)
         self.proceed_btn_search.clicked.connect(self.proceed_btn_search_function)
         self.proceed_btn_search.setGeometry(QtCore.QRect(620, 250, 101, 41))
         self.proceed_btn_search.setObjectName("proceed_btn_search")
-        self.proceed_btn_search.setStyleSheet("QPushButton\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  color: rgb(230,230,230);\n"
-"  padding: 4px 8px;\n"
-"}\n"
-"\n"
-"QPushButton:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"QPushButton:pressed\n"
-"{\n"
-"  border-color: rgb(90,200,255);\n"
-"  padding: 1px -1px -1px 1px;\n"
-"}\n"
-"\n"
-"/**** QPushButton (checkable) ****/\n"
-"QPushButton:checked\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));\n"
-"  color: rgb(20,20,20);\n"
-"}\n"
-"\n"
-"QPushButton:checked:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"/**** QPushButton (disabled) ****/\n"
-"QPushButton:disabled\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));\n"
-"  border-color: rgb(60,60,60);\n"
-"  color: rgb(40,40,40);\n"
-"}")
         self.tabWidget.addTab(self.new_search_tab, "")
         self.import_tab = QtWidgets.QWidget()
         self.import_tab.setObjectName("import_tab")
         self.listWidget = ListView(self.import_tab)
         self.listWidget.setGeometry(QtCore.QRect(0, 40, 731, 201))
-        self.listWidget.setStyleSheet("QListView\n"
-"{\n"
-"  alternate-background-color: rgb(110,110,110);\n"
-"  background-color: rgb(100,100,100);\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  color: rgb(220,220,220);\n"
-"  selection-background-color: rgb(70,110,130);\n"
-"  selection-color: white;\n"
-"}\n"
-"\n"
-"QListView QLineEdit\n"
-"{\n"
-"  padding: -1 0 0 0;\n"
-"}\n"
-"\n"
-"QListView::item:hover,\n"
-"QListView::item:selected:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"  color: white;\n"
-"}\n"
-"\n"
-"QListView::item:selected\n"
-"{\n"
-"  background-color: rgb(90,200,255);\n"
-"  color: rgb(20,20,20);\n"
-"}\n"
-"\n"
-"/**** QListView (disabled) ****/\n"
-"QListView:disabled\n"
-"{\n"
-"  alternate-background-color: rgb(130,130,130);\n"
-"  background-color: rgb(120,120,120);\n"
-"  border-color: rgb(60,60,60);\n"
-"  color: rgb(40,40,40);\n"
-"}\n"
-"\n"
-"QListView::item:selected:disabled\n"
-"{\n"
-"  background-color: transparent;\n"
-"}")
         self.listWidget.setDragEnabled(True)
         self.listWidget.setDragDropMode(QtWidgets.QAbstractItemView.DragDrop)
         self.listWidget.setObjectName("listWidget")
@@ -509,47 +168,6 @@ class Ui_MainWindow(object):
         self.add_btn.setGeometry(QtCore.QRect(650, 10, 31, 23))
         scriptDir = os.path.dirname(os.path.realpath(__file__))
         self.add_btn.setIcon(QIcon(scriptDir + os.path.sep + '\images\\branch-closed_hover.png'))
-        self.add_btn.setStyleSheet("QPushButton\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  color: rgb(230,230,230);\n"
-"  padding: 4px 8px;\n"
-"}\n"
-"\n"
-"QPushButton:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"QPushButton:pressed\n"
-"{\n"
-"  border-color: rgb(90,200,255);\n"
-"  padding: 1px -1px -1px 1px;\n"
-"}\n"
-"\n"
-"/**** QPushButton (checkable) ****/\n"
-"QPushButton:checked\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));\n"
-"  color: rgb(20,20,20);\n"
-"}\n"
-"\n"
-"QPushButton:checked:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"/**** QPushButton (disabled) ****/\n"
-"QPushButton:disabled\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));\n"
-"  border-color: rgb(60,60,60);\n"
-"  color: rgb(40,40,40);\n"
-"}")
         self.add_btn.setObjectName("add_btn")
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -561,94 +179,12 @@ class Ui_MainWindow(object):
         self.remove_btn = QtWidgets.QPushButton(self.import_tab)
         self.remove_btn.setGeometry(QtCore.QRect(690, 10, 31, 23))
         self.remove_btn.setIcon(QIcon(scriptDir + os.path.sep + 'images/branch-open_hover.png'))
-        self.remove_btn.setStyleSheet("QPushButton\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  color: rgb(230,230,230);\n"
-"  padding: 4px 8px;\n"
-"}\n"
-"\n"
-"QPushButton:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"QPushButton:pressed\n"
-"{\n"
-"  border-color: rgb(90,200,255);\n"
-"  padding: 1px -1px -1px 1px;\n"
-"}\n"
-"\n"
-"/**** QPushButton (checkable) ****/\n"
-"QPushButton:checked\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));\n"
-"  color: rgb(20,20,20);\n"
-"}\n"
-"\n"
-"QPushButton:checked:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"/**** QPushButton (disabled) ****/\n"
-"QPushButton:disabled\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));\n"
-"  border-color: rgb(60,60,60);\n"
-"  color: rgb(40,40,40);\n"
-"}")
         self.remove_btn.setObjectName("remove_btn")
         self.remove_btn.setFont(font)
         self.remove_btn.clicked.connect(self.remove_selected_items)
         self.proceed_btn_stats = QtWidgets.QCommandLinkButton(self.import_tab)
         self.proceed_btn_stats.setGeometry(QtCore.QRect(620, 250, 101, 41))
         self.proceed_btn_stats.setObjectName("proceed_btn_stats")
-        self.proceed_btn_stats.setStyleSheet("QPushButton\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));\n"
-"  border: 1px solid rgb(20,20,20);\n"
-"  color: rgb(230,230,230);\n"
-"  padding: 4px 8px;\n"
-"}\n"
-"\n"
-"QPushButton:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"QPushButton:pressed\n"
-"{\n"
-"  border-color: rgb(90,200,255);\n"
-"  padding: 1px -1px -1px 1px;\n"
-"}\n"
-"\n"
-"/**** QPushButton (checkable) ****/\n"
-"QPushButton:checked\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));\n"
-"  color: rgb(20,20,20);\n"
-"}\n"
-"\n"
-"QPushButton:checked:hover\n"
-"{\n"
-"  background-color: rgb(70,110,130);\n"
-"}\n"
-"\n"
-"/**** QPushButton (disabled) ****/\n"
-"QPushButton:disabled\n"
-"{\n"
-"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
-"                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));\n"
-"  border-color: rgb(60,60,60);\n"
-"  color: rgb(40,40,40);\n"
-"}")
         self.tabWidget.addTab(self.import_tab, "")
         self.MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -664,8 +200,8 @@ class Ui_MainWindow(object):
         self.actionChangeTab = QtWidgets.QShortcut(QKeySequence("Ctrl+Tab"), MainWindow)
         self.actionChangeTab.activated.connect(self.change_tab)
         self.actionLogout = QtWidgets.QAction(MainWindow)
-        self.actionLogout.triggered.connect(menu.logout)
-        self.actionLogout.triggered.connect(self.return_to_login_ui)
+        self.actionLogout.triggered.connect(self.logout_function)
+        # self.actionLogout.triggered.connect(self.return_to_login_ui)
         self.actionExit.setObjectName("actionExit")
         self.actionExit.triggered.connect(MainWindow.close)
         self.actionExit.setObjectName("actionLogout")
@@ -724,6 +260,18 @@ class Ui_MainWindow(object):
         self.login_ui = login_ui.Ui_MainWindow()
         self.login_ui.setupUi(self.MainWindow)
         self.MainWindow.show()
+
+    def logout_function(self):
+
+        '''
+        Connecting ui with backend
+        We create separated thread to perform the login (we want ui to be responsive during the login)
+
+        '''
+        self.spinner.start()
+        self.thread = LogoutThread()
+        self.thread.open_login_screen_signal.connect(self.return_to_login_ui) # if logout is successful, open login window
+        self.thread.start() # start the logout thread
 
     def proceed_btn_search_function(self):
 
@@ -856,6 +404,88 @@ class Ui_ScanDialog(object):
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setEnabled(False)
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet("QPushButton\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));\n"
+"  border: 1px solid rgb(20,20,20);\n"
+"  color: rgb(230,230,230);\n"
+"  padding: 4px 8px;\n"
+"}\n"
+"\n"
+"QPushButton:hover\n"
+"{\n"
+"  background-color: rgb(70,110,130);\n"
+"}\n"
+"\n"
+"QPushButton:pressed\n"
+"{\n"
+"  border-color: rgb(90,200,255);\n"
+"  padding: 1px -1px -1px 1px;\n"
+"}\n"
+"\n"
+"/**** QPushButton (checkable) ****/\n"
+"QPushButton:checked\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));\n"
+"  color: rgb(20,20,20);\n"
+"}\n"
+"\n"
+"QPushButton:checked:hover\n"
+"{\n"
+"  background-color: rgb(70,110,130);\n"
+"}\n"
+"\n"
+"/**** QPushButton (disabled) ****/\n"
+"QPushButton:disabled\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));\n"
+"  border-color: rgb(60,60,60);\n"
+"  color: rgb(40,40,40);\n"
+"}")
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet("QPushButton\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 darkslategray, stop: 1 rgb(80,80,80));\n"
+"  border: 1px solid rgb(20,20,20);\n"
+"  color: rgb(230,230,230);\n"
+"  padding: 4px 8px;\n"
+"}\n"
+"\n"
+"QPushButton:hover\n"
+"{\n"
+"  background-color: rgb(70,110,130);\n"
+"}\n"
+"\n"
+"QPushButton:pressed\n"
+"{\n"
+"  border-color: rgb(90,200,255);\n"
+"  padding: 1px -1px -1px 1px;\n"
+"}\n"
+"\n"
+"/**** QPushButton (checkable) ****/\n"
+"QPushButton:checked\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 rgb(40,150,200), stop: 1 rgb(90,200,255));\n"
+"  color: rgb(20,20,20);\n"
+"}\n"
+"\n"
+"QPushButton:checked:hover\n"
+"{\n"
+"  background-color: rgb(70,110,130);\n"
+"}\n"
+"\n"
+"/**** QPushButton (disabled) ****/\n"
+"QPushButton:disabled\n"
+"{\n"
+"  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"
+"                                    stop: 0 rgb(160,160,160), stop: 1 rgb(120,120,120));\n"
+"  border-color: rgb(60,60,60);\n"
+"  color: rgb(40,40,40);\n"
+"}")
         self.progressBar = QtWidgets.QProgressBar(ScanDialog)
         self.progressBar.setGeometry(QtCore.QRect(10, 20, 421, 23))
         self.progressBar.setProperty("value", 0)
@@ -1021,3 +651,17 @@ class AnalysisThread(QtCore.QThread):
 
     def stop(self):
         self.terminate()
+
+class LogoutThread(QtCore.QThread):
+
+    '''
+    Logout thread
+    Performs logout action in separated thread
+    '''
+    open_login_screen_signal = QtCore.pyqtSignal()  # login success, signal menu window to open
+
+    # run method gets called when we start the thread
+    def run(self):
+        success = menu.logout()
+        if success:
+            self.open_login_screen_signal.emit()
