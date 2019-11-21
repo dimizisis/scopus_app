@@ -9,6 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon
 import menu
+import ui.menu_ui as menu_ui
 import pandas as pd
 import os
 
@@ -232,6 +233,6 @@ class Ui_ResultsWindow(object):
         in order to bring user back to
         main menu
         '''
-        self.menu_ui = menu.Ui_MainWindow()
-        self.menu_ui.setupUi(self.ResultsWindow)
+        self.menu = menu_ui.Ui_MainWindow()
+        self.menu.setupUi(self.ResultsWindow)
         self.ResultsWindow.show()

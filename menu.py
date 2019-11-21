@@ -89,7 +89,7 @@ class SearchPage():
         advanced_ref.click()
 
         search_field = WebDriverWait(browser, init.DELAY_TIME).until(    # when page is loaded, click query text box & send our query
-            EC.presence_of_element_located((By.ID, self.search_field_id)))
+            EC.visibility_of_element_located((By.ID, self.search_field_id)))
         search_field.clear()
         search_field.send_keys(query)
 
@@ -115,6 +115,8 @@ class DocumentPage():
 
         self.analysis_thread = thread
 
+        self.stop = False
+
     def analyze_documents(self):
 
         '''
@@ -135,6 +137,10 @@ class DocumentPage():
         self.total_docs_update.emit(total_docs)
         i=1
         while True:
+            
+            print(self.stop)
+            if self.stop:
+                return
 
             try:
                 document_name = document_rows.popleft() # pop the first one in list
@@ -238,6 +244,9 @@ class DocumentPage():
                     break
 
         return final_lst
+
+    def stop_analysis(self):
+        self.stop = True
 
     def remove_digits(self, lst): 
         '''

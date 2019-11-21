@@ -120,7 +120,7 @@ class BrowserThread(QtCore.QThread):
         options = Options()
         # options.headless = True   # to be enabled
 
-        options.add_extension(pluginfile)
+        # options.add_extension(pluginfile)
 
         global browser
 

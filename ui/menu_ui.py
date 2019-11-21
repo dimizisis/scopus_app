@@ -55,56 +55,88 @@ class Ui_MainWindow(object):
         MainWindow.resize(750, 391)
         self.MainWindow.setMinimumSize(QtCore.QSize(750, 391))
         self.MainWindow.setMaximumSize(QtCore.QSize(750, 391))
-        # self.MainWindow.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.spinner = WaitingSpinner(self.MainWindow)
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
-        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 731, 331))
+        self.tabWidget.setGeometry(QtCore.QRect(10, 10, 731, 327))
         self.tabWidget.setStyleSheet("background-color: transparent;")
         self.tabWidget.setObjectName("tabWidget")
         self.new_search_tab = QtWidgets.QWidget()
         self.new_search_tab.setObjectName("new_search_tab")
         self.search_settings_grpbox = QtWidgets.QGroupBox(self.new_search_tab)
-        self.search_settings_grpbox.setGeometry(QtCore.QRect(10, 10, 341, 221))
+        self.search_settings_grpbox.setGeometry(QtCore.QRect(10, 10, 341, 260))
         self.search_settings_grpbox.setObjectName("search_settings_grpbox")
         self.search_settings_grpbox.setStyleSheet("background-color: transparent;")
         self.layoutWidget = QtWidgets.QWidget(self.search_settings_grpbox)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 311, 75))
+        self.layoutWidget.setGeometry(QtCore.QRect(5, 30, 311, 225))
         self.layoutWidget.setObjectName("layoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.search_settings_vertical_layout = QtWidgets.QVBoxLayout(self.layoutWidget)
+        self.search_settings_vertical_layout.setContentsMargins(0, 0, 0, 0)
+        self.search_settings_vertical_layout.setObjectName("search_settings_vertical_layout")
         self.uni_radio_btn = QtWidgets.QRadioButton(self.layoutWidget)
         self.uni_radio_btn.setEnabled(False)
         self.uni_radio_btn.setCheckable(True)
         self.uni_radio_btn.setChecked(True)
         self.uni_radio_btn.setAutoRepeat(False)
         self.uni_radio_btn.setObjectName("uni_radio_btn")
-        self.verticalLayout.addWidget(self.uni_radio_btn)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.search_settings_vertical_layout.addWidget(self.uni_radio_btn)
+        self.year_horizontal_layout = QtWidgets.QHBoxLayout()
+        self.year_horizontal_layout.setObjectName("year_horizontal_layout")
         self.year_label = QtWidgets.QLabel(self.layoutWidget)
         self.year_label.setObjectName("year_label")
-        self.horizontalLayout.addWidget(self.year_label)
+        self.year_horizontal_layout.addWidget(self.year_label)
         self.dateEdit = QtWidgets.QDateEdit(self.layoutWidget)
         self.dateEdit.setObjectName("dateEdit")
         self.dateEdit.setDate(QtCore.QDate.currentDate())
-        self.horizontalLayout.addWidget(self.dateEdit)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.year_horizontal_layout.addWidget(self.dateEdit)
+        self.search_settings_vertical_layout.addLayout(self.year_horizontal_layout)
+        self.src_type_horizontal_layout = QtWidgets.QHBoxLayout(self.layoutWidget)
+        self.src_type_horizontal_layout.setObjectName("src_type_horizontal_layout")
         self.src_type_label = QtWidgets.QLabel(self.layoutWidget)
         self.src_type_label.setObjectName("src_type_label")
-        self.horizontalLayout_2.addWidget(self.src_type_label)
+        self.src_type_horizontal_layout.addWidget(self.src_type_label)
         self.src_type_combobox = QtWidgets.QComboBox(self.layoutWidget)
         self.src_type_combobox.setEnabled(True)
         self.src_type_combobox.setObjectName("src_type_combobox")
         self.src_type_combobox.addItem("Books")
         self.src_type_combobox.addItem("Book Series")
         self.src_type_combobox.addItem("Conference Proceedings")
-        self.horizontalLayout_2.addWidget(self.src_type_combobox)
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.src_type_horizontal_layout.addWidget(self.src_type_combobox)
+        self.doc_type_horizontal_layout = QtWidgets.QHBoxLayout(self.layoutWidget)
+        self.doc_type_horizontal_layout.setObjectName("doc_type_horizontal_layout")
+        self.doc_type_label = QtWidgets.QLabel(self.layoutWidget)
+        self.doc_type_label.setObjectName("doc_type_label")
+        self.doc_type_label.setAlignment(QtCore.Qt.AlignTop)
+        self.doc_type_horizontal_layout.addWidget(self.doc_type_label)
+        self.doc_type_vertical_layout = QtWidgets.QVBoxLayout(self.layoutWidget)
+        self.doc_type_vertical_layout.setContentsMargins(0, 0, 0, 0)
+        self.doc_type_vertical_layout.setObjectName("doc_type_vertical_layout")
+        spacerItem2 = QtWidgets.QSpacerItem(1, 10, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.doc_type_vertical_layout.addItem(spacerItem2)
+        self.article_checkbox = QtWidgets.QCheckBox(self.layoutWidget)
+        self.article_checkbox.setChecked(True)
+        self.article_checkbox.setObjectName("article_checkbox")
+        self.doc_type_vertical_layout.addWidget(self.article_checkbox)
+        self.review_checkbox = QtWidgets.QCheckBox(self.layoutWidget)
+        self.review_checkbox.setChecked(True)
+        self.review_checkbox.setObjectName("review_checkbox")
+        self.doc_type_vertical_layout.addWidget(self.review_checkbox)
+        self.editorial_checkbox = QtWidgets.QCheckBox(self.layoutWidget)
+        self.editorial_checkbox.setChecked(True)
+        self.editorial_checkbox.setObjectName("editorial_checkbox")
+        self.doc_type_vertical_layout.addWidget(self.editorial_checkbox)
+        self.conference_paper_checkbox = QtWidgets.QCheckBox(self.layoutWidget)
+        self.conference_paper_checkbox.setChecked(True)
+        self.conference_paper_checkbox.setObjectName("conference_paper_checkbox")
+        self.doc_type_vertical_layout.addWidget(self.conference_paper_checkbox)
+        self.undefined_checkbox = QtWidgets.QCheckBox(self.layoutWidget)
+        self.undefined_checkbox.setChecked(True)
+        self.undefined_checkbox.setObjectName("undefined_checkbox")
+        self.doc_type_vertical_layout.addWidget(self.undefined_checkbox)
+        self.doc_type_horizontal_layout.addLayout(self.doc_type_vertical_layout)
+        self.search_settings_vertical_layout.addLayout(self.src_type_horizontal_layout)
+        self.search_settings_vertical_layout.addLayout(self.doc_type_horizontal_layout)
         self.export_settings_grpbox = QtWidgets.QGroupBox(self.new_search_tab)
         self.export_settings_grpbox.setGeometry(QtCore.QRect(370, 10, 351, 221))
         self.export_settings_grpbox.setStyleSheet("background-color: transparent;")
@@ -112,46 +144,46 @@ class Ui_MainWindow(object):
         self.layoutWidget1 = QtWidgets.QWidget(self.export_settings_grpbox)
         self.layoutWidget1.setGeometry(QtCore.QRect(10, 30, 311, 75))
         self.layoutWidget1.setObjectName("layoutWidget1")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.layoutWidget1)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.export_settings_vertical_layout = QtWidgets.QVBoxLayout(self.layoutWidget1)
+        self.export_settings_vertical_layout.setContentsMargins(0, 0, 0, 0)
+        self.export_settings_vertical_layout.setObjectName("export_settings_vertical_layout")
         self.export_checkbox = QtWidgets.QCheckBox(self.layoutWidget1)
         self.export_checkbox.setChecked(True)
         self.export_checkbox.setObjectName("export_checkbox")
         self.export_checkbox.stateChanged.connect(self.export_csv_checkbox_function)
-        self.verticalLayout_2.addWidget(self.export_checkbox)
-        self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_7.setObjectName("horizontalLayout_7")
-        self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.export_settings_vertical_layout.addWidget(self.export_checkbox)
+        self.select_export_path_horizontalLayout = QtWidgets.QHBoxLayout()
+        self.select_export_path_horizontalLayout.setObjectName("select_export_path_horizontalLayout")
+        self.select_export_path_horizontalLayout_without_btn = QtWidgets.QHBoxLayout()
+        self.select_export_path_horizontalLayout_without_btn.setObjectName("select_export_path_horizontalLayout_without_btn")
         self.select_path_label = QtWidgets.QLabel(self.layoutWidget1)
         self.select_path_label.setObjectName("select_path_label")
-        self.horizontalLayout_4.addWidget(self.select_path_label)
+        self.select_export_path_horizontalLayout_without_btn.addWidget(self.select_path_label)
         spacerItem = QtWidgets.QSpacerItem(7, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem)
+        self.select_export_path_horizontalLayout_without_btn.addItem(spacerItem)
         self.export_path_textedit = QtWidgets.QTextEdit(self.layoutWidget1)
         self.export_path_textedit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.export_path_textedit.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.export_path_textedit.setReadOnly(True)
         self.export_path_textedit.setObjectName("export_path_textedit")
-        self.horizontalLayout_4.addWidget(self.export_path_textedit)
-        self.horizontalLayout_7.addLayout(self.horizontalLayout_4)
+        self.select_export_path_horizontalLayout_without_btn.addWidget(self.export_path_textedit)
+        self.select_export_path_horizontalLayout.addLayout(self.select_export_path_horizontalLayout_without_btn)
         self.path_select_toolbtn = QtWidgets.QToolButton(self.layoutWidget1)
         self.path_select_toolbtn.setObjectName("path_select_toolbtn")
 
         self.path_select_toolbtn.clicked.connect(self.open_directory_dialog)
-        self.horizontalLayout_7.addWidget(self.path_select_toolbtn)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_7)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.select_export_path_horizontalLayout.addWidget(self.path_select_toolbtn)
+        self.export_settings_vertical_layout.addLayout(self.select_export_path_horizontalLayout)
+        self.select_csv_filename_horizontal_layout = QtWidgets.QHBoxLayout()
+        self.select_csv_filename_horizontal_layout.setObjectName("select_csv_filename_horizontal_layout")
         self.export_filename_label = QtWidgets.QLabel(self.layoutWidget1)
         self.export_filename_label.setObjectName("export_filename_label")
-        self.horizontalLayout_3.addWidget(self.export_filename_label)
+        self.select_csv_filename_horizontal_layout.addWidget(self.export_filename_label)
         self.export_filename_textedit = QtWidgets.QTextEdit(self.layoutWidget1)
         self.export_filename_textedit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.export_filename_textedit.setObjectName("export_filename_textedit")
-        self.horizontalLayout_3.addWidget(self.export_filename_textedit)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
+        self.select_csv_filename_horizontal_layout.addWidget(self.export_filename_textedit)
+        self.export_settings_vertical_layout.addLayout(self.select_csv_filename_horizontal_layout)
         self.proceed_btn_search = QtWidgets.QCommandLinkButton(self.new_search_tab)
         self.proceed_btn_search.clicked.connect(self.proceed_btn_search_function)
         self.proceed_btn_search.setGeometry(QtCore.QRect(620, 250, 101, 41))
@@ -201,7 +233,6 @@ class Ui_MainWindow(object):
         self.actionChangeTab.activated.connect(self.change_tab)
         self.actionLogout = QtWidgets.QAction(MainWindow)
         self.actionLogout.triggered.connect(self.logout_function)
-        # self.actionLogout.triggered.connect(self.return_to_login_ui)
         self.actionExit.setObjectName("actionExit")
         self.actionExit.triggered.connect(MainWindow.close)
         self.actionExit.setObjectName("actionLogout")
@@ -226,10 +257,16 @@ class Ui_MainWindow(object):
         self.year_label.setText(_translate("MainWindow", "Year:"))
         self.dateEdit.setDisplayFormat(_translate("MainWindow", "yyyy"))
         self.src_type_label.setText(_translate("MainWindow", "Source Type:"))
+        self.doc_type_label.setText(_translate("MainWindow", "Document Type:"))
         self.src_type_combobox.setItemText(0, _translate("MainWindow", "Journals"))
         self.src_type_combobox.setItemText(1, _translate("MainWindow", "Conference Proceedings"))
         self.src_type_combobox.setItemText(2, _translate("MainWindow", "Book Series"))
         self.src_type_combobox.setItemText(3, _translate("MainWindow", "Books"))
+        self.review_checkbox.setText(_translate("MainWindow", "Review"))
+        self.article_checkbox.setText(_translate("MainWindow", "Article"))
+        self.editorial_checkbox.setText(_translate("MainWindow", "Editorial"))
+        self.conference_paper_checkbox.setText(_translate("MainWindow", "Conference Paper"))
+        self.undefined_checkbox.setText(_translate("MainWindow", "Undefined"))
         self.export_settings_grpbox.setTitle(_translate("MainWindow", "Export Settings"))
         self.export_checkbox.setText(_translate("MainWindow", "Export results to CSV"))
         self.select_path_label.setText(_translate("MainWindow", "Select Export Path:"))
@@ -368,8 +405,11 @@ class Ui_MainWindow(object):
         Returns the query (str)
 
         '''
+
+        limits = []
         
         pub_year = self.dateEdit.text()
+        limits.append('  AND  ( LIMIT-TO ( PUBYEAR ,  '+pub_year+' ) )')
 
         src_type = 'j' # by default
 
@@ -381,8 +421,25 @@ class Ui_MainWindow(object):
             src_type = 'k'
         elif self.src_type_combobox.currentText() == 'Conference Proceedings':
             src_type = 'p'
+        limits.append('  AND  ( LIMIT-TO ( SRCTYPE ,  "'+src_type+'" )')
 
-        query = '( AF-ID ( "Panepistimion Makedonias"   60001086 ) )  AND  ( LIMIT-TO ( PUBYEAR ,  '+pub_year+' ) )  AND  ( LIMIT-TO ( SRCTYPE ,  "'+src_type+'" ) )'
+        if self.article_checkbox.isChecked():
+            limits.append('  AND  ( LIMIT-TO ( DOCTYPE ,  "ar" )')
+        if self.review_checkbox.isChecked():
+            limits.append('  AND  LIMIT-TO ( DOCTYPE ,  "re" )')
+        if self.conference_paper_checkbox.isChecked():
+            limits.append('  AND  LIMIT-TO ( DOCTYPE ,  "cp" )')
+        if self.editorial_checkbox.isChecked():
+            limits.append('  AND  LIMIT-TO ( DOCTYPE ,  "ed" )')
+        if self.undefined_checkbox.isChecked():
+            limits.append('  AND  LIMIT-TO ( DOCTYPE ,  "Undefined" )')
+
+        query = '( AF-ID ( "Panepistimion Makedonias"   60001086 ) )'
+
+        for limit in limits:
+            query += limit
+
+        print(query)
 
         return query
   
@@ -501,6 +558,9 @@ class Ui_ScanDialog(object):
         QtCore.QMetaObject.connectSlotsByName(ScanDialog)
 
         self.query = query
+
+        self.search_thread = SearchThread(parent=None, query=self.query)
+        self.analysis_thread = AnalysisThread(parent=None, csv_path=self.csv_path)
         self.start_search()
 
     def start_search(self):
@@ -513,9 +573,10 @@ class Ui_ScanDialog(object):
         
         menu.browse_to_search_page()
         
-        self.search_thread = SearchThread(parent=None, query=self.query)
+        print('init search thread')
         self.search_thread.finished.connect(self.start_doc_analysis)
         self.search_thread.start()
+        print('search thread started')
 
     def start_doc_analysis(self):
 
@@ -524,13 +585,14 @@ class Ui_ScanDialog(object):
         in order the analysis of the documents to begin
 
         '''
-        self.analysis_thread = AnalysisThread(parent=None, csv_path=self.csv_path)
-        self.analysis_thread.total_docs_update.connect(self.set_progress_bar_max_value)
-        self.analysis_thread.update_progress_bar.connect(self.update_progress_bar_value)
-        if self.csv_export:
-            self.analysis_thread.thread_finished.connect(menu.write_to_csv)
-        self.analysis_thread.thread_finished.connect(self.open_question_box)
-        self.analysis_thread.start()
+        print(self.search_thread.stop_operation)
+        if not self.search_thread.stop_operation:      
+            self.analysis_thread.total_docs_update.connect(self.set_progress_bar_max_value)
+            self.analysis_thread.update_progress_bar.connect(self.update_progress_bar_value)
+            if self.csv_export:
+                self.analysis_thread.thread_finished.connect(menu.write_to_csv)
+            self.analysis_thread.thread_finished.connect(self.open_question_box)
+            self.analysis_thread.start()
 
     def open_question_box(self, list):
 
@@ -570,19 +632,22 @@ class Ui_ScanDialog(object):
         Triggered on cancel click
 
         '''
-        self.ScanDialog.close()
-        
-        try:
-            self.search_thread.stop()
-            print('search stopped')
-        except:
-            print('No search thread found')
+
+        self.buttonBox.setEnabled(False)
+        self.progressBar.setEnabled(False)
 
         try:
-            self.analysis_thread.stop()  
+            self.search_thread.stop_operation = True
+        except:
+            print('no search thread found')
+
+        try:
+            self.analysis_thread.stop_analysis()
             print('analysis stopped')
         except:
             print('No analysis thread found')
+
+        self.ScanDialog.close()
         
     def update_progress_bar_value(self, value):
 
@@ -614,6 +679,7 @@ class SearchThread(QtCore.QThread):
     Query is generated according to user's selections (menu UI)
 
     '''
+    stop_operation = False
     def __init__(self, parent=None, query=''):
         super(SearchThread, self).__init__(parent)
         self.query = query
@@ -621,10 +687,11 @@ class SearchThread(QtCore.QThread):
     # run method gets called when we start the thread
     def run(self):
         search_page = menu.SearchPage()
+        print('init search page from menu ui')
         search_page.search(self.query)
 
     def stop(self):
-        self.terminate()
+        self.stop_operation = True
 
 class AnalysisThread(QtCore.QThread):
 
@@ -641,16 +708,17 @@ class AnalysisThread(QtCore.QThread):
     def __init__(self, parent=None, csv_path=None):
         super(AnalysisThread, self).__init__(parent)
         self.csv_path = csv_path
+        self.doc_page = menu.DocumentPage(self, self.total_docs_update, self.update_progress_bar)
 
     # run method gets called when we start the thread
     def run(self):
-        doc_page = menu.DocumentPage(self, self.total_docs_update, self.update_progress_bar)
-        results_lst = doc_page.analyze_documents()
+        results_lst = self.doc_page.analyze_documents()
+        
+        if results_lst is not None:
+            self.thread_finished.emit([results_lst, self.csv_path])
 
-        self.thread_finished.emit([results_lst, self.csv_path])
-
-    def stop(self):
-        self.terminate()
+    def stop_analysis(self):
+        self.doc_page.stop_analysis()
 
 class LogoutThread(QtCore.QThread):
 
