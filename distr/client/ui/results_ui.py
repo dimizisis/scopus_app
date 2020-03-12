@@ -13,9 +13,9 @@ import pandas as pd
 import os
 
 class Ui_ResultsWindow(object):
-    def setupUi(self, ResultsWindow, results):
+    def setupUi(self, ResultsWindow, lst):
         self.ResultsWindow = ResultsWindow
-        self.results = results
+        self.results = lst[0]
         self.ResultsWindow.setObjectName("ResultsWindow")
         self.ResultsWindow.resize(833, 342)
         self.ResultsWindow.setWindowFlags(QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMinimizeButtonHint)

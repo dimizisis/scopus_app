@@ -5,17 +5,19 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QKeySequence
 import threading
 import re
-import csv
 import ui.results_ui as results_ui
 from pyqtspinner.spinner import WaitingSpinner
 import magic
 import os
-from ui.client import DesktopClientNamespace, progress, response_lst
+import sys
+sys.path.append('../')
+from helper_functions.export import write_to_excel
+from client import DesktopClientNamespace, progress, response_lst
 
 class ListView(QtWidgets.QListWidget):
     '''
     Custom ListView (QListWidget) in order
-    to handle the drag & drop event (CSV file addition)
+    to handle the drag & drop event (excel file addition)
     '''
     def __init__(self, parent=None):
         super(ListView, self).__init__(parent)
@@ -36,7 +38,7 @@ class ListView(QtWidgets.QListWidget):
 
     def dropEvent(self, e):
         '''
-        When a file is dropped, we check if it is ASCII text (CSV)
+        When a file is dropped, we check if it is ASCII text (excel)
         and if it is, it appears on the list
         Else, it is not accepted
         '''
@@ -148,7 +150,7 @@ class Ui_MainWindow(object):
         self.export_checkbox = QtWidgets.QCheckBox(self.layoutWidget1)
         self.export_checkbox.setChecked(True)
         self.export_checkbox.setObjectName("export_checkbox")
-        self.export_checkbox.stateChanged.connect(self.export_csv_checkbox_function)
+        self.export_checkbox.stateChanged.connect(self.export_excel_checkbox_function)
         self.export_settings_vertical_layout.addWidget(self.export_checkbox)
         self.select_export_path_horizontalLayout = QtWidgets.QHBoxLayout()
         self.select_export_path_horizontalLayout.setObjectName("select_export_path_horizontalLayout")
@@ -172,16 +174,16 @@ class Ui_MainWindow(object):
         self.path_select_toolbtn.clicked.connect(self.open_directory_dialog)
         self.select_export_path_horizontalLayout.addWidget(self.path_select_toolbtn)
         self.export_settings_vertical_layout.addLayout(self.select_export_path_horizontalLayout)
-        self.select_csv_filename_horizontal_layout = QtWidgets.QHBoxLayout()
-        self.select_csv_filename_horizontal_layout.setObjectName("select_csv_filename_horizontal_layout")
+        self.select_excel_filename_horizontal_layout = QtWidgets.QHBoxLayout()
+        self.select_excel_filename_horizontal_layout.setObjectName("select_excel_filename_horizontal_layout")
         self.export_filename_label = QtWidgets.QLabel(self.layoutWidget1)
         self.export_filename_label.setObjectName("export_filename_label")
-        self.select_csv_filename_horizontal_layout.addWidget(self.export_filename_label)
+        self.select_excel_filename_horizontal_layout.addWidget(self.export_filename_label)
         self.export_filename_textedit = QtWidgets.QTextEdit(self.layoutWidget1)
         self.export_filename_textedit.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.export_filename_textedit.setObjectName("export_filename_textedit")
-        self.select_csv_filename_horizontal_layout.addWidget(self.export_filename_textedit)
-        self.export_settings_vertical_layout.addLayout(self.select_csv_filename_horizontal_layout)
+        self.select_excel_filename_horizontal_layout.addWidget(self.export_filename_textedit)
+        self.export_settings_vertical_layout.addLayout(self.select_excel_filename_horizontal_layout)
         self.proceed_btn_search = QtWidgets.QCommandLinkButton(self.new_search_tab)
         self.proceed_btn_search.clicked.connect(self.proceed_btn_search_function)
         self.proceed_btn_search.setGeometry(QtCore.QRect(620, 250, 101, 41))
@@ -263,20 +265,20 @@ class Ui_MainWindow(object):
         self.conference_paper_checkbox.setText(_translate("MainWindow", "Conference Paper"))
         self.undefined_checkbox.setText(_translate("MainWindow", "Undefined"))
         self.export_settings_grpbox.setTitle(_translate("MainWindow", "Export Settings"))
-        self.export_checkbox.setText(_translate("MainWindow", "Export results to CSV"))
+        self.export_checkbox.setText(_translate("MainWindow", "Export results to excel"))
         self.select_path_label.setText(_translate("MainWindow", "Select Export Path:"))
         self.export_path_textedit.setPlaceholderText(_translate("MainWindow", "Export Path..."))
         self.path_select_toolbtn.setText(_translate("MainWindow", "..."))
-        self.export_filename_label.setText(_translate("MainWindow", "Select CSV Filename:"))
+        self.export_filename_label.setText(_translate("MainWindow", "Select excel Filename:"))
         self.proceed_btn_search.setText(_translate("MainWindow", "Proceed"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.new_search_tab), _translate("MainWindow", "New Search"))
         self.proceed_btn_stats.setText(_translate("MainWindow", "Proceed"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.import_tab), _translate("MainWindow", "Import CSVs"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.import_tab), _translate("MainWindow", "Import excels"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionExit.setShortcut(_translate("MainWindow", "Ctrl+X"))
-        self.remove_btn.setToolTip(_translate("MainWindow", "Remove CSV from list"))
-        self.add_btn.setToolTip(_translate("MainWindow", "Add CSV"))
+        self.remove_btn.setToolTip(_translate("MainWindow", "Remove excel from list"))
+        self.add_btn.setToolTip(_translate("MainWindow", "Add excel"))
 
     def change_tab(self):
         '''
@@ -310,8 +312,8 @@ class Ui_MainWindow(object):
                 msg.setWindowTitle("Error")
                 msg.exec_()
                 return
-            if '.csv' not in self.export_filename_textedit.toPlainText():
-                self.export_path = self.export_path_textedit.toPlainText() + '/' + self.export_filename_textedit.toPlainText() + '.csv'
+            if '.xlsx' not in self.export_filename_textedit.toPlainText() or '.xls' not in self.export_filename_textedit.toPlainText():
+                self.export_path = self.export_path_textedit.toPlainText() + '/' + self.export_filename_textedit.toPlainText() + '.xlsx'
             else:
                 self.export_path = self.export_path_textedit.toPlainText() + '/' + self.export_filename_textedit.toPlainText()
 
@@ -326,7 +328,7 @@ class Ui_MainWindow(object):
         '''
         When user hits the tool button,
         a dialog appears, in order the user to choose the folder
-        in which the csv will be exported after the completion of search
+        in which the excel will be exported after the completion of search
 
         '''
         print('opened')
@@ -336,13 +338,13 @@ class Ui_MainWindow(object):
     def open_file_dialog(self):
         '''
         When user hits the add button,
-        a dialog appears, in order the user to choose csv file
+        a dialog appears, in order the user to choose excel file
         When ok is clicked, file's path is added to list widget
 
         '''
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        filenames = QFileDialog.getOpenFileNames(None,"Open", "","Text Files (*.csv)", options=options)
+        filenames = QFileDialog.getOpenFileNames(None,"Open", "","Excel Files (*.xlsx, *.xls)", options=options)
         for filename in filenames[0]:
             self.listWidget.addItem(filename)
 
@@ -356,10 +358,10 @@ class Ui_MainWindow(object):
         for item in list_items:
             self.listWidget.takeItem(self.listWidget.row(item))
 
-    def export_csv_checkbox_function(self):
+    def export_excel_checkbox_function(self):
 
         '''
-        If user unchecks the "Export CSV", then
+        If user unchecks the "Export excel", then
         he will not be able to choose path or filename (because there will be no file)
 
         '''
@@ -400,7 +402,7 @@ class Ui_MainWindow(object):
         limits.append('  AND  ( LIMIT-TO ( SRCTYPE ,  "'+src_type+'" )')
 
         if self.article_checkbox.isChecked():
-            limits.append('  AND  ( LIMIT-TO ( DOCTYPE ,  "ar" )')
+            limits.append('  AND  ( LIMIT-TO ( DOCTYPE ,  "ar" ) ')
         if self.review_checkbox.isChecked():
             limits.append('  AND  LIMIT-TO ( DOCTYPE ,  "re" )')
         if self.conference_paper_checkbox.isChecked():
@@ -420,7 +422,7 @@ class Ui_MainWindow(object):
         return query
   
 class Ui_ScanDialog(object):
-    def setupUi(self, ScanDialog, MainWindow, query, csv_export, csv_path):
+    def setupUi(self, ScanDialog, MainWindow, query, excel_export, excel_path):
         self.MainWindow = MainWindow
         self.ScanDialog = ScanDialog
         self.ScanDialog.setObjectName("ScanDialog")
@@ -428,8 +430,8 @@ class Ui_ScanDialog(object):
         self.ScanDialog.setMaximumSize(QtCore.QSize(440, 108))
         self.ScanDialog.setMinimumSize(QtCore.QSize(440, 108))
         # self.ScanDialog.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);")
-        self.csv_export = csv_export
-        self.csv_path = csv_path
+        self.excel_export = excel_export
+        self.excel_path = excel_path
         self.buttonBox = QtWidgets.QDialogButtonBox(ScanDialog)
         # self.buttonBox.setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);\nborder-style: solid;\nborder-width: 5px;\nborder-radius: 10px;")
         self.buttonBox.setGeometry(QtCore.QRect(10, 70, 421, 32))
@@ -457,7 +459,7 @@ class Ui_ScanDialog(object):
         self.client.connect_to_server()
 
         self.search_thread = SearchThread(query=self.query, client=self.client)
-        self.analysis_thread = AnalysisThread(csv_path=self.csv_path, client=self.client, progressBar=self.progressBar)
+        self.analysis_thread = AnalysisThread(excel_path=self.excel_path, client=self.client, progressBar=self.progressBar)
         self.start_search()
 
     def start_search(self):
@@ -482,25 +484,10 @@ class Ui_ScanDialog(object):
             print('search response: ' +self.search_thread.response)  
             self.analysis_thread.total_docs_update.connect(self.set_progress_bar_max_value)
             self.analysis_thread.update_progress_bar.connect(self.update_progress_bar_value)
-            if self.csv_export:
-                self.analysis_thread.thread_finished.connect(self.write_to_csv)
+            if self.excel_export:
+                self.analysis_thread.thread_finished.connect(write_to_excel)
             self.analysis_thread.thread_finished.connect(self.open_question_box)
             self.analysis_thread.start()
-
-    def write_to_csv(self, results_lst):
-        '''
-        Takes a list of dictionaries (sources)
-        and writes all the info to csv file
-        '''
-        import xlsxwriter
-        
-        keys = results_lst[0].keys()
-                
-        with open(self.csv_path, 'w', encoding='utf-8') as output_file:
-            dict_writer = csv.DictWriter(output_file, keys)
-            dict_writer.writeheader()
-            dict_writer.writerows(results_lst)
-            print('written to csv')
 
     def open_question_box(self, results_lst):
         '''
@@ -612,9 +599,9 @@ class AnalysisThread(QtCore.QThread):
 
     thread_finished = QtCore.pyqtSignal(list)
     
-    def __init__(self, parent=None, csv_path=None, client=None, progressBar=None):
+    def __init__(self, parent=None, excel_path=None, client=None, progressBar=None):
         super(AnalysisThread, self).__init__(parent)
-        self.csv_path = csv_path
+        self.excel_path = excel_path
         self.client = client
         self.progressBar = progressBar
         self.stop = False
@@ -634,7 +621,7 @@ class AnalysisThread(QtCore.QThread):
                 response = self.client.update_process()
                 self.progressBar.setValue(response)
                 if total_docs == response:
-                    response_lst = self.client.get_response_lst()
+                    results_lst = self.client.get_response_lst()
                     self.client.disconnect()
                     print(f't.d: {total_docs}, response: {response}')
                     break
@@ -642,8 +629,8 @@ class AnalysisThread(QtCore.QThread):
             except:
                 return
                 
-        print(response_lst)
-        self.thread_finished.emit(response_lst)
+        print(results_lst)
+        self.thread_finished.emit([results_lst, self.excel_path])
 
     def stop_analysis(self):
         self.stop = True

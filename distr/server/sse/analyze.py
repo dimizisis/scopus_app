@@ -157,7 +157,7 @@ class DocumentPage():
         and creates a dictionary for each document with
         all the info needed
         '''
-        dictionary = {'Document Name': doc_name, 'Source Name': source_name, 'Year': year, 'Authors': authors, '# Authors': num_of_authors, 'Average Percentile': avg_percentile}
+        dictionary = {'#': i, 'Document Name': doc_name, 'Source Name': source_name, 'Year': year, 'Authors': authors, '# Authors': num_of_authors, 'Average Percentile': avg_percentile}
         dictionary.update(metrics)
         return dictionary
 
@@ -207,10 +207,6 @@ class DocumentPage():
             pages = paging_ul.find_elements_by_tag_name('li')
 
             next_page = next(page for page in pages if page.text == str(curr_page+1))
-
-            print(f'******* NEXT PAGE: {next_page.text}')
-
-            browser.execute_script("arguments[0].click();", next_page)
 
             try:
                 next_page.click()
