@@ -199,7 +199,7 @@ class Ui_MainWindow(object):
         self.add_btn = QtWidgets.QPushButton(self.import_tab)
         self.add_btn.setGeometry(QtCore.QRect(650, 10, 31, 23))
         scriptDir = os.path.dirname(os.path.realpath(__file__))
-        self.add_btn.setIcon(QIcon(scriptDir + os.path.sep + '\images\\branch-closed_hover.png'))
+        self.add_btn.setIcon(QIcon(scriptDir + os.path.sep + '\\style\\images\\branch-closed_hover.png'))
         self.add_btn.setObjectName("add_btn")
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -210,7 +210,7 @@ class Ui_MainWindow(object):
         self.add_btn.clicked.connect(self.open_file_dialog)
         self.remove_btn = QtWidgets.QPushButton(self.import_tab)
         self.remove_btn.setGeometry(QtCore.QRect(690, 10, 31, 23))
-        self.remove_btn.setIcon(QIcon(scriptDir + os.path.sep + 'images/branch-open_hover.png'))
+        self.remove_btn.setIcon(QIcon(scriptDir + os.path.sep + 'style\\images\\branch-open_hover.png'))
         self.remove_btn.setObjectName("remove_btn")
         self.remove_btn.setFont(font)
         self.remove_btn.clicked.connect(self.remove_selected_items)
@@ -238,7 +238,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuFile.menuAction())
 
         scriptDir = os.path.dirname(os.path.realpath(__file__))
-        self.MainWindow.setWindowIcon(QIcon(scriptDir + os.path.sep + 'images\\favicon.ico')) 
+        self.MainWindow.setWindowIcon(QIcon(scriptDir + os.path.sep + '\\style\\images\\favicon.ico')) 
 
         self.export_path = None
 
@@ -289,13 +289,10 @@ class Ui_MainWindow(object):
         self.tabWidget.setCurrentIndex(desired_index)
 
     def proceed_btn_search_function(self):
-
         '''
         When user hits proceed button, a scan dialog appears,
         which shows the progress of the expected search (progress bar & percentage of completion)
-
         '''
-
         if self.export_checkbox.isChecked():
             if not self.export_path_textedit.toPlainText():
                 msg = QtWidgets.QMessageBox()
@@ -324,12 +321,10 @@ class Ui_MainWindow(object):
         self.dialog.exec_()
 
     def open_directory_dialog(self):
-
         '''
         When user hits the tool button,
         a dialog appears, in order the user to choose the folder
         in which the excel will be exported after the completion of search
-
         '''
         print('opened')
         self.dir_ = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
@@ -340,7 +335,6 @@ class Ui_MainWindow(object):
         When user hits the add button,
         a dialog appears, in order the user to choose excel file
         When ok is clicked, file's path is added to list widget
-
         '''
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -359,13 +353,10 @@ class Ui_MainWindow(object):
             self.listWidget.takeItem(self.listWidget.row(item))
 
     def export_excel_checkbox_function(self):
-
         '''
         If user unchecks the "Export excel", then
         he will not be able to choose path or filename (because there will be no file)
-
         '''
-
         if not self.export_checkbox.isChecked():
             self.path_select_toolbtn.setEnabled(False)
             self.export_filename_textedit.setEnabled(False)
@@ -376,18 +367,15 @@ class Ui_MainWindow(object):
             self.export_filename_textedit.setStyleSheet("background-color: rgb(255, 255, 255);")
 
     def generate_query(self):
-
         '''
         This function generates a specific search query
         according to user's choices (from menu UI)
         Returns the query (str)
-
         '''
-
         limits = []
         
         pub_year = self.dateEdit.text()
-        limits.append('  AND  ( LIMIT-TO ( PUBYEAR ,  '+pub_year+' ) )')
+        limits.append(f'  AND  ( LIMIT-TO ( PUBYEAR ,  {pub_year} ) )')
 
         src_type = 'j' # by default
 
@@ -399,7 +387,7 @@ class Ui_MainWindow(object):
             src_type = 'k'
         elif self.src_type_combobox.currentText() == 'Conference Proceedings':
             src_type = 'p'
-        limits.append('  AND  ( LIMIT-TO ( SRCTYPE ,  "'+src_type+'" )')
+        limits.append(f'  AND  ( LIMIT-TO ( SRCTYPE ,  "{src_type}" )')
 
         if self.article_checkbox.isChecked():
             limits.append('  AND  ( LIMIT-TO ( DOCTYPE ,  "ar" ) ')
@@ -446,7 +434,7 @@ class Ui_ScanDialog(object):
         self.progressBar.setObjectName("progressBar")
 
         scriptDir = os.path.dirname(os.path.realpath(__file__))
-        self.ScanDialog.setWindowIcon(QIcon(scriptDir + os.path.sep + 'images\\favicon.ico')) 
+        self.ScanDialog.setWindowIcon(QIcon(scriptDir + os.path.sep + '\\style\\images\\favicon.ico')) 
 
         self.retranslateUi(ScanDialog)
         self.buttonBox.accepted.connect(ScanDialog.accept)
@@ -463,22 +451,18 @@ class Ui_ScanDialog(object):
         self.start_search()
 
     def start_search(self):
-
         '''
         This function starts a new thread,
         in order the search to begin (using the generated query)
         After search is done, document analysis begins
-        '''
-        
+        ''' 
         self.search_thread.finished.connect(self.start_doc_analysis)
         self.search_thread.start()
 
     def start_doc_analysis(self):
-
         '''
         This function starts a new thread,
         in order the analysis of the documents to begin
-
         '''
         if not self.search_thread.stop_operation and self.search_thread.response == 'ok':
             print('search response: ' +self.search_thread.response)  
@@ -496,7 +480,6 @@ class Ui_ScanDialog(object):
         he wants to open the results window or not
         Triggered when analysis operation is finished
         '''
-
         msg = QtWidgets.QMessageBox()
         msg.setIcon(QtWidgets.QMessageBox.Question)
         msg.setText('Analysis finished! Show results?')
@@ -523,7 +506,6 @@ class Ui_ScanDialog(object):
         and ends search and analysis operation
         Triggered on cancel click
         '''
-
         self.buttonBox.setEnabled(False)
         self.progressBar.setEnabled(False)
 
@@ -531,11 +513,6 @@ class Ui_ScanDialog(object):
             self.client.disconnect()
         except:
             print('No client found')
-
-        # try:
-        #     self.search_thread.stop_search()
-        # except:
-        #     print('no search thread found')
 
         try:
             self.analysis_thread.stop_analysis()
@@ -549,7 +526,6 @@ class Ui_ScanDialog(object):
         '''
         This function updates the progress bar
         according to the number of read documents
-
         '''
         self.progressBar.setValue(value)
 
@@ -557,7 +533,6 @@ class Ui_ScanDialog(object):
         '''
         This function is used once, in the beginning of analysis
         Sets the maximum value of progress bar
-
         '''
         self.progressBar.setMaximum(max_value)
 
@@ -571,7 +546,6 @@ class SearchThread(QtCore.QThread):
     Search thread
     Performs the document search in separated thread
     Query is generated according to user's selections (menu UI)
-
     '''
     stop_operation = False
     def __init__(self, parent=None, query='', client=None):
@@ -592,7 +566,6 @@ class AnalysisThread(QtCore.QThread):
     '''
     Analysis thread
     Performs the document analysis in separated thread
-
     '''
     total_docs_update = QtCore.pyqtSignal(int)
     update_progress_bar = QtCore.pyqtSignal(int)

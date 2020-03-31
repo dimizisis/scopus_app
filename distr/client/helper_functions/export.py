@@ -43,14 +43,29 @@ def write_to_excel(lst):
     workbook = xlsxwriter.Workbook(path)
     worksheet = workbook.add_worksheet('Table')
 
+    bold = workbook.add_format({'bold': True})
+
     for header in list(results_lst[0]):
         col=list(results_lst[0]).index(header) # we are keeping order.
-        worksheet.write(0,col,header) # we have written first row which is the header of worksheet also.
+        worksheet.write(0, col, header, bold) # we have written first row which is the header of worksheet also.
+
+    green_format = workbook.add_format({'bg_color': '#009933'})
+    blue_format = workbook.add_format({'bg_color': '#0099ff'})
+    yellow_format = workbook.add_format({'bg_color': '#ffcc00'})
+    red_format = workbook.add_format({'bg_color': '#ff3333'})
 
     row=1
     for d in results_lst:
         for _key,_value in d.items():
             col=list(results_lst[0]).index(_key)
+            if d['Average Percentile'] >= 95.0:
+                worksheet.set_row(row, cell_format=green_format)
+            elif d['Average Percentile'] >= 80.0:
+                worksheet.set_row(row, cell_format=blue_format)
+            elif d['Average Percentile'] >= 50.0:
+                worksheet.set_row(row, cell_format=yellow_format)
+            else:
+                worksheet.set_row(row, cell_format=red_format)
             worksheet.write(row,col,_value)
         row+=1 #enter the next row
 
