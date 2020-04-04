@@ -1,9 +1,14 @@
+
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 from matplotlib.ticker import FuncFormatter
 import numpy as np
+import sqlite3
+from builtins import any
+import re
+import pathlib
 
 PATH = 'C:\\Users\\Dimitris\\Desktop\\' # Set your path to the folder containing the .xlsx files
 
@@ -131,39 +136,55 @@ def create_citescore_max_by_year_barplot(df):
 
     return plot
 
-def create_authors_barplot(df):
-    '''
-    Creates a plot which shows the evolution
-    of maximum CiteScore over the years (CSVs)
-    '''
-
-    import pathlib
-    import sqlite3
-
-    PATH = ''
-
-    conn = sqlite3.connect(PATH)
+def fetch_professors_from_db(DB_PATH):
+    conn = sqlite3.connect(DB_PATH)
 
     cursor = conn.cursor()
 
     query = """SELECT name, surname, department FROM professors"""
     cursor.execute(query)
-    lst = cursor.fetchall()
+    professors = cursor.fetchall()
 
-    mylst = list()
+    return professors
 
-    for dtuple in lst:
-        indexes = list(df['Authors'].str.find(dtuple[1]))
+def create_author_list():
+    n=2
+    author_lst = list()
+    for authors in df['Authors']:
+        author_lst.append(list(map(str.strip, re.findall(",".join(["[^,]+"] * n), str(authors)))))
+    return author_lst
+
+def create_final_list(professors):
+    final_lst = list()
+    for professor in professors:
+        prof_name = str(professor[1]+', '+professor[0][:1]+'.')
+        indexes = list(df['Authors'].str.find(prof_name))
         indexes = [i for i in range(len(indexes)) if indexes[i] != -1]
-        print(indexes)
         average = float(df['Average Percentile'].iloc[indexes].mean())
-        mylst.append({'Name': dtuple[0], 'Surname': dtuple[1], 'Department': dtuple[2], 'Average': round(average, 3) if not pd.isna(average) else 0})
+        final_lst.append({'Name': professor[0] + ' ' + professor[1], 'Department': professor[2], 'Ranking': round(average, 3) if not pd.isna(average) else 0})
 
-    print(mylst)
+        for i in indexes:
+            pass
+
+    return final_lst
+
+def create_authors_overall_ranking_excel(df):
+    '''
+    Creates a plot which shows the evolution
+    of maximum CiteScore over the years (CSVs)
+    '''
+
+    DB_PATH = 'C:\\Users\\Dimitris\\scopus_app\\distr\\client\\test.db'
+
+    professors = fetch_professors_from_db(DB_PATH)
+
+    author_lst = create_author_list()
+
+    pd.DataFrame(create_final_list(professors)).to_excel('C:\\Users\\Dimitris\\Desktop\\professors.xlsx')
 
 # create_citescore_max_by_year_barplot(df)
 # create_num_of_documents_by_year_plot(df)
 # create_num_of_documents_by_year_plot_top_ten(df)
 # create_citescore_mean_by_year_plot(df)
 # create_avg_percentile_by_year_plot(df)
-create_authors_barplot(df)
+create_authors_overall_ranking_excel(df)

@@ -58,7 +58,7 @@ def get_final_lst(sid):
 def add_id(lst):
     i=1
     for d in lst:
-        d.update( {"#": i})
+        d.update({"#": i})
         i += 1
     return lst
 
