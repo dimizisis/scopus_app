@@ -338,7 +338,7 @@ class Ui_MainWindow(object):
         '''
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        filenames = QFileDialog.getOpenFileNames(None,"Open", "","Excel Files (*.xlsx, *.xls)", options=options)
+        filenames = QFileDialog.getOpenFileNames(None,"Open", "", 'Excel Files (*.xlsx *.xls)', options=options)
         for filename in filenames[0]:
             self.listWidget.addItem(filename)
 
