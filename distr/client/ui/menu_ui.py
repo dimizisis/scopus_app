@@ -43,7 +43,7 @@ class ListView(QtWidgets.QListWidget):
         Else, it is not accepted
         '''
         for url in e.mimeData().urls():
-            if magic.from_file(url.toLocalFile()) == 'ASCII text':
+            if magic.from_file(url.toLocalFile()) == 'Microsoft Excel 2007+':
                 self.addItem(url.toLocalFile())
             else:
                 print(magic.from_file(url.toLocalFile()))
@@ -218,6 +218,23 @@ class Ui_MainWindow(object):
         self.proceed_btn_stats.setGeometry(QtCore.QRect(620, 250, 101, 41))
         self.proceed_btn_stats.setObjectName("proceed_btn_stats")
         self.tabWidget.addTab(self.import_tab, "")
+
+        self.database_tab = QtWidgets.QWidget()
+        self.database_tab.setObjectName("database_tab")
+        self.database_table = QtWidgets.QTableWidget(self.database_tab)
+        self.database_table.setSortingEnabled(True)
+        self.database_table.setGeometry(QtCore.QRect(10, 10, 711, 221))
+        self.database_table.setObjectName("database_table")
+        self.database_table.setColumnCount(9)
+        self.delete_db_btn = QtWidgets.QCommandLinkButton(self.database_tab)
+        self.delete_db_btn.setGeometry(QtCore.QRect(10, 250, 185, 41))
+        self.delete_db_btn.setObjectName("delete_db_btn")
+        self.db_export_stats_btn = QtWidgets.QCommandLinkButton(self.database_tab)
+        self.db_export_stats_btn.setGeometry(QtCore.QRect(540, 250, 185, 41))
+        self.db_export_stats_btn.setObjectName("db_export_stats_btn")
+        self.tabWidget.addTab(self.database_tab, "")
+        self.load_initial_data()
+
         self.MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 750, 21))
@@ -280,13 +297,39 @@ class Ui_MainWindow(object):
         self.remove_btn.setToolTip(_translate("MainWindow", "Remove excel from list"))
         self.add_btn.setToolTip(_translate("MainWindow", "Add excel"))
 
+        self.delete_db_btn.setText(_translate("MainWindow", "Delete..."))
+        self.db_export_stats_btn.setText(_translate("MainWindow", "Export Statistics"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.database_tab), _translate("MainWindow", "Database"))
+
     def change_tab(self):
         '''
         Changes current tab
         Triggered when CTRL+Tab is pressed
         '''
-        desired_index = abs(self.tabWidget.currentIndex() - 1)
+        desired_index = (self.tabWidget.currentIndex() + 1) % self.tabWidget.count()
         self.tabWidget.setCurrentIndex(desired_index)
+    
+    def load_initial_data(self):
+
+        import db
+        
+        rows = db.get_all_records()
+
+        self.database_table.setHorizontalHeaderLabels(['Document Name', '# Authors', 'Authors', 'Year', 'Source Name', 'Average Percentile', 'CiteScore', 'SJR', 'SNIP'])
+
+        for row in rows:
+            inx = rows.index(row)
+            self.database_table.insertRow(inx)
+            # add more if there is more columns in the database.
+            self.database_table.setItem(inx, 0, QtWidgets.QTableWidgetItem(str(row[0])))
+            self.database_table.setItem(inx, 1, QtWidgets.QTableWidgetItem(str(row[1])))
+            self.database_table.setItem(inx, 2, QtWidgets.QTableWidgetItem(str(row[2])))
+            self.database_table.setItem(inx, 3, QtWidgets.QTableWidgetItem(str(row[3])))
+            self.database_table.setItem(inx, 4, QtWidgets.QTableWidgetItem(str(row[4])))
+            self.database_table.setItem(inx, 5, QtWidgets.QTableWidgetItem(str(row[5])))
+            self.database_table.setItem(inx, 6, QtWidgets.QTableWidgetItem(str(row[6])))
+            self.database_table.setItem(inx, 7, QtWidgets.QTableWidgetItem(str(round(row[7], 3))))
+            self.database_table.setItem(inx, 8, QtWidgets.QTableWidgetItem(str(round(row[8], 3))))
 
     def proceed_btn_search_function(self):
         '''

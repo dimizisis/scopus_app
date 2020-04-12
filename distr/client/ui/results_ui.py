@@ -125,6 +125,7 @@ class Ui_ResultsWindow(object):
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
+        self.tableWidget.setSortingEnabled(True)
         self.statistics_btn = QtWidgets.QPushButton(self.centralwidget)
         self.statistics_btn.setStyleSheet("QPushButton\n"
 "{\n"

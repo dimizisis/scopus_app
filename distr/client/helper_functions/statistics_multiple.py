@@ -141,7 +141,7 @@ def fetch_professors_from_db(DB_PATH):
 
     cursor = conn.cursor()
 
-    query = """SELECT name, surname, department FROM professors"""
+    query = """SELECT name, surname, department FROM uni_professors"""
     cursor.execute(query)
     professors = cursor.fetchall()
 
@@ -162,9 +162,6 @@ def create_final_list(professors):
         indexes = [i for i in range(len(indexes)) if indexes[i] != -1]
         average = float(df['Average Percentile'].iloc[indexes].mean())
         final_lst.append({'Name': professor[0] + ' ' + professor[1], 'Department': professor[2], 'Ranking': round(average, 3) if not pd.isna(average) else 0})
-
-        for i in indexes:
-            pass
 
     return final_lst
 
