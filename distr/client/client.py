@@ -29,8 +29,6 @@ class DesktopClientNamespace(socketio.ClientNamespace):
 
     NAMESPACE, HOST, EVENTS = import_settings()
 
-    print(HOST)
-
     def __init__(self, namespace=None):
         super().__init__(namespace=namespace)
 
@@ -55,8 +53,11 @@ class DesktopClientNamespace(socketio.ClientNamespace):
         print('disconnected from server')
         
     def connect_to_server(self):
-        sio.connect(self.HOST)
-        return True
+        try:
+            sio.connect(self.HOST)
+        except Exception as e:
+            return False, str(e)
+        return True, True
 
     def update_process(self):
         response = sio.call(event=self.EVENTS['update_event'])

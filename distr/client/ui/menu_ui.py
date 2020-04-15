@@ -1,18 +1,12 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtGui import QKeySequence
-import threading
 import re
-import ui.results_ui as results_ui
 from pyqtspinner.spinner import WaitingSpinner
 import magic
 import os
-import sys
-sys.path.append('../')
-from helper_functions.export import write_to_excel
-from client import DesktopClientNamespace, progress, response_lst
+from ui.dialogs.scan_dialog import Ui_ScanDialog
 
 class ListView(QtWidgets.QListWidget):
     '''
@@ -52,7 +46,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
         self.MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(750, 391)
+        self.MainWindow.resize(750, 391)
         self.MainWindow.setMinimumSize(QtCore.QSize(750, 391))
         self.MainWindow.setMaximumSize(QtCore.QSize(750, 391))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -229,11 +223,14 @@ class Ui_MainWindow(object):
         self.delete_db_btn = QtWidgets.QCommandLinkButton(self.database_tab)
         self.delete_db_btn.setGeometry(QtCore.QRect(10, 250, 185, 41))
         self.delete_db_btn.setObjectName("delete_db_btn")
+        # self.delete_db_btn.setStyleSheet('background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 rgb(120,120,120), stop: 1 rgb(80,80,80));')
+        self.delete_db_btn.setIcon(QIcon(scriptDir + os.path.sep + 'style\\images\\delete.png'))
+        self.delete_db_btn.clicked.connect(self.open_delete_from_db_dialog)
         self.db_export_stats_btn = QtWidgets.QCommandLinkButton(self.database_tab)
         self.db_export_stats_btn.setGeometry(QtCore.QRect(540, 250, 185, 41))
         self.db_export_stats_btn.setObjectName("db_export_stats_btn")
         self.tabWidget.addTab(self.database_tab, "")
-        self.load_initial_data()
+        self.load_data_from_db()
 
         self.MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -265,7 +262,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Menu"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "ScopusAnalyzer - Menu"))
         self.search_settings_grpbox.setTitle(_translate("MainWindow", "Search Settings"))
         self.uni_radio_btn.setText(_translate("MainWindow", "University Of Macedonia"))
         self.year_label.setText(_translate("MainWindow", "Year:"))
@@ -309,9 +306,11 @@ class Ui_MainWindow(object):
         desired_index = (self.tabWidget.currentIndex() + 1) % self.tabWidget.count()
         self.tabWidget.setCurrentIndex(desired_index)
     
-    def load_initial_data(self):
+    def load_data_from_db(self):
 
-        import db
+        import database.db as db
+
+        self.database_table.setRowCount(0)
         
         rows = db.get_all_records()
 
@@ -320,16 +319,23 @@ class Ui_MainWindow(object):
         for row in rows:
             inx = rows.index(row)
             self.database_table.insertRow(inx)
-            # add more if there is more columns in the database.
-            self.database_table.setItem(inx, 0, QtWidgets.QTableWidgetItem(str(row[0])))
-            self.database_table.setItem(inx, 1, QtWidgets.QTableWidgetItem(str(row[1])))
-            self.database_table.setItem(inx, 2, QtWidgets.QTableWidgetItem(str(row[2])))
-            self.database_table.setItem(inx, 3, QtWidgets.QTableWidgetItem(str(row[3])))
-            self.database_table.setItem(inx, 4, QtWidgets.QTableWidgetItem(str(row[4])))
-            self.database_table.setItem(inx, 5, QtWidgets.QTableWidgetItem(str(row[5])))
-            self.database_table.setItem(inx, 6, QtWidgets.QTableWidgetItem(str(row[6])))
-            self.database_table.setItem(inx, 7, QtWidgets.QTableWidgetItem(str(round(row[7], 3))))
-            self.database_table.setItem(inx, 8, QtWidgets.QTableWidgetItem(str(round(row[8], 3))))
+            for i in range(0, 9):
+                if i != 7 and i != 8:
+                    self.database_table.setItem(inx, i, QtWidgets.QTableWidgetItem(str(row[i])))
+                else:
+                    self.database_table.setItem(inx, i, QtWidgets.QTableWidgetItem(str(round(row[i], 3))))
+
+    def open_delete_from_db_dialog(self):
+        from ui.dialogs.delete_from_db_dialog import Ui_deleteDialog
+
+        self.db_dialog = QtWidgets.QDialog()
+        self.db_dialog.dialog_ui = Ui_deleteDialog()
+        self.db_dialog.dialog_ui.setupUi(deleteDialog=self.db_dialog)
+        self.db_dialog.exec_()
+
+        self.load_data_from_db()
+
+        return
 
     def proceed_btn_search_function(self):
         '''
@@ -357,11 +363,11 @@ class Ui_MainWindow(object):
             else:
                 self.export_path = self.export_path_textedit.toPlainText() + '/' + self.export_filename_textedit.toPlainText()
 
-        self.dialog = None
         self.dialog = QtWidgets.QDialog()
         self.dialog.dialog_ui = Ui_ScanDialog()
-        self.dialog.dialog_ui.setupUi(self.dialog, self.MainWindow, self.generate_query(), self.export_checkbox.isChecked(), self.export_path)
-        self.dialog.exec_()
+        success = self.dialog.dialog_ui.setupUi(self.dialog, self.MainWindow, self.generate_query(), self.export_checkbox.isChecked(), self.export_path)
+        if success:
+            self.dialog.exec_()
 
     def open_directory_dialog(self):
         '''
@@ -369,7 +375,6 @@ class Ui_MainWindow(object):
         a dialog appears, in order the user to choose the folder
         in which the excel will be exported after the completion of search
         '''
-        print('opened')
         self.dir_ = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
         self.export_path_textedit.setText(self.dir_)
 
@@ -451,202 +456,3 @@ class Ui_MainWindow(object):
         print(query)
 
         return query
-  
-class Ui_ScanDialog(object):
-    def setupUi(self, ScanDialog, MainWindow, query, excel_export, excel_path):
-        self.MainWindow = MainWindow
-        self.ScanDialog = ScanDialog
-        self.ScanDialog.setObjectName("ScanDialog")
-        self.ScanDialog.resize(440, 108)
-        self.ScanDialog.setMaximumSize(QtCore.QSize(440, 108))
-        self.ScanDialog.setMinimumSize(QtCore.QSize(440, 108))
-        # self.ScanDialog.setStyleSheet("background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 darkslategray, stop:1 grey);")
-        self.excel_export = excel_export
-        self.excel_path = excel_path
-        self.buttonBox = QtWidgets.QDialogButtonBox(ScanDialog)
-        # self.buttonBox.setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);\nborder-style: solid;\nborder-width: 5px;\nborder-radius: 10px;")
-        self.buttonBox.setGeometry(QtCore.QRect(10, 70, 421, 32))
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setEnabled(False)
-        self.progressBar = QtWidgets.QProgressBar(ScanDialog)
-        self.progressBar.setGeometry(QtCore.QRect(10, 20, 421, 23))
-        self.progressBar.setProperty("value", 0)
-        self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
-        self.progressBar.setObjectName("progressBar")
-
-        scriptDir = os.path.dirname(os.path.realpath(__file__))
-        self.ScanDialog.setWindowIcon(QIcon(scriptDir + os.path.sep + '\\style\\images\\favicon.ico')) 
-
-        self.retranslateUi(ScanDialog)
-        self.buttonBox.accepted.connect(ScanDialog.accept)
-        self.buttonBox.rejected.connect(self.cancel_analysis)
-        QtCore.QMetaObject.connectSlotsByName(ScanDialog)
-
-        self.query = query
-
-        self.client = DesktopClientNamespace()
-        self.client.connect_to_server()
-
-        self.search_thread = SearchThread(query=self.query, client=self.client)
-        self.analysis_thread = AnalysisThread(excel_path=self.excel_path, client=self.client, progressBar=self.progressBar)
-        self.start_search()
-
-    def start_search(self):
-        '''
-        This function starts a new thread,
-        in order the search to begin (using the generated query)
-        After search is done, document analysis begins
-        ''' 
-        self.search_thread.finished.connect(self.start_doc_analysis)
-        self.search_thread.start()
-
-    def start_doc_analysis(self):
-        '''
-        This function starts a new thread,
-        in order the analysis of the documents to begin
-        '''
-        if not self.search_thread.stop_operation and self.search_thread.response == 'ok':
-            print('search response: ' +self.search_thread.response)  
-            self.analysis_thread.total_docs_update.connect(self.set_progress_bar_max_value)
-            self.analysis_thread.update_progress_bar.connect(self.update_progress_bar_value)
-            if self.excel_export:
-                self.analysis_thread.thread_finished.connect(write_to_excel)
-            self.analysis_thread.thread_finished.connect(self.open_question_box)
-            self.analysis_thread.start()
-
-    def open_question_box(self, results_lst):
-        '''
-        This function opens a question box
-        in order to ask the user whether
-        he wants to open the results window or not
-        Triggered when analysis operation is finished
-        '''
-        msg = QtWidgets.QMessageBox()
-        msg.setIcon(QtWidgets.QMessageBox.Question)
-        msg.setText('Analysis finished! Show results?')
-        msg.setStandardButtons(QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No)
-        msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
-        msg.setWindowTitle("Success")
-        reply = msg.exec_()
-
-        if reply == QtWidgets.QMessageBox.Yes:
-            
-            self.ScanDialog.close()
-            self.MainWindow.close()
-            self.ResultsWindow = QtWidgets.QMainWindow()
-            self.results_ui = results_ui.Ui_ResultsWindow()
-            self.results_ui.setupUi(self.ResultsWindow, results_lst)
-            self.ResultsWindow.show()
-
-        elif reply == QtWidgets.QMessageBox.No:
-            self.ScanDialog.close()
-
-    def cancel_analysis(self):
-        '''
-        This function closes scan dialog
-        and ends search and analysis operation
-        Triggered on cancel click
-        '''
-        self.buttonBox.setEnabled(False)
-        self.progressBar.setEnabled(False)
-
-        try:
-            self.client.disconnect()
-        except:
-            print('No client found')
-
-        try:
-            self.analysis_thread.stop_analysis()
-            print('analysis stopped')
-        except:
-            print('No analysis thread found')
-
-        self.ScanDialog.close()
-        
-    def update_progress_bar_value(self, value):
-        '''
-        This function updates the progress bar
-        according to the number of read documents
-        '''
-        self.progressBar.setValue(value)
-
-    def set_progress_bar_max_value(self, max_value):
-        '''
-        This function is used once, in the beginning of analysis
-        Sets the maximum value of progress bar
-        '''
-        self.progressBar.setMaximum(max_value)
-
-    def retranslateUi(self, ScanDialog):
-        _translate = QtCore.QCoreApplication.translate
-        ScanDialog.setWindowTitle(_translate("ScanDialog", "Scanning..."))
-        self.progressBar.setFormat(_translate("ScanDialog", "%p%"))
-
-class SearchThread(QtCore.QThread):
-    '''
-    Search thread
-    Performs the document search in separated thread
-    Query is generated according to user's selections (menu UI)
-    '''
-    stop_operation = False
-    def __init__(self, parent=None, query='', client=None):
-        super(SearchThread, self).__init__(parent)
-        self.query = query
-        self.client = client
-        self.response = None
-
-    # run method gets called when we start the thread
-    def run(self):
-        try:
-            self.response = self.client.make_search_request(self.query)
-            print(self.response)
-        except:
-            return
-
-class AnalysisThread(QtCore.QThread):
-    '''
-    Analysis thread
-    Performs the document analysis in separated thread
-    '''
-    total_docs_update = QtCore.pyqtSignal(int)
-    update_progress_bar = QtCore.pyqtSignal(int)
-
-    thread_finished = QtCore.pyqtSignal(list)
-    
-    def __init__(self, parent=None, excel_path=None, client=None, progressBar=None):
-        super(AnalysisThread, self).__init__(parent)
-        self.excel_path = excel_path
-        self.client = client
-        self.progressBar = progressBar
-        self.stop = False
-
-    # run method gets called when we start the thread
-    def run(self):
-        total_docs = self.client.get_total_docs()
-        self.total_docs_update.emit(total_docs)
-        self.client.start_analyzing()
-
-        import time
-
-        while True:
-            if self.stop:
-                return
-            try:
-                response = self.client.update_process()
-                self.progressBar.setValue(response)
-                if total_docs == response:
-                    results_lst = self.client.get_response_lst()
-                    self.client.disconnect()
-                    print(f't.d: {total_docs}, response: {response}')
-                    break
-                time.sleep(5)
-            except:
-                return
-                
-        print(results_lst)
-        self.thread_finished.emit([results_lst, self.excel_path])
-
-    def stop_analysis(self):
-        self.stop = True

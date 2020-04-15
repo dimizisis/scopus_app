@@ -1,9 +1,14 @@
 
 from PyQt5 import QtWidgets
-import ui.menu_ui as menu_ui
+from ui.menu_ui import Ui_MainWindow
 import sys
 import os
 import re
+import ctypes
+
+# icon init
+myappid = 'uom.scopus.scopusanalyzer.1' # arbitrary string
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 def open_qss(path):
     """
@@ -28,7 +33,7 @@ if __name__ == '__main__':
     qss = open_qss(os.path.dirname(os.path.abspath(__file__))+'\\ui\style\\stylesheet.qss')
     app.setStyleSheet(qss)
     MainWindow = QtWidgets.QMainWindow()
-    ui = menu_ui.Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    menu = Ui_MainWindow()
+    menu.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
