@@ -3,11 +3,14 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtGui import QIcon
 import sys
 sys.path.append('../')
+sys.path.append('../../')
 from helper_functions.export import write_to_excel
 from client import DesktopClientNamespace, progress, response_lst
+import database.db as db
+import ui.results_ui as results_ui
 
 class Ui_ScanDialog(object):
-    def setupUi(self, ScanDialog, MainWindow, query, excel_export, excel_path):
+    def setupUi(self, ScanDialog, MainWindow, query, excel_export, excel_path, db_save):
 
         import os
         scriptDir = os.path.dirname(os.path.realpath(__file__))
@@ -24,11 +27,6 @@ class Ui_ScanDialog(object):
             msg.setWindowTitle('Failed to connect')
             reply = msg.exec_()
             return False
-        else:
-            import dialogs.threads as threads
-            self.search_thread = threads.SearchThread(query=self.query, client=self.client)
-            self.analysis_thread = threads.AnalysisThread(excel_path=self.excel_path, client=self.client, progressBar=self.progressBar)
-            self.start_search()
 
         self.MainWindow = MainWindow
         self.ScanDialog = ScanDialog
@@ -38,6 +36,7 @@ class Ui_ScanDialog(object):
         self.ScanDialog.setMinimumSize(QtCore.QSize(440, 108))
         self.excel_export = excel_export
         self.excel_path = excel_path
+        self.db_save = db_save
         self.buttonBox = QtWidgets.QDialogButtonBox(ScanDialog)
         self.buttonBox.setGeometry(QtCore.QRect(10, 70, 421, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -57,6 +56,11 @@ class Ui_ScanDialog(object):
         QtCore.QMetaObject.connectSlotsByName(ScanDialog)
 
         self.query = query
+
+        import ui.dialogs.threads as threads
+        self.search_thread = threads.SearchThread(query=self.query, client=self.client)
+        self.analysis_thread = threads.AnalysisThread(excel_path=self.excel_path, client=self.client, progressBar=self.progressBar)
+        self.start_search()
 
         return True
 
@@ -80,6 +84,8 @@ class Ui_ScanDialog(object):
             self.analysis_thread.update_progress_bar.connect(self.update_progress_bar_value)
             if self.excel_export:
                 self.analysis_thread.thread_finished.connect(write_to_excel)
+            if self.db_save:
+                self.analysis_thread.thread_finished.connect(db.save_to_db)
             self.analysis_thread.thread_finished.connect(self.open_question_box)
             self.analysis_thread.start()
 
@@ -99,8 +105,6 @@ class Ui_ScanDialog(object):
         reply = msg.exec_()
 
         if reply == QtWidgets.QMessageBox.Yes:
-
-            import results_ui
             
             self.ScanDialog.close()
             self.MainWindow.close()

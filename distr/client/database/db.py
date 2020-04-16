@@ -69,6 +69,30 @@ def perform_deletion(year):
 
 # df[['doc_name', 'authors_num', 'authors', 'year', '']].to_sql('CARS', conn, index = False)
 
+def save_to_db(lst):
+
+    results_lst = lst[0]
+
+    df = pd.DataFrame(results_lst)
+
+    for index, row in df.iterrows():
+        try:
+            cursor.execute('SELECT source_id FROM sources WHERE source_name = ?', (row['Source Name'],))
+            source = cursor.fetchone()
+            if not source:
+                cursor.execute('INSERT INTO sources VALUES (null,?,?,?,?,?)', row[['Source Name', 'CiteScore', 'SJR', 'SNIP', 'Average Percentile']])
+                tmp_lst = list(row[['Document Name', '# Authors', 'Authors', 'Year']])
+                tmp_lst.append(cursor.lastrowid)
+                cursor.execute('INSERT OR IGNORE INTO documents VALUES (null,?,?,?,?,?)', tmp_lst)
+            else:
+                tmp_lst = list(row[['Document Name', '# Authors', 'Authors', 'Year']])
+                tmp_lst.append(source[0])
+                cursor.execute('INSERT OR IGNORE INTO documents VALUES (null,?,?,?,?,?)', tmp_lst)
+        except Exception as e:
+            print(e)
+
+    conn.commit()
+
 def insert_from_excel(df):
 
     for index, row in df.iterrows():
@@ -85,10 +109,7 @@ def insert_from_excel(df):
                 tmp_lst.append(source[0])
                 cursor.execute('INSERT OR IGNORE INTO documents VALUES (null,?,?,?,?,?)', tmp_lst)
         except Exception as e:
-            pass
-            # print(source)
             print(e)
-            # break
 
     conn.commit()
 

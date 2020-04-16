@@ -1,15 +1,11 @@
+
 import eventlet
 eventlet.monkey_patch()
 import socketio
-from test import Analyzer
 from analyze import DocumentPage
 from search import SearchPage
-import test
 import init
-import db
-import os
 import threading
-import pylint.test.functional.init_subclass_classmethod_py36
 
 sio = socketio.Server()
 app = socketio.WSGIApp(sio)

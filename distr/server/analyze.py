@@ -157,7 +157,7 @@ class DocumentPage():
         and creates a dictionary for each document with
         all the info needed
         '''
-        dictionary = {'#': i, 'Document Name': doc_name, 'Source Name': source_name, 'Year': year, 'Authors': authors, '# Authors': num_of_authors, 'Average Percentile': avg_percentile}
+        dictionary = {'Document Name': doc_name, 'Source Name': source_name, 'Year': year, 'Authors': authors, '# Authors': num_of_authors, 'Average Percentile': avg_percentile}
         dictionary.update(metrics)
         return dictionary
 
