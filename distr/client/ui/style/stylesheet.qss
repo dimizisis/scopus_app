@@ -516,7 +516,6 @@ QGroupBox::title
 {
   padding: 2px 8px;
   subcontrol-origin: margin;
-  subcontrol-position: top center;
 }
 
 QGroupBox::indicator
@@ -1328,6 +1327,9 @@ QLabel
 /**** QLabel (disabled) ****/
 QLabel
 {
+  background-color: transparent;
+  color: rgb(220,220,220);
+  padding: 4px;
 }
 
 /*********************************************************************************************************/

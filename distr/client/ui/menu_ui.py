@@ -244,6 +244,7 @@ class Ui_MainWindow(object):
         self.db_export_stats_btn.setGeometry(QtCore.QRect(540, 250, 185, 41))
         self.db_export_stats_btn.setObjectName("db_export_stats_btn")
         self.db_export_stats_btn.setIcon(QIcon(scriptDir + os.path.sep + 'style\\images\\export.png'))
+        self.db_export_stats_btn.clicked.connect(self.open_export_stats_dialog)
         self.tabWidget.addTab(self.database_tab, "")
         self.load_data_from_db()
 
@@ -365,6 +366,14 @@ class Ui_MainWindow(object):
 
         return
 
+    def open_export_stats_dialog(self):
+        from ui.dialogs.export_dialog import Ui_exportDialog
+
+        self.export_dialog = QtWidgets.QDialog()
+        self.export_dialog.dialog_ui = Ui_exportDialog()
+        self.export_dialog.dialog_ui.setupUi(exportDialog=self.export_dialog)
+        self.export_dialog.exec_()
+
     def proceed_btn_search_function(self):
         '''
         When user hits proceed button, a scan dialog appears,
@@ -403,7 +412,10 @@ class Ui_MainWindow(object):
         a dialog appears, in order the user to choose the folder
         in which the excel will be exported after the completion of search
         '''
-        self.dir_ = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
+        if self.export_path_textedit.toPlainText():
+            self.dir_ = QFileDialog.getExistingDirectory(None, 'Select a folder:', self.export_path_textedit.toPlainText(), QFileDialog.ShowDirsOnly)
+        else:
+            self.dir_ = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
         self.export_path_textedit.setText(self.dir_)
 
     def open_file_dialog(self):

@@ -20,11 +20,11 @@ excel_lst = list()    # list that will contain all excel files
 
 for file in file_names:
 
-    excel = pd.read_excel(PATH + file, index_col = False)   # Read .excel file and append to list
+    excel = pd.read_excel(PATH + file, index_col = False)   # Read .xlsx file and append to list
 
     excel_lst.append(excel)
 
-df = pd.concat(excel_lst) # merge all csv read in one data frame (df that will be used for statistics)
+df = pd.concat(excel_lst, sort=True) # merge all csv read in one data frame (df that will be used for statistics)
 
 df = df.dropna()
 
@@ -161,7 +161,11 @@ def create_final_list(professors):
         indexes = list(df['Authors'].str.find(prof_name))
         indexes = [i for i in range(len(indexes)) if indexes[i] != -1]
         average = float(df['Average Percentile'].iloc[indexes].mean())
-        final_lst.append({'Name': professor[0] + ' ' + professor[1], 'Department': professor[2], 'Ranking': round(average, 3) if not pd.isna(average) else 0})
+        max_year = df['Year'].max().astype(int)
+        min_year = df['Year'].min().astype(int)
+        final_lst.append({'Name': professor[0] + ' ' + professor[1], 'Department': professor[2], 
+                            'Ranking': round(average, 3) if not pd.isna(average) else 0, 'Years': str(min_year) + ' - ' + str(max_year) 
+                                                                if min_year != max_year else min_year})
 
     return final_lst
 
@@ -171,7 +175,7 @@ def create_authors_overall_ranking_excel(df):
     of maximum CiteScore over the years (CSVs)
     '''
 
-    DB_PATH = 'C:\\Users\\Dimitris\\scopus_app\\distr\\client\\test.db'
+    DB_PATH = 'C:\\Users\\Dimitris\\scopus_app\\distr\\client\\database\\test.db'
 
     professors = fetch_professors_from_db(DB_PATH)
 

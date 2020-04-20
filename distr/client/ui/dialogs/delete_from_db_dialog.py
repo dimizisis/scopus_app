@@ -19,7 +19,7 @@ class Ui_deleteDialog(object):
         self.gridLayout.setObjectName("gridLayout")
         self.year_lbl = QtWidgets.QLabel(self.gridLayoutWidget)
         self.year_lbl.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.year_lbl.setStyleSheet("background-color: rgba(0,0,0,0%)")
+        self.year_lbl.setStyleSheet("background-color: transparent")
         self.year_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.year_lbl.setObjectName("year_lbl")
         self.gridLayout.addWidget(self.year_lbl, 0, 0, 1, 1)
@@ -29,7 +29,7 @@ class Ui_deleteDialog(object):
         self.buttonBox.setObjectName("buttonBox")
         self.buttonBox.accepted.connect(self.perform_deletion)
         self.buttonBox.accepted.connect(self.deleteDialog.accept)
-        self.buttonBox.rejected.connect(self.cancel)
+        self.buttonBox.rejected.connect(self.deleteDialog.close)
         self.gridLayout.addWidget(self.buttonBox, 1, 1, 1, 1)
         self.comboBox = QtWidgets.QComboBox(self.gridLayoutWidget)
         self.comboBox.setMaximumSize(QtCore.QSize(237, 20))
@@ -48,9 +48,6 @@ class Ui_deleteDialog(object):
         _translate = QtCore.QCoreApplication.translate
         deleteDialog.setWindowTitle(_translate("deleteDialog", "Delete from Database"))
         self.year_lbl.setText(_translate("deleteDialog", "Year:"))    
-
-    def cancel(self):
-        self.deleteDialog.close()
     
     def fetch_years_from_db(self):
         import database.db as db

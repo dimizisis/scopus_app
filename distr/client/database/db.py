@@ -41,8 +41,15 @@ def get_all_records():
 
     return all_recs
 
-def get_distinct_years():
-    query = """SELECT DISTINCT year FROM documents ORDER BY year DESC"""
+def get_records_by_year(years):
+    query = """SELECT doc_name, authors_num, authors, year, source_name, avg_percentile, citescore, sjr, snip FROM documents NATURAL JOIN sources WHERE year BETWEEN ? AND ? ORDER BY avg_percentile DESC"""
+    cursor.execute(query, [years])
+    all_recs = cursor.fetchall()
+
+    return all_recs
+
+def get_distinct_years(order='DESC'):
+    query = f"""SELECT DISTINCT year FROM documents ORDER BY year {order}"""
     cursor.execute(query)
     years = cursor.fetchall()
 
@@ -112,5 +119,11 @@ def insert_from_excel(df):
             print(e)
 
     conn.commit()
+def fetch_professors_from_db():
 
+    query = """SELECT name, surname, department FROM uni_professors"""
+    cursor.execute(query)
+    professors = cursor.fetchall()
+
+    return professors
 # insert_from_excel(read_excel())
