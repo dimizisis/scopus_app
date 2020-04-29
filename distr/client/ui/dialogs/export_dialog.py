@@ -158,7 +158,11 @@ class Ui_exportDialog(object):
         self.export_filename_textedit.setText(f'''STAT_EXPORT_{self.from_year_combobox.currentText()}-{self.to_year_combobox.currentText()}''' 
                                                 if self.from_year_combobox.currentText() != self.to_year_combobox.currentText() else f'''STAT_EXPORT_{self.from_year_combobox.currentText()}''')
         self.export_path_textedit.setText(scriptDir + os.path.sep)
-        
+
+        self.from_year_combobox.currentTextChanged.connect(self.change_filename)
+        self.to_year_combobox.currentTextChanged.connect(self.change_filename)
+
+        self.export_command_link_btn.clicked.connect(self.export)
 
         self.retranslateUi(exportDialog)
         QtCore.QMetaObject.connectSlotsByName(exportDialog)
@@ -177,12 +181,47 @@ class Ui_exportDialog(object):
         self.professor_stats_checkbox.setText(_translate("exportDialog", "Professor Statistics"))
         self.output_grpbox.setTitle(_translate("exportDialog", "Output File"))
         self.select_path_label.setText(_translate("exportDialog", "Select Export Path:"))
-        # self.export_path_textedit.setPlaceholderText(_translate("exportDialog", "Export Path..."))
         self.path_select_toolbtn.setToolTip(_translate("exportDialog", "Select export path for Excel"))
         self.path_select_toolbtn.setText(_translate("exportDialog", "..."))
         self.export_filename_label.setText(_translate("exportDialog", "Select Excel Filename:"))
         self.cancel_command_link_btn.setText(_translate("exportDialog", "Cancel"))
         self.export_command_link_btn.setText(_translate("exportDialog", "Export"))
+
+    def export(self):
+        if not self.years_are_correct():
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Warning)
+            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '..\\style\\images\\favicon.ico'))
+            msg.setText('Please enter valid from/to years.')
+            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
+            msg.setWindowTitle('Failed to connect')
+            reply = msg.exec_()
+            return
+
+        from export.statistics import StatisticsExportation
+
+        if not outfile_name:
+            self.outfile_name = f'STAT_EXPORT_{self.from_year_combobox.currentText()}-{self.to_year_combobox.currentText()}' if self.from_year_combobox.currentText() != self.to_year_combobox.currentText() else f'STAT_EXPORT_{self.from_year_combobox.currentText()}'
+
+        self.outpath = self.export_path_textedit.toPlainText() + '/' + (self.export_filename_textedit.toPlainText() 
+                            if '.xlsx' in self.export_filename_textedit.toPlainText() else self.export_filename_textedit.toPlainText() + '.xlsx')
+        
+        stats = StatisticsExportation(from_year=self.from_year_combobox.currentText(), to_year=self.to_year_combobox.currentText(), 
+                                        agg_data=self.aggregated_data_checkbox.isChecked(), stat_diagrams=self.diagrams_checkbox.isChecked(), 
+                                            department_stats=self.department_stats_checkbox.isChecked(), outpath=self.outpath)
+        stats.write_to_excel()
+
+    def change_filename(self):
+        ###### Set default export settings ######
+        if self.years_are_correct():
+            self.export_filename_textedit.setText(f'''STAT_EXPORT_{self.from_year_combobox.currentText()}-{self.to_year_combobox.currentText()}''' 
+                                                    if self.from_year_combobox.currentText() != self.to_year_combobox.currentText() else f'''STAT_EXPORT_{self.from_year_combobox.currentText()}''')
+
+    def years_are_correct(self):
+        if int(self.from_year_combobox.currentText()) <= int(self.to_year_combobox.currentText()):
+            return True
+        return False
 
     def fetch_years_from_db(self, order='DESC'):
         import database.db as db

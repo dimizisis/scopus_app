@@ -78,21 +78,29 @@ def create_plugin():
         return pluginfile
 
 def reset_browser(browser):
+    # options = Options()
+    # options.add_extension(create_plugin())
+    # options.add_argument('--no-proxy-server')
+    # options.add_argument("--start-maximized")
+    # capabilities = options.to_capabilities()
+    # user_agent = str(browser.execute_script("return navigator.userAgent;")).replace('Headless','')  # remove headless from user-agent (if headless is detected by site, our requests will be denied)
+    # browser.close() # close browser with old user-agent
+    # options.add_argument('user-agent={0}'.format(user_agent))   # update the user agent
+    # browser = webdriver.Remote(session_id=session_id, command_executor=url, desired_capabilities=capabilities)
+    # browser = webdriver.Chrome(executable_path=driver_path, port=int(url.split(':')[2]), options=options)
+    # browser.session_id = session_id
     browser.delete_all_cookies()
     browser.get(search_url)
-    search_field = WebDriverWait(browser, DELAY_TIME).until(    # when page is loaded, click query text box & send our query
-                EC.visibility_of_element_located((By.ID, 'searchfield')))
-    search_field.clear()
+    return browser
 
 def init_browser():
     options = Options()
     options.add_extension(create_plugin())
-    options.add_argument("--start-maximized")
-    # browser = webdriver.Chrome(options=options, executable_path=driver_path)
+    options.add_argument('--no-proxy-server')
+    # options.add_argument("--start-maximized")
     # user_agent = str(browser.execute_script("return navigator.userAgent;")).replace('Headless','')  # remove headless from user-agent (if headless is detected by site, our requests will be denied)
     # browser.close() # close browser with old user-agent
     # options.add_argument('user-agent={0}'.format(user_agent))   # update the user agent
-    # options.add_extension('proxy_auth_plugin.zip')
     browser = webdriver.Chrome(options=options, executable_path=driver_path)    # open browser with new user agent
     browser.get(search_url)
     return browser

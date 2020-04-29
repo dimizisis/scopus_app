@@ -24,14 +24,11 @@ class DocumentPage():
         self.count = 0
 
     def analyze_documents(self, sio, browser, final_lst):
-
         '''
         Scans every source & gets its rating
         Saves all percentiles, average of percentiles and name of source
         in a dictionary, which is appended in a list of dictionaries (all sources)
-
         '''
-
         curr_page = 1   # begin with page 1
         
         no_of_pages = self.get_number_of_pages(browser) # get total number of pages
@@ -43,8 +40,6 @@ class DocumentPage():
         # sio.emit(event='total_docs', data=total_docs, namespace='/desktop_client')
         self.count=1
         while True:
-
-            print(self.stop)
             
             if self.stop == True:
                 break
@@ -54,6 +49,15 @@ class DocumentPage():
                 author_list = author_rows.popleft()
                 source_name = source_rows.popleft()
                 year = year_rows.popleft()
+
+                doc_dict = next((src for src in final_lst if src['Source Name'] == source_name), None)
+
+                if doc_dict is not None:
+                    document_dict = self.create_dict(self.count, document_name, doc_dict['Source Name'], year, author_list, 
+                                        self.get_number_of_authors(author_list), doc_dict['Average Percentile'], zip(['CiteScore', 'SJR', 'SNIP'], [doc_dict['CiteScore'], doc_dict['SJR'], doc_dict['SNIP']]))
+                    final_lst.append(document_dict)
+                    self.count+=1
+                    continue
 
                 if source_name['clickable']:
                     source = WebDriverWait(browser, init.DELAY_TIME).until(    
@@ -120,7 +124,6 @@ class DocumentPage():
                         break
                 except:
                     break
-        
         # sio.emit(event='analyze_response', data=final_lst, namespace='/desktop_client')
 
     def stop_analysis(self):

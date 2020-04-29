@@ -4,15 +4,15 @@ from PyQt5.QtGui import QIcon
 import sys
 sys.path.append('../')
 sys.path.append('../../')
-from helper_functions.export import write_to_excel
+from export.statistics import StatisticsExportation
 from client import DesktopClientNamespace, progress, response_lst
 import database.db as db
 import ui.results_ui as results_ui
+import os
 
 class Ui_ScanDialog(object):
     def setupUi(self, ScanDialog, MainWindow, query, excel_export, excel_path, db_save):
 
-        import os
         scriptDir = os.path.dirname(os.path.realpath(__file__))
         self.client = DesktopClientNamespace()
         success = self.client.connect_to_server()
@@ -30,6 +30,10 @@ class Ui_ScanDialog(object):
 
         self.MainWindow = MainWindow
         self.ScanDialog = ScanDialog
+
+        self.ScanDialog.rejected.connect(self.cancel_analysis)
+        self.ScanDialog.rejected.connect(self.ScanDialog.close)
+
         self.ScanDialog.setObjectName("ScanDialog")
         self.ScanDialog.resize(440, 108)
         self.ScanDialog.setMaximumSize(QtCore.QSize(440, 108))
@@ -83,11 +87,24 @@ class Ui_ScanDialog(object):
             self.analysis_thread.total_docs_update.connect(self.set_progress_bar_max_value)
             self.analysis_thread.update_progress_bar.connect(self.update_progress_bar_value)
             if self.excel_export:
-                self.analysis_thread.thread_finished.connect(write_to_excel)
+                self.analysis_thread.thread_finished.connect(self.export_search_results)
             if self.db_save:
                 self.analysis_thread.thread_finished.connect(db.save_to_db)
             self.analysis_thread.thread_finished.connect(self.open_question_box)
             self.analysis_thread.start()
+
+    def export_search_results(self, lst):
+        
+        import pandas as pd
+
+        df = pd.DataFrame(lst[0])
+
+        year = int(df['Year'].unique())
+
+        stats = StatisticsExportation(from_year=year, to_year=year, 
+                                        agg_data=True, stat_diagrams=True, 
+                                            department_stats=True, outpath=self.excel_path, df=df)
+        stats.write_to_excel()
 
     def open_question_box(self, results_lst):
         '''
@@ -101,11 +118,11 @@ class Ui_ScanDialog(object):
         msg.setText('Analysis finished! Show results?')
         msg.setStandardButtons(QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No)
         msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
+        msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '..\\style\\images\\favicon.ico'))
         msg.setWindowTitle("Success")
         reply = msg.exec_()
 
-        if reply == QtWidgets.QMessageBox.Yes:
-            
+        if reply == QtWidgets.QMessageBox.Yes:          
             self.ScanDialog.close()
             self.MainWindow.close()
             self.ResultsWindow = QtWidgets.QMainWindow()

@@ -32,6 +32,11 @@ def read_excel():
     df = df.rename(columns={"# Authors": "authors_num", "Authors": "authors", "Average Percentile": "avg_percentile", "CiteScore": 
                                 "citescore", "Document Name": "doc_name", "SJR": "sjr", "SNIP": "snip", "Source Name": "source_name", "Year": "year"})
 
+    df['avg_percentile'] = df['avg_percentile'].astype(float)
+    df['citescore'] = df['citescore'].astype(float)
+    df['sjr'] = df['sjr'].astype(float)
+    df['snip'] = df['snip'].astype(float)
+
     return df
 
 def get_all_records():
@@ -41,12 +46,14 @@ def get_all_records():
 
     return all_recs
 
-def get_records_by_year(years):
+def get_df_by_year(years):
     query = """SELECT doc_name, authors_num, authors, year, source_name, avg_percentile, citescore, sjr, snip FROM documents NATURAL JOIN sources WHERE year BETWEEN ? AND ? ORDER BY avg_percentile DESC"""
-    cursor.execute(query, [years])
-    all_recs = cursor.fetchall()
-
-    return all_recs
+    # cursor.execute(query, years)
+    # all_recs = cursor.fetchall()
+    df = pd.read_sql_query(query, conn, params=years)
+    df = df.rename(columns={"authors_num": "# Authors", "authors": "Authors", "avg_percentile": "Average Percentile", "citescore": 
+                                "CiteScore", "doc_name": "Document Name", "sjr": "SJR", "snip": "SNIP", "source_name": "Source Name", "year": "Year"})
+    return df
 
 def get_distinct_years(order='DESC'):
     query = f"""SELECT DISTINCT year FROM documents ORDER BY year {order}"""
@@ -64,6 +71,14 @@ def perform_deletion(year):
     conn.commit()
 
     return True
+
+def is_db_empty():
+    query = """SELECT doc_name, authors_num, authors, year, source_name, avg_percentile, citescore, sjr, snip FROM documents NATURAL JOIN sources ORDER BY avg_percentile DESC"""
+    cursor.execute(query)
+    row = cursor.fetchone()
+    if row == None:
+        return True
+    return False
 
 # mylst = list()
 
@@ -126,4 +141,4 @@ def fetch_professors_from_db():
     professors = cursor.fetchall()
 
     return professors
-# insert_from_excel(read_excel())
+insert_from_excel(read_excel())

@@ -43,7 +43,9 @@ def get_total_docs(sid):
 @sio.event
 def analyze(sid):
     global doc_page
+    mutex.acquire()
     doc_page.analyze_documents(sio, browser, final_lst)
+    mutex.release()
 
 @sio.event
 def get_final_lst(sid):
@@ -51,10 +53,6 @@ def get_final_lst(sid):
     final_lst = sorted(final_lst, key = lambda i: i['Average Percentile'], reverse=True)
     final_lst = add_id(final_lst)
     return final_lst
-
-@sio.event
-def check_db(sid, data):
-    pass
 
 def add_id(lst):
     i=1
@@ -82,9 +80,8 @@ def disconnect(sid):
 def reset():
     global doc_page, search_page, final_lst, browser
     mutex.acquire()
-    final_lst = []
-    browser.close()
-    browser = init.init_browser()
+    final_lst = list()
+    browser = init.reset_browser(browser)
     mutex.release()
         
 if __name__ == '__main__':

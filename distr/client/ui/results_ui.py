@@ -69,6 +69,7 @@ class Ui_ResultsWindow(object):
         self.back_btn.clicked.connect(self.go_to_menu)
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
         self.tableWidget.setGeometry(QtCore.QRect(10, 10, 811, 241))
+        self.tableWidget.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
         self.tableWidget.setStyleSheet("QTableView\n"
 "{\n"
 "  alternate-background-color: rgb(110,110,110);\n"

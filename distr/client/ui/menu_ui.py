@@ -7,6 +7,15 @@ from pyqtspinner.spinner import WaitingSpinner
 import magic
 import os
 from ui.dialogs.scan_dialog import Ui_ScanDialog
+import database.db as db
+
+# class CustomDialog(QtWidgets.QDialog):
+#     def __init__(self):
+#         super(CustomDialog, self).__init__()
+    
+#     def closeEvent(self, event):
+#         self.Rejected.triggered.connect()
+#         self.close()
 
 class ListView(QtWidgets.QListWidget):
     '''
@@ -231,6 +240,7 @@ class Ui_MainWindow(object):
         self.database_table.setGeometry(QtCore.QRect(10, 10, 711, 221))
         self.database_table.setObjectName("database_table")
         self.database_table.setColumnCount(9)
+        self.database_table.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
         self.delete_db_btn = QtWidgets.QCommandLinkButton(self.horizontalLayoutWidget)
         self.delete_db_btn.setGeometry(QtCore.QRect(10, 250, 185, 41))
         self.delete_db_btn.setObjectName("delete_db_btn")
@@ -282,7 +292,6 @@ class Ui_MainWindow(object):
         self.MainWindow.setWindowIcon(QIcon(scriptDir + os.path.sep + '\\style\\images\\favicon.ico')) 
 
         self.export_path = None
-
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -337,8 +346,6 @@ class Ui_MainWindow(object):
     
     def load_data_from_db(self):
 
-        import database.db as db
-
         self.database_table.setRowCount(0)
         
         rows = db.get_all_records()
@@ -356,6 +363,15 @@ class Ui_MainWindow(object):
 
     def open_delete_from_db_dialog(self):
         from ui.dialogs.delete_from_db_dialog import Ui_deleteDialog
+
+        if db.is_db_empty():
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setText("Database is empty.")
+            msg.setWindowTitle("Empty Database")
+            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '\\style\\images\\favicon.ico')) 
+            msg.exec_()
+            return
 
         self.db_dialog = QtWidgets.QDialog()
         self.db_dialog.dialog_ui = Ui_deleteDialog()
@@ -385,6 +401,7 @@ class Ui_MainWindow(object):
                 msg.setIcon(QtWidgets.QMessageBox.Critical)
                 msg.setText("Please select a valid export path.")
                 msg.setWindowTitle("Error")
+                msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '\\style\\images\\favicon.ico')) 
                 msg.exec_()
                 return
 
@@ -393,6 +410,7 @@ class Ui_MainWindow(object):
                 msg.setIcon(QtWidgets.QMessageBox.Critical)
                 msg.setText('Please enter a valid output filename.')
                 msg.setWindowTitle("Error")
+                msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '\\style\\images\\favicon.ico')) 
                 msg.exec_()
                 return
             if '.xlsx' not in self.export_filename_textedit.toPlainText() or '.xls' not in self.export_filename_textedit.toPlainText():
@@ -402,7 +420,8 @@ class Ui_MainWindow(object):
 
         self.dialog = QtWidgets.QDialog()
         self.dialog.dialog_ui = Ui_ScanDialog()
-        success = self.dialog.dialog_ui.setupUi(self.dialog, self.MainWindow, self.generate_query(), self.export_checkbox.isChecked(), self.export_path, self.save_to_db_checkbox.isChecked())
+        success = self.dialog.dialog_ui.setupUi(self.dialog, self.MainWindow, 
+                    self.generate_query(), self.export_checkbox.isChecked(), self.export_path, self.save_to_db_checkbox.isChecked())
         if success:
             self.dialog.exec_()
 
