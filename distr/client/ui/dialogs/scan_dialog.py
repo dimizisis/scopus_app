@@ -11,16 +11,18 @@ import ui.results_ui as results_ui
 import os
 
 class Ui_ScanDialog(object):
+
+    ICON_PATH = os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '..\\style\\images\\favicon.ico'
+
     def setupUi(self, ScanDialog, MainWindow, query, excel_export, excel_path, db_save):
 
-        scriptDir = os.path.dirname(os.path.realpath(__file__))
         self.client = DesktopClientNamespace()
         success = self.client.connect_to_server()
 
         if not success[0]:
             msg = QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Warning)
-            msg.setWindowIcon(QIcon(scriptDir + os.path.sep + '..\\style\\images\\favicon.ico'))
+            msg.setWindowIcon(QIcon(self.ICON_PATH))
             msg.setText(success[1])
             msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
             msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
@@ -52,7 +54,7 @@ class Ui_ScanDialog(object):
         self.progressBar.setProperty("value", 0)
         self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
         self.progressBar.setObjectName("progressBar")
-        self.ScanDialog.setWindowIcon(QIcon(scriptDir + os.path.sep + '..\\style\\images\\favicon.ico')) 
+        self.ScanDialog.setWindowIcon(QIcon(self.ICON_PATH)) 
 
         self.retranslateUi(ScanDialog)
         self.buttonBox.accepted.connect(ScanDialog.accept)
@@ -118,7 +120,7 @@ class Ui_ScanDialog(object):
         msg.setText('Analysis finished! Show results?')
         msg.setStandardButtons(QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No)
         msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
-        msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '..\\style\\images\\favicon.ico'))
+        msg.setWindowIcon(QIcon(self.ICON_PATH))
         msg.setWindowTitle("Success")
         reply = msg.exec_()
 
