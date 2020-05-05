@@ -5,18 +5,29 @@ import socketio
 from analyze import DocumentPage
 from search import SearchPage
 import init
-import threading
+from threading import Lock
+import configparser
+import os
 
 sio = socketio.Server()
 app = socketio.WSGIApp(sio)
 
-mutex = threading.Lock()
+mutex = Lock()
 
 search_page = None
 doc_page = None
 
 final_lst = list()
 browser = init.init_browser()
+
+def import_settings():
+    parser = configparser.ConfigParser()
+    parser.read(os.path.dirname(os.path.realpath(__file__))+'/settings.ini')
+
+    ip = parser.get('SYSTEM_SETTINGS', 'IP')
+    port = int(parser.get('SYSTEM_SETTINGS', 'PORT'))
+
+    return ip, port
 
 @sio.event
 def connect(sid, environ):
@@ -81,8 +92,10 @@ def reset():
     global doc_page, search_page, final_lst, browser
     mutex.acquire()
     final_lst = list()
-    browser = init.reset_browser(browser)
+    browser.delete_all_cookies()
+    browser.get(init.search_url)
     mutex.release()
         
 if __name__ == '__main__':
-    eventlet.wsgi.server(eventlet.listen(('', 5000)), app)
+    ip, port = import_settings()
+    eventlet.wsgi.server(eventlet.listen((ip, port)), app)

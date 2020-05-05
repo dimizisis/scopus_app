@@ -12,7 +12,7 @@ progress = 0
 
 def import_settings():
     parser = configparser.ConfigParser()
-    parser.read(os.path.dirname(os.path.realpath(__file__))+'\\settings.ini')
+    parser.read(os.path.dirname(os.path.realpath(__file__))+'/settings.ini')
 
     events = dict()
     namespace = parser.get('SYSTEM_SETTINGS', 'CLIENT_NAMESPACE')
@@ -21,6 +21,7 @@ def import_settings():
     events.update({'update_event': parser.get('SYSTEM_SETTINGS', 'UPDATE_EVENT')})
     events.update({'get_lst_event': parser.get('SYSTEM_SETTINGS', 'GET_LIST_EVENT')})
     events.update({'search_event': parser.get('SYSTEM_SETTINGS', 'SEARCH_EVENT')})
+    events.update({'analyze_event': parser.get('SYSTEM_SETTINGS', 'ANALYSIS_EVENT')})
     events.update({'get_total_docs_event': parser.get('SYSTEM_SETTINGS', 'GET_TOTAL_DOCS_EVENT')})
 
     return namespace, host, events
@@ -77,7 +78,7 @@ class DesktopClientNamespace(socketio.ClientNamespace):
 
     def start_analyzing(self):
         print('emitted analyze event')
-        sio.emit(event='analyze')
+        sio.emit(event=self.EVENTS['analyze_event'])
 
     def get_total_docs(self):
         response = sio.call(event=self.EVENTS['get_total_docs_event'])
@@ -87,4 +88,4 @@ class DesktopClientNamespace(socketio.ClientNamespace):
         sio.disconnect()
         print('disconnected from server')
 
-sio.register_namespace(DesktopClientNamespace('/desktop_client'))
+sio.register_namespace(DesktopClientNamespace(DesktopClientNamespace.NAMESPACE))

@@ -1,5 +1,8 @@
 
 from PyQt5 import QtCore
+import sys
+sys.path.append('../../')
+from export.statistics import StatisticsExportation
 
 class SearchThread(QtCore.QThread):
     '''

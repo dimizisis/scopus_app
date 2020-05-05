@@ -4,8 +4,9 @@ import pathlib
 import pandas as pd
 import os
 import sys
+sys.path.append('../')
 
-PATH = 'C:\\Users\\Dimitris\\Desktop\\' # Set your path to the folder containing the .xlsx files
+PATH = 'C:/Users/Dimitris/Desktop/' # Set your path to the folder containing the .xlsx files
 
 def read_excel():
 
@@ -25,8 +26,8 @@ def read_excel():
 
     df = df.dropna()
 
-    df = df.rename(columns={"# Authors": "authors_num", "Authors": "authors", "Average Percentile": "avg_percentile", "CiteScore": 
-                                "citescore", "Document Name": "doc_name", "SJR": "sjr", "SNIP": "snip", "Source Name": "source_name", "Year": "year"})
+    df = df.rename(columns={'# Authors': 'authors_num', 'Authors': 'authors', 'Average Percentile': 'avg_percentile', 'CiteScore': 
+                                'citescore', 'Document Name': 'doc_name', 'SJR': 'sjr', 'SNIP': 'snip', 'Source Name': 'source_name', 'Year': 'year'})
 
     df['avg_percentile'] = df['avg_percentile'].astype(float)
     df['citescore'] = df['citescore'].astype(float)
@@ -35,7 +36,18 @@ def read_excel():
 
     return df
 
-DB_PATH = str(pathlib.Path(__file__).parent.absolute())+'\\test.db'
+def import_db_name():
+
+    import configparser
+
+    parser = configparser.ConfigParser()
+    parser.read('settings.ini')
+
+    db_name = parser.get('SYSTEM_SETTINGS', 'DATABASE')
+
+    return db_name if '.db' in db_name else f'{db_name}.db'
+
+DB_PATH = f'{str(pathlib.Path(__file__).parent.absolute())}\\{import_db_name()}'
 
 conn = sqlite3.connect(DB_PATH)
 

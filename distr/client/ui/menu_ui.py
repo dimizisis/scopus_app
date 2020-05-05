@@ -9,14 +9,6 @@ import os
 from ui.dialogs.scan_dialog import Ui_ScanDialog
 import database.db as db
 
-# class CustomDialog(QtWidgets.QDialog):
-#     def __init__(self):
-#         super(CustomDialog, self).__init__()
-    
-#     def closeEvent(self, event):
-#         self.Rejected.triggered.connect()
-#         self.close()
-
 class ListView(QtWidgets.QListWidget):
     '''
     Custom ListView (QListWidget) in order
@@ -369,7 +361,7 @@ class Ui_MainWindow(object):
             msg.setIcon(QtWidgets.QMessageBox.Critical)
             msg.setText("Database is empty.")
             msg.setWindowTitle("Empty Database")
-            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '\\style\\images\\favicon.ico')) 
+            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '/style/images/favicon.ico')) 
             msg.exec_()
             return
 
@@ -401,7 +393,7 @@ class Ui_MainWindow(object):
                 msg.setIcon(QtWidgets.QMessageBox.Critical)
                 msg.setText("Please select a valid export path.")
                 msg.setWindowTitle("Error")
-                msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '\\style\\images\\favicon.ico')) 
+                msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '/style/images/favicon.ico')) 
                 msg.exec_()
                 return
 
@@ -410,10 +402,10 @@ class Ui_MainWindow(object):
                 msg.setIcon(QtWidgets.QMessageBox.Critical)
                 msg.setText('Please enter a valid output filename.')
                 msg.setWindowTitle("Error")
-                msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '\\style\\images\\favicon.ico')) 
+                msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '/style/images/favicon.ico')) 
                 msg.exec_()
                 return
-            if '.xlsx' not in self.export_filename_textedit.toPlainText() or '.xls' not in self.export_filename_textedit.toPlainText():
+            if '.xlsx' not in self.export_filename_textedit.toPlainText():
                 self.export_path = self.export_path_textedit.toPlainText() + '/' + self.export_filename_textedit.toPlainText() + '.xlsx'
             else:
                 self.export_path = self.export_path_textedit.toPlainText() + '/' + self.export_filename_textedit.toPlainText()

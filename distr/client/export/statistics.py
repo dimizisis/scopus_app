@@ -22,16 +22,19 @@ def import_pub_data():
 
 class StatisticsExportation:
 
-    def __init__(self, from_year, to_year, agg_data=False, stat_diagrams=False, department_stats=False, outpath='C:\\export.', df=None):
+    def __init__(self, from_year, to_year, agg_data=False, stat_diagrams=False, department_stats=False, outpath='C:/export.xlsx', df=None):
         self.first_cat, self.second_cat, self.third_cat = import_pub_data()
         self.from_year = from_year
         self.to_year = to_year
         self.worksheet = None
         self.outpath = outpath
         self.export = {'agg_data': agg_data, 'stat_diagrams': stat_diagrams, 'department_stats': department_stats}
+        self.df = df
 
-        if not df.empty:
+        if self.df is None:
             self.df = db.get_df_by_year([from_year, to_year])
+
+        print(self.df)
 
     def create_num_of_documents_per_year_plot(self):
         '''
@@ -170,8 +173,12 @@ class StatisticsExportation:
             indexes = list(self.df['Authors'].str.find(prof_name))
             indexes = [i for i in range(len(indexes)) if indexes[i] != -1]
             average = float(self.df['Average Percentile'].iloc[indexes].mean())
-            max_year = self.df['Year'].max().astype(int)
-            min_year = self.df['Year'].min().astype(int)
+            try:
+                max_year = self.df['Year'].max().astype(int)
+                min_year = self.df['Year'].min().astype(int)
+            except:
+                max_year = int(self.df['Year'].max())
+                min_year = int(self.df['Year'].min())
             final_lst.append({'Name': professor[0] + ' ' + professor[1], 'Department': professor[2], 
                                 'Ranking': round(average, 3) if not pd.isna(average) else 0, 'Years': str(min_year) + ' - ' + str(max_year) 
                                                                     if min_year != max_year else min_year})
@@ -183,7 +190,6 @@ class StatisticsExportation:
         Creates a bar plot, which shows how many
         journals exist in each category (Average Percentile >= 95% etc.)
         '''
-
         categories = ['<= 50%', '50% - 79,9%', '80% - 94,99%', '>= 95%']
 
         first_category = self.df.loc[self.df['Average Percentile'] >= float(self.first_cat)]['Average Percentile']    # find all the journals with average percentile >= 95%
@@ -220,6 +226,8 @@ class StatisticsExportation:
         '''
         Writes all the info to excel file
         '''
+
+        print(self.outpath)
 
         # Create a Pandas Excel writer using XlsxWriter as the engine.
         writer = pd.ExcelWriter(path=self.outpath, engine='xlsxwriter')

@@ -9,10 +9,11 @@ from client import DesktopClientNamespace, progress, response_lst
 import database.db as db
 import ui.results_ui as results_ui
 import os
+import ui.dialogs.threads as threads
 
 class Ui_ScanDialog(object):
 
-    ICON_PATH = os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '..\\style\\images\\favicon.ico'
+    ICON_PATH = os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '../style/images/favicon.ico'
 
     def setupUi(self, ScanDialog, MainWindow, query, excel_export, excel_path, db_save):
 
@@ -63,7 +64,6 @@ class Ui_ScanDialog(object):
 
         self.query = query
 
-        import ui.dialogs.threads as threads
         self.search_thread = threads.SearchThread(query=self.query, client=self.client)
         self.analysis_thread = threads.AnalysisThread(excel_path=self.excel_path, client=self.client, progressBar=self.progressBar)
         self.start_search()
@@ -88,25 +88,28 @@ class Ui_ScanDialog(object):
             print('search response: ' +self.search_thread.response)  
             self.analysis_thread.total_docs_update.connect(self.set_progress_bar_max_value)
             self.analysis_thread.update_progress_bar.connect(self.update_progress_bar_value)
-            if self.excel_export:
-                self.analysis_thread.thread_finished.connect(self.export_search_results)
+            self.analysis_thread.thread_finished.connect(self.open_question_box)
             if self.db_save:
                 self.analysis_thread.thread_finished.connect(db.save_to_db)
-            self.analysis_thread.thread_finished.connect(self.open_question_box)
+            if self.excel_export:
+                self.analysis_thread.thread_finished.connect(self.export_search_results)
             self.analysis_thread.start()
 
     def export_search_results(self, lst):
-        
-        import pandas as pd
 
+        import pandas as pd
         df = pd.DataFrame(lst[0])
 
         year = int(df['Year'].unique())
+
+        print(self.excel_path)
 
         stats = StatisticsExportation(from_year=year, to_year=year, 
                                         agg_data=True, stat_diagrams=True, 
                                             department_stats=True, outpath=self.excel_path, df=df)
         stats.write_to_excel()
+
+        print('written to excel')
 
     def open_question_box(self, results_lst):
         '''
