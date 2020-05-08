@@ -1,7 +1,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon
-from PyQt5.Qt import QAbstractItemView
+from PyQt5.Qt import QAbstractItemView, Qt
 import os
 import sys
 sys.path.append('../../')
@@ -17,13 +17,13 @@ class Ui_Professors_Dialog(object):
         self.verticalLayoutWidget = QtWidgets.QWidget(Dialog)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 301, 211))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.tablewidget_verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.tablewidget_verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.tablewidget_verticalLayout.setObjectName("tablewidget_verticalLayout")
+        self.tree_widget_verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
+        self.tree_widget_verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.tree_widget_verticalLayout.setObjectName("tree_widget_verticalLayout")
         self.tree_widget = QtWidgets.QTreeWidget(self.verticalLayoutWidget)
         self.tree_widget.setColumnCount(3)
         self.tree_widget.setSelectionMode(QAbstractItemView.MultiSelection)
-        self.tablewidget_verticalLayout.addWidget(self.tree_widget)
+        self.tree_widget_verticalLayout.addWidget(self.tree_widget)
         self.select_deselect_all_horizontalLayout = QtWidgets.QHBoxLayout()
         self.select_deselect_all_horizontalLayout.setObjectName("select_deselect_all_horizontalLayout")
         self.deselect_all_btn = QtWidgets.QPushButton(self.verticalLayoutWidget)
@@ -32,11 +32,13 @@ class Ui_Professors_Dialog(object):
         self.select_all_btn = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.select_all_btn.setObjectName("select_all_btn")
         self.select_deselect_all_horizontalLayout.addWidget(self.select_all_btn)
-        self.tablewidget_verticalLayout.addLayout(self.select_deselect_all_horizontalLayout)
+        self.tree_widget_verticalLayout.addLayout(self.select_deselect_all_horizontalLayout)
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(Dialog)
         self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(220, 270, 91, 80))
         self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
         self.ok_cancel_verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
+        self.verticalLayoutWidget_2.setStyleSheet('background-color: transparent;')
+        self.verticalLayoutWidget_2.setAttribute(Qt.WA_NoSystemBackground)
         self.ok_cancel_verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.ok_cancel_verticalLayout.setObjectName("ok_cancel_verticalLayout")
         self.ok_btn = QtWidgets.QPushButton(self.verticalLayoutWidget_2)
@@ -59,7 +61,7 @@ class Ui_Professors_Dialog(object):
         Dialog.setWindowTitle(_translate("Select Professors", "Select Professors"))
         self.deselect_all_btn.setText(_translate("Dialog", "Deselect All"))
         self.select_all_btn.setText(_translate("Dialog", "Select All"))
-        self.ok_btn.setText(_translate("Dialog", "Ok"))
+        self.ok_btn.setText(_translate("Dialog", "OK"))
         self.cancel_btn.setText(_translate("Dialog", "Cancel"))
 
     def load_professors_from_db(self):

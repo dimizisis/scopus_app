@@ -276,8 +276,6 @@ class StatisticsExportation:
                 workbook  = writer.book
                 worksheet = workbook.add_worksheet('Average Percentile Rank')
                 worksheet.insert_image(0,0, '', {'image_data': self.create_percentile_rank_barplot()})
-                worksheet = workbook.add_worksheet('Max CiteScore Per Year')
-                worksheet.insert_image(0,0, '', {'image_data': self.create_citescore_max_per_year_barplot()})
 
         if self.export['department_stats']:
             dep_stats = self.create_authors_overall_ranking_excel()

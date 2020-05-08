@@ -47,7 +47,7 @@ def import_db_name():
 
     return db_name if '.db' in db_name else f'{db_name}.db'
 
-DB_PATH = f'{str(pathlib.Path(__file__).parent.absolute())}/{import_db_name}'
+DB_PATH = f'{str(pathlib.Path(__file__).parent.absolute())}/{import_db_name()}'
 
 conn = sqlite3.connect(DB_PATH)
 

@@ -128,6 +128,7 @@ class Ui_ResultsWindow(object):
         self.tableWidget.setRowCount(0)
         self.tableWidget.setSortingEnabled(True)
         self.statistics_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.statistics_btn.setVisible(False)
         self.statistics_btn.setStyleSheet("QPushButton\n"
 "{\n"
 "  background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,\n"

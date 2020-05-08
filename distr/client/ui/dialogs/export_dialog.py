@@ -138,10 +138,12 @@ class Ui_exportDialog(object):
         self.cancel_command_link_btn.setAutoRepeat(False)
         self.cancel_command_link_btn.setObjectName("cancel_command_link_btn")
         self.cancel_command_link_btn.clicked.connect(self.exportDialog.close)
+        self.cancel_command_link_btn.setIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '../style/images/delete.png'))
         self.button_horizontalLayout.addWidget(self.cancel_command_link_btn)
         self.export_command_link_btn = QtWidgets.QCommandLinkButton(self.horizontalLayoutWidget)
         self.export_command_link_btn.setMaximumSize(QtCore.QSize(150, 41))
         self.export_command_link_btn.setObjectName("export_command_link_btn")
+        self.export_command_link_btn.setIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '../style/images/export.png'))
         self.button_horizontalLayout.addWidget(self.export_command_link_btn)
 
         self.verticalLayoutWidget.setStyleSheet("background-color: transparent;")
