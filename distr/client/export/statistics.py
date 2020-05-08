@@ -22,7 +22,7 @@ def import_pub_data():
 
 class StatisticsExportation:
 
-    def __init__(self, from_year, to_year, agg_data=False, stat_diagrams=False, department_stats=False, outpath='C:/export.xlsx', df=None):
+    def __init__(self, from_year, to_year, agg_data=False, stat_diagrams=False, department_stats=False, outpath='C:/export.xlsx', professors=None, df=None):
         self.first_cat, self.second_cat, self.third_cat = import_pub_data()
         self.from_year = from_year
         self.to_year = to_year
@@ -30,11 +30,10 @@ class StatisticsExportation:
         self.outpath = outpath
         self.export = {'agg_data': agg_data, 'stat_diagrams': stat_diagrams, 'department_stats': department_stats}
         self.df = df
+        self.professors = professors
 
         if self.df is None:
             self.df = db.get_df_by_year([from_year, to_year])
-
-        print(self.df)
 
     def create_num_of_documents_per_year_plot(self):
         '''
@@ -181,8 +180,7 @@ class StatisticsExportation:
                 min_year = int(self.df['Year'].min())
             final_lst.append({'Name': professor[0] + ' ' + professor[1], 'Department': professor[2], 
                                 'Ranking': round(average, 3) if not pd.isna(average) else 0, 'Years': str(min_year) + ' - ' + str(max_year) 
-                                                                    if min_year != max_year else min_year})
-
+                                                                        if min_year != max_year else min_year})
         return final_lst
 
     def create_percentile_rank_barplot(self):
@@ -222,12 +220,35 @@ class StatisticsExportation:
 
         return pd.DataFrame(self.create_final_list(professors))
 
+    def create_professor_rank_by_year(self, professor):
+        prof_name = professor['Surname']+', '+professor['Name'][:1]+'.'
+        indexes = list(self.df['Authors'].str.find(prof_name))
+        indexes = [i for i in range(len(indexes)) if indexes[i] != -1]
+        values = self.df[['Average Percentile', 'Year']].iloc[indexes]
+        values['Name'] = prof_name
+        tmp_df = values.groupby(['Name', 'Year'], as_index=False).agg({'Average Percentile' : 'mean'})
+
+        plt.clf()
+
+        plt.xlabel('Year')
+        plt.ylabel('Average of Average Percentile')
+
+        plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))
+
+        plt.title(prof_name)
+
+        plot = plt.bar(tmp_df['Year'], tmp_df['Average Percentile'])   # create the barplot
+
+        imgdata = io.BytesIO()
+        plt.savefig(imgdata)
+
+        return imgdata
+
+
     def write_to_excel(self):
         '''
         Writes all the info to excel file
         '''
-
-        print(self.outpath)
 
         # Create a Pandas Excel writer using XlsxWriter as the engine.
         writer = pd.ExcelWriter(path=self.outpath, engine='xlsxwriter')
@@ -248,6 +269,9 @@ class StatisticsExportation:
                 worksheet.insert_image(0,0, '', {'image_data': self.create_avg_percentile_per_year_plot()})
                 worksheet = workbook.add_worksheet('Max CiteScore Per Year')
                 worksheet.insert_image(0,0, '', {'image_data': self.create_citescore_max_per_year_barplot()})
+                for professor in self.professors:
+                    worksheet = workbook.add_worksheet(professor['Surname'] + ' ' + professor['Name'][:1]+'.')
+                    worksheet.insert_image(0,0, '', {'image_data': self.create_professor_rank_by_year(professor)})
             else:
                 workbook  = writer.book
                 worksheet = workbook.add_worksheet('Average Percentile Rank')

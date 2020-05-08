@@ -18,11 +18,11 @@ def read_excel():
 
     for file in file_names:
 
-        excel = pd.read_excel(PATH + file, index_col = False)   # Read .excel file and append to list
+        excel = pd.read_excel(PATH + file, sheet_name=0, index_col = False)   # Read .excel file and append to list
 
         excel_lst.append(excel)
 
-    df = pd.concat(excel_lst, sort=True) # merge all csv read in one data frame (df that will be used for statistics)
+    df = pd.concat(excel_lst, sort=True, join='inner') # merge all excels in one data frame (df that will be used for statistics)
 
     df = df.dropna()
 
@@ -47,7 +47,7 @@ def import_db_name():
 
     return db_name if '.db' in db_name else f'{db_name}.db'
 
-DB_PATH = f'{str(pathlib.Path(__file__).parent.absolute())}\\{import_db_name()}'
+DB_PATH = f'{str(pathlib.Path(__file__).parent.absolute())}/{import_db_name}'
 
 conn = sqlite3.connect(DB_PATH)
 

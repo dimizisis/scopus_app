@@ -11,7 +11,7 @@ class Ui_exportDialog(object):
         self.exportDialog.setObjectName("exportDialog")
         self.exportDialog.resize(329, 467)
         scriptDir = os.path.dirname(os.path.realpath(__file__))
-        self.exportDialog.setWindowIcon(QIcon(scriptDir + os.path.sep + '..\\style\\images\\favicon.ico')) 
+        self.exportDialog.setWindowIcon(QIcon(scriptDir + os.path.sep + '../style/images/favicon.ico')) 
         self.export_grpbox = QtWidgets.QGroupBox(exportDialog)
         self.export_grpbox.setGeometry(QtCore.QRect(10, 10, 311, 391))
         self.export_grpbox.setObjectName("export_grpbox")
@@ -163,6 +163,8 @@ class Ui_exportDialog(object):
         self.to_year_combobox.currentTextChanged.connect(self.change_filename)
 
         self.export_command_link_btn.clicked.connect(self.export)
+        self.professor_stats_checkbox.clicked.connect(self.open_professors_dialog)
+        self.selected_professors = None
 
         self.retranslateUi(exportDialog)
         QtCore.QMetaObject.connectSlotsByName(exportDialog)
@@ -191,7 +193,7 @@ class Ui_exportDialog(object):
         if not self.years_are_correct():
             msg = QtWidgets.QMessageBox()
             msg.setIcon(QtWidgets.QMessageBox.Warning)
-            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '..\\style\\images\\favicon.ico'))
+            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '../style/images/favicon.ico'))
             msg.setText('Please enter valid from/to years.')
             msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
             msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
@@ -201,17 +203,30 @@ class Ui_exportDialog(object):
 
         from export.statistics import StatisticsExportation
 
-        if not outfile_name:
-            self.outfile_name = f'STAT_EXPORT_{self.from_year_combobox.currentText()}-{self.to_year_combobox.currentText()}' if self.from_year_combobox.currentText() != self.to_year_combobox.currentText() else f'STAT_EXPORT_{self.from_year_combobox.currentText()}'
-
         self.outpath = self.export_path_textedit.toPlainText() + '/' + (self.export_filename_textedit.toPlainText() 
                             if '.xlsx' in self.export_filename_textedit.toPlainText() else self.export_filename_textedit.toPlainText() + '.xlsx')
         
         stats = StatisticsExportation(from_year=self.from_year_combobox.currentText(), to_year=self.to_year_combobox.currentText(), 
                                         agg_data=self.aggregated_data_checkbox.isChecked(), stat_diagrams=self.diagrams_checkbox.isChecked(), 
-                                            department_stats=self.department_stats_checkbox.isChecked(), outpath=self.outpath)
+                                            department_stats=self.department_stats_checkbox.isChecked(), outpath=self.outpath, professors=self.selected_professors)
         stats.write_to_excel()
 
+    def open_professors_dialog(self):
+        if self.professor_stats_checkbox.isChecked():
+            from .professors_dialog import Ui_Professors_Dialog
+            self.professors_dialog = QtWidgets.QDialog()
+            self.professors_dialog.professors_ui = Ui_Professors_Dialog()
+            self.professors_dialog.professors_ui.setupUi(Dialog=self.professors_dialog)
+            self.professors_dialog.exec_()
+            try:
+                self.selected_professors = self.professors_dialog.professors_ui.selected_professors
+            except:
+                self.selected_professors = None
+
+            if not self.selected_professors:
+                self.professor_stats_checkbox.setChecked(False)
+        else:
+            self.professor_stats_checkbox.setChecked(False)
     def change_filename(self):
         ###### Set default export settings ######
         if self.years_are_correct():
@@ -237,5 +252,5 @@ class Ui_exportDialog(object):
         try:
             self.dir_ = QFileDialog.getExistingDirectory(None, 'Select a folder:', self.export_path_textedit.toPlainText(), QFileDialog.ShowDirsOnly)
         except:
-            self.dir_ = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:\\', QFileDialog.ShowDirsOnly)
+            self.dir_ = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:/', QFileDialog.ShowDirsOnly)
         self.export_path_textedit.setText(self.dir_)

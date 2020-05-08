@@ -39,7 +39,7 @@ class Ui_deleteDialog(object):
         self.comboBox.addItems(self.fetch_years_from_db())
         self.gridLayout.addWidget(self.comboBox, 0, 1, 1, 1)
         scriptDir = os.path.dirname(os.path.realpath(__file__))
-        self.deleteDialog.setWindowIcon(QIcon(scriptDir + os.path.sep + '..\\style\\images\\favicon.ico')) 
+        self.deleteDialog.setWindowIcon(QIcon(scriptDir + os.path.sep + '../style/images/favicon.ico')) 
 
         self.retranslateUi(deleteDialog)
         QtCore.QMetaObject.connectSlotsByName(deleteDialog)
