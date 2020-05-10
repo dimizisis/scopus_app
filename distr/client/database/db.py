@@ -8,31 +8,28 @@ sys.path.append('../')
 
 PATH = 'C:/Users/Dimitris/Desktop/' # Set your path to the folder containing the .xlsx files
 
-def read_excel():
-
-    file_names = os.listdir(PATH)   # Fetch all files in path
-
-    file_names = [file for file in file_names if '.xlsx' in file]    # Filter file name list for files ending with .xlsx
+def read_excel(excel_filenames):
 
     excel_lst = list()    # list that will contain all excel files
 
-    for file in file_names:
+    try:
 
-        excel = pd.read_excel(PATH + file, sheet_name=0, index_col = False)   # Read .excel file and append to list
+        for file in excel_filenames:
+            excel = pd.read_excel(file, sheet_name=0, index_col = False)   # Read .excel file and append to list
+            excel_lst.append(excel)
 
-        excel_lst.append(excel)
+        df = pd.concat(excel_lst, sort=True, join='inner') # merge all excels in one data frame (df that will be used for statistics)
+        df = df.dropna()
+        df = df.rename(columns={'# Authors': 'authors_num', 'Authors': 'authors', 'Average Percentile': 'avg_percentile', 'CiteScore': 
+                                    'citescore', 'Document Name': 'doc_name', 'SJR': 'sjr', 'SNIP': 'snip', 'Source Name': 'source_name', 'Year': 'year'})
 
-    df = pd.concat(excel_lst, sort=True, join='inner') # merge all excels in one data frame (df that will be used for statistics)
-
-    df = df.dropna()
-
-    df = df.rename(columns={'# Authors': 'authors_num', 'Authors': 'authors', 'Average Percentile': 'avg_percentile', 'CiteScore': 
-                                'citescore', 'Document Name': 'doc_name', 'SJR': 'sjr', 'SNIP': 'snip', 'Source Name': 'source_name', 'Year': 'year'})
-
-    df['avg_percentile'] = df['avg_percentile'].astype(float)
-    df['citescore'] = df['citescore'].astype(float)
-    df['sjr'] = df['sjr'].astype(float)
-    df['snip'] = df['snip'].astype(float)
+        df['avg_percentile'] = df['avg_percentile'].astype(float)
+        df['citescore'] = df['citescore'].astype(float)
+        df['sjr'] = df['sjr'].astype(float)
+        df['snip'] = df['snip'].astype(float)
+    except Exception as e:
+        print(e)
+        return False
 
     return df
 
@@ -104,6 +101,19 @@ def perform_deletion(year):
 
     return True
 
+def perform_deletion_all():
+    '''
+    Based on a specific year, performs deletion
+    to all records matching this year
+    Returns True if deletion is completed
+    '''
+    queries = [''' DELETE FROM documents''', ''' DELETE FROM sources''']
+    for query in queries:
+        cursor.execute(query)
+    conn.commit()
+
+    return True
+
 def is_db_empty():
     '''
     Checks if database is empty
@@ -145,13 +155,16 @@ def save_to_db(lst):
 
     return True
 
-def insert_from_excel(df):
+def insert_from_excel(filenames):
     '''
     Gets a dataframe (created from excel file)
     and saves all the records to database appropriately
     If save is successful, returns True,
     Else returns False
     '''
+
+    df = read_excel(filenames)
+
     for index, row in df.iterrows():
         try:
             cursor.execute('SELECT source_id FROM sources WHERE source_name = ?', (row['source_name'],))
@@ -183,4 +196,4 @@ def fetch_professors_from_db():
 
     return professors
 
-insert_from_excel(read_excel())
+# insert_from_excel(read_excel())

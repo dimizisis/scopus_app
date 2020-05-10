@@ -14,6 +14,7 @@ class Ui_Professors_Dialog(object):
         self.Dialog = Dialog
         scriptDir = os.path.dirname(os.path.realpath(__file__))
         self.Dialog.setWindowIcon(QIcon(scriptDir + os.path.sep + '../style/images/favicon.ico')) 
+        self.Dialog.setMaximumSize(QtCore.QSize(318, 358))
         self.verticalLayoutWidget = QtWidgets.QWidget(Dialog)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(10, 10, 301, 211))
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")

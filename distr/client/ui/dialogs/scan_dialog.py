@@ -37,7 +37,7 @@ class Ui_ScanDialog(object):
         self.ScanDialog.rejected.connect(self.cancel_analysis)
         self.ScanDialog.rejected.connect(self.ScanDialog.close)
 
-        self.ScanDialog.setObjectName("ScanDialog")
+        self.ScanDialog.setObjectName('ScanDialog')
         self.ScanDialog.resize(440, 108)
         self.ScanDialog.setMaximumSize(QtCore.QSize(440, 108))
         self.ScanDialog.setMinimumSize(QtCore.QSize(440, 108))
@@ -48,13 +48,13 @@ class Ui_ScanDialog(object):
         self.buttonBox.setGeometry(QtCore.QRect(10, 70, 421, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
+        self.buttonBox.setObjectName('buttonBox')
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setEnabled(False)
         self.progressBar = QtWidgets.QProgressBar(ScanDialog)
         self.progressBar.setGeometry(QtCore.QRect(10, 20, 421, 23))
-        self.progressBar.setProperty("value", 0)
+        self.progressBar.setProperty('value', 0)
         self.progressBar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
-        self.progressBar.setObjectName("progressBar")
+        self.progressBar.setObjectName('progressBar')
         self.ScanDialog.setWindowIcon(QIcon(self.ICON_PATH)) 
 
         self.retranslateUi(ScanDialog)
@@ -124,7 +124,7 @@ class Ui_ScanDialog(object):
         msg.setStandardButtons(QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No)
         msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
         msg.setWindowIcon(QIcon(self.ICON_PATH))
-        msg.setWindowTitle("Success")
+        msg.setWindowTitle('Success')
         reply = msg.exec_()
 
         if reply == QtWidgets.QMessageBox.Yes:          
@@ -176,5 +176,5 @@ class Ui_ScanDialog(object):
 
     def retranslateUi(self, ScanDialog):
         _translate = QtCore.QCoreApplication.translate
-        ScanDialog.setWindowTitle(_translate("ScanDialog", "Scanning..."))
-        self.progressBar.setFormat(_translate("ScanDialog", "%p%"))
+        ScanDialog.setWindowTitle(_translate('ScanDialog', 'Scanning...'))
+        self.progressBar.setFormat(_translate('ScanDialog', '%p%'))

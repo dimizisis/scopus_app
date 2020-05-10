@@ -10,6 +10,7 @@ class Ui_exportDialog(object):
         self.exportDialog = exportDialog
         self.exportDialog.setObjectName("exportDialog")
         self.exportDialog.resize(329, 467)
+        self.exportDialog.setMaximumSize(QtCore.QSize(329, 467))
         scriptDir = os.path.dirname(os.path.realpath(__file__))
         self.exportDialog.setWindowIcon(QIcon(scriptDir + os.path.sep + '../style/images/favicon.ico')) 
         self.export_grpbox = QtWidgets.QGroupBox(exportDialog)
