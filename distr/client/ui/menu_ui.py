@@ -7,6 +7,7 @@ import re
 from pyqtspinner.spinner import WaitingSpinner
 import magic
 import os
+from functools import partial
 from ui.dialogs.scan_dialog import Ui_ScanDialog
 from ui.dialogs.insert_from_excel_dialog import Ui_InsertFromExcelDialog
 import database.db as db
@@ -20,9 +21,6 @@ class ListView(QtWidgets.QListWidget):
         super(ListView, self).__init__(parent)
         self.setAcceptDrops(True)
         self.setIconSize(QtCore.QSize(72, 72))
-
-    def dragMoveEvent(self, event):
-        pass
 
     def dragEnterEvent(self, e):
         '''
@@ -220,6 +218,7 @@ class Ui_MainWindow(object):
         self.proceed_btn_stats.setGeometry(QtCore.QRect(620, 250, 101, 41))
         self.proceed_btn_stats.setObjectName('proceed_btn_stats')
         self.proceed_btn_stats.setIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + 'style/images/export.png'))
+        self.proceed_btn_stats.clicked.connect(partial(self.open_export_stats_dialog, self.proceed_btn_stats))
         self.tabWidget.addTab(self.import_tab, '')
 
         self.database_tab = QtWidgets.QWidget()
@@ -242,6 +241,7 @@ class Ui_MainWindow(object):
         self.insert_db_btn.setObjectName('insert_db_btn')
         self.insert_db_btn.setIcon(QIcon(scriptDir + os.path.sep + 'style/images/insert.png'))
         self.insert_db_btn.clicked.connect(self.open_insert_from_excel_dialog)
+        # self.insert_db_btn.setStyleSheet('background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 rgb(120,120,120), stop: 1 rgb(80,80,80));')
         # self.delete_db_btn.setStyleSheet('background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 rgb(120,120,120), stop: 1 rgb(80,80,80));')
         self.delete_db_btn.setIcon(QIcon(scriptDir + os.path.sep + 'style/images/delete.png'))
         self.delete_db_btn.clicked.connect(self.open_delete_from_db_dialog)
@@ -249,7 +249,7 @@ class Ui_MainWindow(object):
         self.db_export_stats_btn.setGeometry(QtCore.QRect(540, 250, 185, 41))
         self.db_export_stats_btn.setObjectName('db_export_stats_btn')
         self.db_export_stats_btn.setIcon(QIcon(scriptDir + os.path.sep + 'style/images/export.png'))
-        self.db_export_stats_btn.clicked.connect(self.open_export_stats_dialog)
+        self.db_export_stats_btn.clicked.connect(partial(self.open_export_stats_dialog, self.db_export_stats_btn))
         self.tabWidget.addTab(self.database_tab, '')
         self.load_data_from_db()
 
@@ -376,13 +376,20 @@ class Ui_MainWindow(object):
 
         return
 
-    def open_export_stats_dialog(self):
+    def open_export_stats_dialog(self, btn):
         from ui.dialogs.export_dialog import Ui_exportDialog
 
+        from_db = (btn == self.db_export_stats_btn)
+        df = None
+
+        if not from_db:
+            df = self.create_df()
+            if df is None:
+                return
         self.export_dialog = QtWidgets.QDialog()
         self.export_dialog.dialog_ui = Ui_exportDialog()
-        self.export_dialog.dialog_ui.setupUi(exportDialog=self.export_dialog)
-        self.export_dialog.exec_()
+        self.export_dialog.dialog_ui.setupUi(exportDialog=self.export_dialog, from_db=from_db, df=df)
+        self.export_dialog.exec_()       
 
     def open_insert_from_excel_dialog(self):
         from ui.dialogs.export_dialog import Ui_exportDialog
@@ -393,6 +400,43 @@ class Ui_MainWindow(object):
         self.insert_from_excel_dialog.exec_()
 
         self.load_data_from_db()
+
+    def create_df(self):
+        excel_filenames = [str(self.listWidget.item(i).text()) for i in range(self.listWidget.count())]
+        if not excel_filenames:
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setText('No excel files selected.')
+            msg.setWindowTitle('Error')
+            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '/style/images/favicon.ico')) 
+            msg.exec_()
+            return None
+        df = self.read_excel(excel_filenames)
+        return df
+
+    def read_excel(self, excel_filenames):
+
+        import pandas as pd
+
+        excel_lst = list()    # list that will contain all excel files
+
+        try:
+            for file in excel_filenames:
+                excel = pd.read_excel(file, sheet_name=0, index_col = False)   # Read .excel file and append to list
+                excel_lst.append(excel)
+
+            df = pd.concat(excel_lst, sort=True, join='inner') # merge all excels in one data frame (df that will be used for statistics)
+            df = df.dropna()
+
+            df['Average Percentile'] = df['Average Percentile'].astype(float)
+            df['CiteScore'] = df['CiteScore'].astype(float)
+            df['SJR'] = df['SJR'].astype(float)
+            df['SNIP'] = df['SNIP'].astype(float)
+        except Exception as e:
+            print(e)
+            return False
+
+        return df
 
     def proceed_btn_search_function(self):
         '''

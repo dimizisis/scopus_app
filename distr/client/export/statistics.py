@@ -244,45 +244,51 @@ class StatisticsExportation:
 
         return imgdata
 
-
     def write_to_excel(self):
         '''
         Writes all the info to excel file
         '''
+        try:
 
-        # Create a Pandas Excel writer using XlsxWriter as the engine.
-        writer = pd.ExcelWriter(path=self.outpath, engine='xlsxwriter')
-        
-        if self.export['agg_data']:
-            self.df.to_excel(writer, sheet_name='Aggregated Data')
-        
-        if self.export['stat_diagrams']:
-            if self.are_multiple_years():
-                workbook  = writer.book
-                worksheet = workbook.add_worksheet('Documents Per Year')
-                worksheet.insert_image(0,0, '', {'image_data': self.create_num_of_documents_per_year_plot()})
-                worksheet = workbook.add_worksheet('Top Ten Per Year')
-                worksheet.insert_image(0,0, '', {'image_data': self.create_num_of_documents_per_year_plot_top_ten()})
-                worksheet = workbook.add_worksheet('CiteScore Mean Per Year')
-                worksheet.insert_image(0,0, '', {'image_data': self.create_citescore_mean_per_year_plot()})
-                worksheet = workbook.add_worksheet('Avg Percentile Mean Per Year')
-                worksheet.insert_image(0,0, '', {'image_data': self.create_avg_percentile_per_year_plot()})
-                worksheet = workbook.add_worksheet('Max CiteScore Per Year')
-                worksheet.insert_image(0,0, '', {'image_data': self.create_citescore_max_per_year_barplot()})
-                for professor in self.professors:
-                    worksheet = workbook.add_worksheet(professor['Surname'] + ' ' + professor['Name'][:1]+'.')
-                    worksheet.insert_image(0,0, '', {'image_data': self.create_professor_rank_by_year(professor)})
-            else:
-                workbook  = writer.book
-                worksheet = workbook.add_worksheet('Average Percentile Rank')
-                worksheet.insert_image(0,0, '', {'image_data': self.create_percentile_rank_barplot()})
+            # Create a Pandas Excel writer using XlsxWriter as the engine.
+            writer = pd.ExcelWriter(path=self.outpath, engine='xlsxwriter')
+            
+            if self.export['agg_data']:
+                self.df.to_excel(writer, sheet_name='Aggregated Data')
+            
+            if self.export['stat_diagrams']:
+                if self.are_multiple_years():
+                    workbook  = writer.book
+                    worksheet = workbook.add_worksheet('Documents Per Year')
+                    worksheet.insert_image(0,0, '', {'image_data': self.create_num_of_documents_per_year_plot()})
+                    worksheet = workbook.add_worksheet('Top Ten Per Year')
+                    worksheet.insert_image(0,0, '', {'image_data': self.create_num_of_documents_per_year_plot_top_ten()})
+                    worksheet = workbook.add_worksheet('CiteScore Mean Per Year')
+                    worksheet.insert_image(0,0, '', {'image_data': self.create_citescore_mean_per_year_plot()})
+                    worksheet = workbook.add_worksheet('Avg Percentile Mean Per Year')
+                    worksheet.insert_image(0,0, '', {'image_data': self.create_avg_percentile_per_year_plot()})
+                    worksheet = workbook.add_worksheet('Max CiteScore Per Year')
+                    worksheet.insert_image(0,0, '', {'image_data': self.create_citescore_max_per_year_barplot()})
+                    if self.professors is not None: 
+                        for professor in self.professors:
+                            worksheet = workbook.add_worksheet(professor['Surname'] + ' ' + professor['Name'][:1]+'.')
+                            worksheet.insert_image(0,0, '', {'image_data': self.create_professor_rank_by_year(professor)})
+                else:
+                    workbook  = writer.book
+                    worksheet = workbook.add_worksheet('Average Percentile Rank')
+                    worksheet.insert_image(0,0, '', {'image_data': self.create_percentile_rank_barplot()})
 
-        if self.export['department_stats']:
-            dep_stats = self.create_authors_overall_ranking_excel()
-            dep_stats.to_excel(writer, sheet_name='Department Statistics')
+            if self.export['department_stats']:
+                dep_stats = self.create_authors_overall_ranking_excel()
+                dep_stats.to_excel(writer, sheet_name='Department Statistics')
 
-        # Close the Pandas Excel writer and output the Excel file.
-        writer.save()
+            # Close the Pandas Excel writer and output the Excel file.
+            writer.save()
+        except Exception as e:
+            print(e)
+            return False
+
+        return True
 
     def are_multiple_years(self):
         return int(self.from_year) != int(self.to_year)

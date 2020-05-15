@@ -6,7 +6,7 @@ import sys
 sys.path.append('../../')
 
 class Ui_exportDialog(object):
-    def setupUi(self, exportDialog, from_db=True):
+    def setupUi(self, exportDialog, from_db=True, df=None):
         self.exportDialog = exportDialog
         self.exportDialog.setObjectName("exportDialog")
         self.exportDialog.resize(329, 467)
@@ -152,10 +152,20 @@ class Ui_exportDialog(object):
         self.verticalLayoutWidget_4.setStyleSheet("background-color: transparent;")
         self.horizontalLayoutWidget.setStyleSheet("background-color: transparent;")
 
+        self.df = None
+
         ###### Fetch years from DB or Dataframe ######
         if from_db:
             self.to_year_combobox.addItems(self.fetch_years_from_db('DESC'))
             self.from_year_combobox.addItems(self.fetch_years_from_db('ASC'))
+        else:
+            self.df = df
+            years = list(self.df['Year'].unique())
+            years = [str(year) for year in years]
+            years.sort(reverse=True)
+            self.to_year_combobox.addItems(years)
+            years.sort()
+            self.from_year_combobox.addItems(years)
 
         ###### Set default export settings ######
         self.export_filename_textedit.setText(f'''STAT_EXPORT_{self.from_year_combobox.currentText()}-{self.to_year_combobox.currentText()}''' 
@@ -211,8 +221,23 @@ class Ui_exportDialog(object):
         
         stats = StatisticsExportation(from_year=self.from_year_combobox.currentText(), to_year=self.to_year_combobox.currentText(), 
                                         agg_data=self.aggregated_data_checkbox.isChecked(), stat_diagrams=self.diagrams_checkbox.isChecked(), 
-                                            department_stats=self.department_stats_checkbox.isChecked(), outpath=self.outpath, professors=self.selected_professors)
-        stats.write_to_excel()
+                                            department_stats=self.department_stats_checkbox.isChecked(), outpath=self.outpath, professors=self.selected_professors, df=self.df)
+        success = stats.write_to_excel()
+
+        if success:
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Information)
+            msg.setText('Successfully written to excel.')
+            msg.setWindowTitle('Success!')
+            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '../style/images/favicon.ico'))
+            msg.exec_()
+        else:
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setText('Something went wrong. Please try again.')
+            msg.setWindowTitle('Error')
+            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '../style/images/favicon.ico'))
+            msg.exec_()
 
     def open_professors_dialog(self):
         if self.professor_stats_checkbox.isChecked():

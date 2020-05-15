@@ -1,5 +1,6 @@
 
 from PyQt5 import QtWidgets, QtCore
+from PyQt5.Qt import Qt
 from ui.menu_ui import Ui_MainWindow
 import sys
 import os
