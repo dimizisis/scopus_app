@@ -6,14 +6,11 @@ import os
 import sys
 sys.path.append('../')
 
-PATH = 'C:/Users/Dimitris/Desktop/' # Set your path to the folder containing the .xlsx files
-
 def read_excel(excel_filenames):
 
     excel_lst = list()    # list that will contain all excel files
 
     try:
-
         for file in excel_filenames:
             excel = pd.read_excel(file, sheet_name=0, index_col = False)   # Read .excel file and append to list
             excel_lst.append(excel)
@@ -36,9 +33,12 @@ def read_excel(excel_filenames):
 def import_db_name():
 
     import configparser
+    from pathlib import Path
+    HERE = Path(__file__).parent.resolve()
+    CONFIG_PATH = HERE / '../settings.ini'
 
     parser = configparser.ConfigParser()
-    parser.read('settings.ini')
+    parser.read(CONFIG_PATH)
 
     db_name = parser.get('SYSTEM_SETTINGS', 'DATABASE')
 

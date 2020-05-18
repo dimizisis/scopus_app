@@ -4,7 +4,6 @@ from PyQt5.QtGui import QIcon, QKeySequence
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.Qt import Qt
 import re
-from pyqtspinner.spinner import WaitingSpinner
 import magic
 import os
 from functools import partial
@@ -52,7 +51,6 @@ class Ui_MainWindow(object):
         self.MainWindow.setMaximumSize(QtCore.QSize(750, 391))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName('centralwidget')
-        self.spinner = WaitingSpinner(self.MainWindow)
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setGeometry(QtCore.QRect(10, 10, 731, 327))
         self.tabWidget.setObjectName('tabWidget')

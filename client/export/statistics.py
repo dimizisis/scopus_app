@@ -11,8 +11,12 @@ sys.path.append('../')
 import database.db as db
 
 def import_pub_data():
+    from pathlib import Path
+    HERE = Path(__file__).parent.resolve()
+    CONFIG_PATH = HERE / '../settings.ini'
+
     parser = configparser.ConfigParser()
-    parser.read('settings.ini')
+    parser.read(CONFIG_PATH)
 
     first_c_lower = parser.get('PUBLICATION_DATA', 'FIRST_C_LOWER')
     second_c_lower = parser.get('PUBLICATION_DATA', 'SECOND_C_LOWER')

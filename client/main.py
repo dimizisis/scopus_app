@@ -5,11 +5,13 @@ from ui.menu_ui import Ui_MainWindow
 import sys
 import os
 import re
-import ctypes
+import platform
 
-# icon init
-myappid = 'uom.scopus.scopusanalyzer.1' # arbitrary string
-ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+if platform.system() == 'Windows':    # Windows
+    # icon init
+    import ctypes
+    myappid = 'uom.scopus.scopusanalyzer.1' # arbitrary string
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 def open_qss(path):
     """

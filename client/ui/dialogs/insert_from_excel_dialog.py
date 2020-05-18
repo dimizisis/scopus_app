@@ -77,7 +77,7 @@ class Ui_InsertFromExcelDialog(object):
     
     def add_data_to_db(self):
         filenames = list()
-        for i in range(self.listWidget.count()-1):
+        for i in range(self.listWidget.count()):
             filenames.append(self.listWidget.item(i).text())
         
         if filenames:
