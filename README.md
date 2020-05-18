@@ -6,7 +6,7 @@ Application, in which the user can log into scopus (must have account on www.sco
 
 Analyzes documents from query, and returns the results.
 
-When analyzing is finished, a CSV file is exported, containing all the dictionaries mentioned above (documents with its info)
+When analyzing is finished, an Excel file is exported, containing all the dictionaries mentioned above (documents with its info)
 
 ### Works for
 
