@@ -437,6 +437,16 @@ class Ui_MainWindow(object):
         When user hits proceed button, a scan dialog appears,
         which shows the progress of the expected search (progress bar & percentage of completion)
         '''
+        import datetime
+        if int(self.dateEdit.text()) > datetime.datetime.now().year:
+            msg = QtWidgets.QMessageBox()
+            msg.setIcon(QtWidgets.QMessageBox.Critical)
+            msg.setText('Please enter a valid date.')
+            msg.setWindowTitle('Error')
+            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '/style/images/favicon.ico')) 
+            msg.exec_()
+            return
+
         if self.export_checkbox.isChecked():
             if not self.export_path_textedit.toPlainText():
                 msg = QtWidgets.QMessageBox()
