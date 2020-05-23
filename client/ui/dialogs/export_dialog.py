@@ -205,14 +205,7 @@ class Ui_exportDialog(object):
 
     def export(self):
         if not self.years_are_correct():
-            msg = QtWidgets.QMessageBox()
-            msg.setIcon(QtWidgets.QMessageBox.Warning)
-            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '../style/images/favicon.ico'))
-            msg.setText('Please enter valid from/to years.')
-            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-            msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
-            msg.setWindowTitle('Failed to connect')
-            reply = msg.exec_()
+            self.show_msg_box(QtWidgets.QMessageBox.Warning, 'Invalid Years', 'Please enter valid from/to years.')
             return
 
         from export.statistics import StatisticsExportation
@@ -226,14 +219,7 @@ class Ui_exportDialog(object):
         success = stats.write_to_excel()
 
         if success:
-            msg = QtWidgets.QMessageBox()
-            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '../style/images/favicon.ico'))
-            msg.setIcon(QtWidgets.QMessageBox.Question)
-            msg.setText('Exportation finished! Show results?')
-            msg.setStandardButtons(QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No)
-            msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
-            msg.setWindowTitle('Success')
-            reply = msg.exec_()
+            reply = self.show_msg_box(QtWidgets.QMessageBox.Question, 'Success', 'Something went wrong. Please try again.', QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:          
             self.exportDialog.close()
@@ -248,12 +234,7 @@ class Ui_exportDialog(object):
         elif reply == QtWidgets.QMessageBox.No:
             self.exportDialog.close()
         else:
-            msg = QtWidgets.QMessageBox()
-            msg.setIcon(QtWidgets.QMessageBox.Critical)
-            msg.setText('Something went wrong. Please try again.')
-            msg.setWindowTitle('Error')
-            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '../style/images/favicon.ico'))
-            msg.exec_()
+            self.show_msg_box(QtWidgets.QMessageBox.Critical, 'Error', 'Something went wrong. Please try again.')
 
     def open_professors_dialog(self):
         if self.professor_stats_checkbox.isChecked():
@@ -298,3 +279,12 @@ class Ui_exportDialog(object):
         except:
             self.dir_ = QFileDialog.getExistingDirectory(None, 'Select a folder:', 'C:/', QFileDialog.ShowDirsOnly)
         self.export_path_textedit.setText(self.dir_)
+
+    def show_msg_box(self, msg_type, title, text, standard_btns=QtWidgets.QMessageBox.Ok):
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(msg_type)
+        msg.setText(text)
+        msg.setWindowTitle(title)
+        msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '../style/images/favicon.ico')) 
+        msg.setStandardButtons(standard_btns)
+        return msg.exec_()

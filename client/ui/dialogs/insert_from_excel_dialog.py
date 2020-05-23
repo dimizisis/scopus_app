@@ -84,21 +84,18 @@ class Ui_InsertFromExcelDialog(object):
             success = db.insert_from_excel(filenames)
 
             if success:
-                msg = QtWidgets.QMessageBox()
-                msg.setIcon(QtWidgets.QMessageBox.Information)
-                msg.setText('All files are successfully added to database.')
-                msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-                msg.setWindowIcon(QIcon(self.ICON_PATH))
-                msg.setWindowTitle('Success!')
-                msg.exec_()
+                self.show_msg_box(QtWidgets.QMessageBox.Information, 'Success!', 'All files are successfully added to database.')
                 self.InsertFromExcelDialog.close()
 
         else:
-            msg = QtWidgets.QMessageBox()
-            msg.setIcon(QtWidgets.QMessageBox.Warning)
-            msg.setText('No excel files are selected.')
-            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-            msg.setWindowIcon(QIcon(self.ICON_PATH))
-            msg.setWindowTitle('Something went wrong!')
-            msg.exec_()
+            self.show_msg_box(QtWidgets.QMessageBox.Warning, 'Error', 'No excel files are selected.')
             self.InsertFromExcelDialog.close()
+
+    def show_msg_box(self, msg_type, title, text, standard_btns=QtWidgets.QMessageBox.Ok):
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(msg_type)
+        msg.setText(text)
+        msg.setWindowTitle(title)
+        msg.setWindowIcon(QIcon(self.ICON_PATH)) 
+        msg.setStandardButtons(standard_btns)
+        return msg.exec_()

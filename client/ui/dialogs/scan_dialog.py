@@ -21,14 +21,7 @@ class Ui_ScanDialog(object):
         success = self.client.connect_to_server()
 
         if not success[0]:
-            msg = QtWidgets.QMessageBox()
-            msg.setIcon(QtWidgets.QMessageBox.Warning)
-            msg.setWindowIcon(QIcon(self.ICON_PATH))
-            msg.setText(success[1])
-            msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-            msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
-            msg.setWindowTitle('Failed to connect')
-            reply = msg.exec_()
+            self.show_msg_box(QtWidgets.QMessageBox.Warning, 'Failed to connect', success[1])
             return False
 
         self.MainWindow = MainWindow
@@ -102,8 +95,6 @@ class Ui_ScanDialog(object):
 
         year = int(df['Year'].unique())
 
-        print(self.excel_path)
-
         stats = StatisticsExportation(from_year=year, to_year=year, 
                                         agg_data=True, stat_diagrams=True, 
                                             department_stats=True, outpath=self.excel_path, df=df)
@@ -118,14 +109,7 @@ class Ui_ScanDialog(object):
         he wants to open the results window or not
         Triggered when analysis operation is finished
         '''
-        msg = QtWidgets.QMessageBox()
-        msg.setIcon(QtWidgets.QMessageBox.Question)
-        msg.setText('Analysis finished! Show results?')
-        msg.setStandardButtons(QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No)
-        msg.setDefaultButton(QtWidgets.QMessageBox.Yes)
-        msg.setWindowIcon(QIcon(self.ICON_PATH))
-        msg.setWindowTitle('Success')
-        reply = msg.exec_()
+        reply = self.show_msg_box(QtWidgets.QMessageBox.Question, 'Success!', 'Analysis finished! Show results?', QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:          
             self.ScanDialog.close()
@@ -178,3 +162,12 @@ class Ui_ScanDialog(object):
         _translate = QtCore.QCoreApplication.translate
         ScanDialog.setWindowTitle(_translate('ScanDialog', 'Scanning...'))
         self.progressBar.setFormat(_translate('ScanDialog', '%p%'))
+
+    def show_msg_box(self, msg_type, title, text, standard_btns=QtWidgets.QMessageBox.Ok):
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(msg_type)
+        msg.setText(text)
+        msg.setWindowTitle(title)
+        msg.setWindowIcon(QIcon(self.ICON_PATH)) 
+        msg.setStandardButtons(standard_btns)
+        return msg.exec_()

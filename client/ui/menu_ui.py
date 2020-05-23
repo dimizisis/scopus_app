@@ -353,12 +353,7 @@ class Ui_MainWindow(object):
         from ui.dialogs.delete_from_db_dialog import Ui_deleteDialog
 
         if db.is_db_empty():
-            msg = QtWidgets.QMessageBox()
-            msg.setIcon(QtWidgets.QMessageBox.Critical)
-            msg.setText('Database is empty.')
-            msg.setWindowTitle('Empty Database')
-            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '/style/images/favicon.ico')) 
-            msg.exec_()
+            self.show_msg_box(QtWidgets.QMessageBox.Critical, 'Error', 'Database is empty.')
             return
 
         self.db_dialog = QtWidgets.QDialog()
@@ -398,12 +393,7 @@ class Ui_MainWindow(object):
     def create_df(self):
         excel_filenames = [str(self.listWidget.item(i).text()) for i in range(self.listWidget.count())]
         if not excel_filenames:
-            msg = QtWidgets.QMessageBox()
-            msg.setIcon(QtWidgets.QMessageBox.Critical)
-            msg.setText('No excel files selected.')
-            msg.setWindowTitle('Error')
-            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '/style/images/favicon.ico')) 
-            msg.exec_()
+            self.show_msg_box(QtWidgets.QMessageBox.Critical, 'Error', 'No excel files selected.')
             return None
         df = self.read_excel(excel_filenames)
         return df
@@ -439,32 +429,18 @@ class Ui_MainWindow(object):
         '''
         import datetime
         if int(self.dateEdit.text()) > datetime.datetime.now().year:
-            msg = QtWidgets.QMessageBox()
-            msg.setIcon(QtWidgets.QMessageBox.Critical)
-            msg.setText('Please enter a valid date.')
-            msg.setWindowTitle('Error')
-            msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '/style/images/favicon.ico')) 
-            msg.exec_()
+            self.show_msg_box(QtWidgets.QMessageBox.Critical, 'Error', 'Please enter a valid date.')
             return
 
         if self.export_checkbox.isChecked():
             if not self.export_path_textedit.toPlainText():
-                msg = QtWidgets.QMessageBox()
-                msg.setIcon(QtWidgets.QMessageBox.Critical)
-                msg.setText('Please select a valid export path.')
-                msg.setWindowTitle('Error')
-                msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '/style/images/favicon.ico')) 
-                msg.exec_()
+                self.show_msg_box(QtWidgets.QMessageBox.Critical, 'Error', 'Please select a valid export path.')
                 return
 
             if not self.export_filename_textedit.toPlainText():
-                msg = QtWidgets.QMessageBox()
-                msg.setIcon(QtWidgets.QMessageBox.Critical)
-                msg.setText('Please enter a valid output filename.')
-                msg.setWindowTitle('Error')
-                msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '/style/images/favicon.ico')) 
-                msg.exec_()
+                self.show_msg_box(QtWidgets.QMessageBox.Critical, 'Error', 'Please enter a valid output filename.')
                 return
+
             if '.xlsx' not in self.export_filename_textedit.toPlainText():
                 self.export_path = self.export_path_textedit.toPlainText() + '/' + self.export_filename_textedit.toPlainText() + '.xlsx'
             else:
@@ -563,3 +539,11 @@ class Ui_MainWindow(object):
         print(query)
 
         return query
+
+    def show_msg_box(self, msg_type, title, text):
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(msg_type)
+        msg.setText(text)
+        msg.setWindowTitle(title)
+        msg.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + '/style/images/favicon.ico')) 
+        msg.exec_()
