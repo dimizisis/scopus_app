@@ -16,7 +16,9 @@ Journal Sources
 
 ## Prerequisites
 
-Python 3.7.5
+1. Python 3.7.5
+2. Correct version chromedriver (depends on your version of Chrome, for more see http://chromedriver.chromium.org/)
+3. If using Windows, please add Chromedriver in PATH (for more see https://www.computerhope.com/issues/ch000549.htm)
 
 ## Requirements
 
