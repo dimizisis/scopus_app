@@ -219,7 +219,7 @@ class Ui_exportDialog(object):
         success = stats.write_to_excel()
 
         if success:
-            reply = self.show_msg_box(QtWidgets.QMessageBox.Question, 'Success', 'Something went wrong. Please try again.', QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No)
+            reply = self.show_msg_box(QtWidgets.QMessageBox.Question, 'Success', 'Statistics File Exported! Open file?', QtWidgets.QMessageBox.Yes| QtWidgets.QMessageBox.No)
 
         if reply == QtWidgets.QMessageBox.Yes:          
             self.exportDialog.close()

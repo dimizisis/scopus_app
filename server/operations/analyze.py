@@ -42,8 +42,9 @@ class DocumentPage():
         while True:
             
             if self.stop == True:
+                print(self.stop)
                 break
-
+            print(self.stop)
             try:
                 document_name = document_rows.popleft() # pop the first one in list
                 author_list = author_rows.popleft()
@@ -71,7 +72,7 @@ class DocumentPage():
                             percentiles = WebDriverWait(browser, init.DELAY_TIME).until(    
                                 EC.presence_of_all_elements_located((By.XPATH, self.percentiles_xpath))) # find percentiles
                             percentiles = self.percentiles_to_num(self.convert_to_txt(percentiles))   # convert percentiles to number (int)
-                            print(percentiles)
+                            # print(percentiles)
                         except:
                             print('no percentiles found')
                         try:
@@ -98,20 +99,20 @@ class DocumentPage():
                             print('no metric values found')
                         document_dict = self.create_dict(self.count, document_name, source_name['name'], year, author_list, self.get_number_of_authors(author_list), self.get_average_percentile(percentiles), zip(['CiteScore', 'SJR', 'SNIP'], metric_values))
                         final_lst.append(document_dict)
-                        print(document_dict)
+                        # print(document_dict)
                         self.count+=1
                         browser.execute_script("window.history.go(-1)") # go to the previous page
                     except:
                         document_dict = self.create_dict(self.count, document_name, source_name['name'], year, author_list, self.get_number_of_authors(author_list), 0, zip(['CiteScore', 'SJR', 'SNIP'], [0, 0, 0]))
                         final_lst.append(document_dict)
                         self.count+=1
-                        print(document_dict)
+                        # print(document_dict)
                         browser.execute_script("window.history.go(-1)") # go to the previous page
                 else:
                     document_dict = self.create_dict(self.count, document_name, source_name['name'], year, author_list, self.get_number_of_authors(author_list), 0, zip(['CiteScore', 'SJR', 'SNIP'], [0, 0, 0]))
                     final_lst.append(document_dict)
                     self.count+=1
-                    print(document_dict)
+                    # print(document_dict)
             except:
                 try:
                     if curr_page < no_of_pages:
@@ -124,7 +125,6 @@ class DocumentPage():
                         break
                 except:
                     break
-        # sio.emit(event='analyze_response', data=final_lst, namespace='/desktop_client')
 
     def stop_analysis(self):
         self.stop = True

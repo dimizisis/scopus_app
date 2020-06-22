@@ -9,7 +9,7 @@ from threading import Lock
 import configparser
 import os
 
-sio = socketio.Server()
+sio = socketio.Server(allow_upgrades=False)
 app = socketio.WSGIApp(sio)
 
 mutex = Lock()
@@ -32,6 +32,17 @@ def import_settings():
 @sio.event
 def connect(sid, environ):
     print('connect ', sid)
+
+@sio.event
+def disconnect(sid):
+    global doc_page
+    print('disconnect ', sid)
+    try:
+        doc_page.stop_analysis()
+    except Exception as e:
+        print(e)
+    finally:
+        reset()
 
 @sio.event
 def search(sid, data):
@@ -76,17 +87,6 @@ def add_id(lst):
 def update(sid):
     global final_lst
     return len(final_lst)
-
-@sio.event
-def disconnect(sid):
-    global doc_page
-    print('disconnect ', sid)
-    try:
-        doc_page.stop_analysis()
-    except:
-        pass
-    finally:
-        reset()
 
 def reset():
     global doc_page, search_page, final_lst, browser
