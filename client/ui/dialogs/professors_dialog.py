@@ -29,9 +29,11 @@ class Ui_Professors_Dialog(object):
         self.select_deselect_all_horizontalLayout.setObjectName("select_deselect_all_horizontalLayout")
         self.deselect_all_btn = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.deselect_all_btn.setObjectName("deselect_all_btn")
+        self.deselect_all_btn.clicked.connect(self.deselectAll)
         self.select_deselect_all_horizontalLayout.addWidget(self.deselect_all_btn)
         self.select_all_btn = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.select_all_btn.setObjectName("select_all_btn")
+        self.select_all_btn.clicked.connect(self.tree_widget.selectAll)
         self.select_deselect_all_horizontalLayout.addWidget(self.select_all_btn)
         self.tree_widget_verticalLayout.addLayout(self.select_deselect_all_horizontalLayout)
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(Dialog)
@@ -72,3 +74,7 @@ class Ui_Professors_Dialog(object):
     def ok_pressed(self):
         self.selected_professors = [{'Name': selected_prof.text(0), 'Surname': selected_prof.text(1), 'Department': selected_prof.text(2)} for selected_prof in self.tree_widget.selectedItems()]
         self.Dialog.accept()
+    
+    def deselectAll(self):
+        for item in self.tree_widget.selectedItems():
+            item.setSelected(False)

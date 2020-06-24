@@ -333,6 +333,11 @@ class Ui_MainWindow(object):
         self.tabWidget.setCurrentIndex(desired_index)
     
     def load_data_from_db(self):
+        '''
+        Loads data from database
+        '''
+        for row in range(self.database_table.rowCount()):
+            self.database_table.removeRow(row)
 
         self.database_table.setRowCount(0)
         
