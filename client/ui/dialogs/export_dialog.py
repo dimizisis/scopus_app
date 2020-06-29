@@ -171,7 +171,8 @@ class Ui_exportDialog(object):
         ###### Set default export settings ######
         self.export_filename_textedit.setText(f'''STAT_EXPORT_{self.from_year_combobox.currentText()}-{self.to_year_combobox.currentText()}''' 
                                                 if self.from_year_combobox.currentText() != self.to_year_combobox.currentText() else f'''STAT_EXPORT_{self.from_year_combobox.currentText()}''')
-        self.export_path_textedit.setText(scriptDir + os.path.sep)
+        
+        self.export_path_textedit.setText(os.environ['USERPROFILE']+'\\')
 
         self.from_year_combobox.currentTextChanged.connect(self.change_filename)
         self.to_year_combobox.currentTextChanged.connect(self.change_filename)
