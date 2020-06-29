@@ -167,15 +167,14 @@ def insert_from_excel(filenames):
 
     for index, row in df.iterrows():
         try:
+            
+            # if not source:
+            cursor.execute('INSERT INTO sources VALUES (null,?,?,?,?,?) ON CONFLICT(source_name) DO UPDATE SET citescore=excluded.citescore, sjr=excluded.sjr, snip=excluded.snip, avg_percentile=excluded.avg_percentile', 
+                            row[['source_name', 'citescore', 'sjr', 'snip', 'avg_percentile']])
             cursor.execute('SELECT source_id FROM sources WHERE source_name = ?', (row['source_name'],))
             source = cursor.fetchone()
-            if not source:
-                cursor.execute('INSERT INTO sources VALUES (null,?,?,?,?,?)', row[['source_name', 'citescore', 'sjr', 'snip', 'avg_percentile']])
-                tmp_lst = list(row[['doc_name', 'authors_num', 'authors', 'year']])
-                tmp_lst.append(cursor.lastrowid)
-            else:
-                tmp_lst = list(row[['doc_name', 'authors_num', 'authors', 'year']])
-                tmp_lst.append(source[0])
+            tmp_lst = list(row[['doc_name', 'authors_num', 'authors', 'year']])
+            tmp_lst.append(source[0])
             cursor.execute('INSERT OR IGNORE INTO documents VALUES (null,?,?,?,?,?)', tmp_lst)
         except Exception as e:
             print(e)
@@ -195,5 +194,3 @@ def fetch_professors_from_db():
     professors = cursor.fetchall()
 
     return professors
-
-# insert_from_excel(read_excel())

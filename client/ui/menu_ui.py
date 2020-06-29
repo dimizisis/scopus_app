@@ -39,8 +39,6 @@ class ListView(QtWidgets.QListWidget):
         for url in e.mimeData().urls():
             if magic.from_file(url.toLocalFile()) == 'Microsoft Excel 2007+':
                 self.addItem(url.toLocalFile())
-            else:
-                print(magic.from_file(url.toLocalFile()))
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -225,7 +223,6 @@ class Ui_MainWindow(object):
         self.horizontalLayoutWidget.setObjectName('horizontalLayoutWidget')
 
         self.database_table = QtWidgets.QTableWidget(self.database_tab)
-        self.database_table.setSortingEnabled(True)
         self.database_table.setGeometry(QtCore.QRect(10, 10, 711, 221))
         self.database_table.setObjectName('database_table')
         self.database_table.setColumnCount(9)
@@ -336,8 +333,8 @@ class Ui_MainWindow(object):
         '''
         Loads data from database
         '''
-        for row in range(self.database_table.rowCount()):
-            self.database_table.removeRow(row)
+
+        self.database_table.setSortingEnabled(False)
 
         self.database_table.setRowCount(0)
         
@@ -354,6 +351,8 @@ class Ui_MainWindow(object):
                 else:
                     self.database_table.setItem(inx, i, QtWidgets.QTableWidgetItem(str(round(row[i], 3))))
 
+        self.database_table.setSortingEnabled(True)
+
     def open_delete_from_db_dialog(self):
         from ui.dialogs.delete_from_db_dialog import Ui_deleteDialog
 
@@ -368,8 +367,6 @@ class Ui_MainWindow(object):
 
         self.load_data_from_db()
 
-        return
-
     def open_export_stats_dialog(self, btn):
         from ui.dialogs.export_dialog import Ui_exportDialog
 
@@ -380,6 +377,11 @@ class Ui_MainWindow(object):
             df = self.create_df()
             if df is None:
                 return
+        else:
+            if db.is_db_empty():
+                self.show_msg_box(QtWidgets.QMessageBox.Critical, 'Error', 'Database is empty.')
+                return
+
         self.export_dialog = QtWidgets.QDialog()
         self.export_dialog.dialog_ui = Ui_exportDialog()
         self.export_dialog.dialog_ui.setupUi(exportDialog=self.export_dialog, from_db=from_db, df=df)
@@ -457,6 +459,8 @@ class Ui_MainWindow(object):
                     self.generate_query(), self.export_checkbox.isChecked(), self.export_path, self.save_to_db_checkbox.isChecked())
         if success:
             self.dialog.exec_()
+        
+        self.load_data_from_db()
 
     def open_directory_dialog(self):
         '''
@@ -540,8 +544,6 @@ class Ui_MainWindow(object):
 
         for limit in limits:
             query += limit
-
-        print(query)
 
         return query
 

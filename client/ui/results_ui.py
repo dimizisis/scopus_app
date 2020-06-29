@@ -72,12 +72,11 @@ class Ui_ResultsWindow(object):
             for column in range(column_count):
                 try:
                     item = (list(self.results[row].values())[column])
-                    print(item)
                     if not isinstance(item, str):
                         item = str(item)
                     self.tableWidget.setItem(row, column, QtWidgets.QTableWidgetItem(item))
-                except:
-                    print('Ok')
+                except Exception as e:
+                    print(e)
                 
     def retranslateUi(self, ResultsWindow):
         _translate = QtCore.QCoreApplication.translate
