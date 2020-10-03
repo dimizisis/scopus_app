@@ -4,7 +4,7 @@ Dissertation project
 
 ## Description
 
-Application, in which the user can search a query (chooses its settings in UI).
+Application, in which the user can search documents in Scopus database using a query (chooses its settings in UI).
 
 Analyzes documents from query, and returns the results.
 
@@ -16,7 +16,7 @@ Journal Sources
 
 ## Prerequisites
 
-1. Python 3.7.5
+1. Python 3.7
 2. Correct version chromedriver (depends on your version of Chrome, for more see http://chromedriver.chromium.org/)
 3. If using Windows, please add Chromedriver in PATH (for more see https://www.computerhope.com/issues/ch000549.htm)
 
